@@ -11,16 +11,29 @@ import "./Interpreter.sol";
 contract InstructionsProvider is Ownable {
     
     /* STORAGE */
+
+    /// @dev Interpreter contract reference
     Interpreter private interpreterInstance;
+
+    /// @dev OpenZeppelin Escrow contract reference
     Escrow private escrow;
 
     /* EVENTS */
-    event SetInterpreterInstance(address _from, address _new);
+    
+    /**
+    * @dev Event emitted when the Interpreter contract reference is changed
+    * @param _from Caller address
+    * @param _old Old address of the Interpreter contract
+    * @param _new New address of the Interpreter contract
+    */
+    event SetInterpreterInstance(address _from, address _old, address _new);
+
+    // TODO: TESTING: remove this event
     event _CALLBACK(address _from, address _to, uint _success);
 
     /* MODIFIERS */
 
-    /// @dev Escrow: Modifier used to check whether the sender has a deposit to withdraw 
+    /// @dev OpenZeppelin Escrow: Modifier used to check whether the sender has a deposit to withdraw 
     modifier hasBalance() {
         require(depositsOf(msg.sender) > 0, "Not enough balance");
         _;
@@ -33,26 +46,47 @@ contract InstructionsProvider is Ownable {
     }
 
     /* PUBLIC INTERFACE */
+
+    /**
+    * @dev Constructor used to instantiate the Escrow contract and set the InterpreterInstance reference
+    * @param _address Address of the Interpreter contract
+    */
     constructor(address _address) {
         escrow = new Escrow();
-        setInterpreterInstance(_address);
-    }
-    
-    function setInterpreterInstance(address _address) public onlyOwner {
         interpreterInstance = Interpreter(_address);
-        emit SetInterpreterInstance(msg.sender, _address);
     }
     
-    /* Instructions definitions/Articles */
+    /**
+    * @dev Sets the Interpreter reference. Emits a SetInterpreterInstance event
+    * @param _new Address of the Interpreter contract
+    */
+    function setInterpreterInstance(address _new) public onlyOwner {
+        address old = address(interpreterInstance);
+        interpreterInstance = Interpreter(_new);
+        emit SetInterpreterInstance(msg.sender, old, _new);
+    }
+    
+    /* Instructions definitions */
+
+    // TODO: TESTING - Remove this function and the corresponding TCs
     function _test(bool _value) public payable onlyInterpreter returns(bool)  {
         return _value;
     }
 
+    /**
+    * @dev Checks if the addresses in parameters are equal
+    * @param _address1 First address used in the comparison
+    * @param _address2 Second address used in the comparison
+    */
     function _ifAddress(address _address1, address _address2) public onlyInterpreter returns (bool) {
         emit _CALLBACK(_address1, _address2, 777);
         return (_address1 == _address2);
     }
 
+    /**
+    * @dev Deposits all the msg.value in the corresponding Escrow address
+    * @param _to Address where to deposit funds
+    */
     function _transferExternal(address _to) public payable onlyInterpreter {
         _deposit(_to, msg.value);
     }
