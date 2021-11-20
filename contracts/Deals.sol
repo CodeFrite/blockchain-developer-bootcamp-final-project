@@ -54,6 +54,7 @@ contract Deals {
     /** 
     * @dev Returns the number of rules of a deal
     * @param _dealId Id of the deal
+    * @return Number of rules in the deal
     */
     function getRulesCount(uint _dealId) public view returns(uint) {
         return rulesCount[_dealId];
@@ -63,6 +64,7 @@ contract Deals {
     * @dev Returns the number of articles of a rule
     * @param _dealId Id of the deal
     * @param _ruleId Id of the rule
+    * @return Number of articles in the rule
     */
     function getArticlesCount(uint _dealId, uint _ruleId) public view returns(uint) {
         return articlesCount[_dealId][_ruleId];
@@ -71,6 +73,7 @@ contract Deals {
     /** 
     * @dev Returns the number of internal accounts of a deal
     * @param _dealId Id of the deal
+    * @return Number of internal accounts in the deal
     */
     function getInternalAccountsCount(uint _dealId) public view returns(uint) {
         return internalAccountsCount[_dealId];
@@ -79,6 +82,7 @@ contract Deals {
     /** 
     * @dev Returns the number of external accounts of a deal
     * @param _dealId Id of the deal
+    * @return Number of external accounts in the deal
     */
     function getExternalAccountsCount(uint _dealId) public view returns(uint) {
         return externalAccountsCount[_dealId];
@@ -88,6 +92,7 @@ contract Deals {
     * @dev Returns the address of an internal account of a deal
     * @param _dealId Id of the deal
     * @param _accountId Id of the account
+    * @return Internal account address
     */
     function getInternalAccount(uint _dealId, uint _accountId) public view returns(address) {
         return internalAccounts[_dealId][_accountId];
@@ -97,6 +102,7 @@ contract Deals {
     * @dev Returns the address of an external account of a deal
     * @param _dealId Id of the deal
     * @param _accountId Id of the account
+    * @return External account address
     */
     function getExternalAccount(uint _dealId, uint _accountId) public view returns(address) {
         return externalAccounts[_dealId][_accountId];
@@ -107,6 +113,7 @@ contract Deals {
     * @param _dealId Id of the deal
     * @param _ruleId Id of the rule
     * @param _articleId Id of the article
+    * @return CommonStructs.Article
     */
     function getArticle(uint _dealId, uint _ruleId, uint _articleId) public view returns(CommonStructs.Article memory) {
         return deals[_dealId][_ruleId][_articleId];
@@ -115,6 +122,7 @@ contract Deals {
     /**
     * @dev Returns the list of addresses of the internal accounts for a deal
     * @param _dealId Id of the deal
+    * @return Address list of internal accounts
     */
     function getInternalAccounts(uint _dealId) public view returns(address[] memory) {
         return internalAccounts[_dealId];
@@ -125,6 +133,7 @@ contract Deals {
     * @param _externalAccounts List of the external accounts addresses linked to the deal
     * @param _internalAccounts List of the internal accounts addresses linked to the deal
     * @param _rulesList List of the rules linked to the deal (rule = list of Articles)
+    * @return Deal Id
     */
     function createDeal
     (
@@ -161,11 +170,6 @@ contract Deals {
 
         // Return the deal Id
         return currentDealId;
-    }
-
-    /* SUPPORT FUNCTIONS */
-    function compareStrings(string memory _s1, string memory _s2) public pure returns(bool) {
-        return keccak256(bytes(_s1)) == keccak256(bytes(_s2));
     }
    
 }
