@@ -1,0 +1,30 @@
+body {
+  margin: 0;
+  font-family: "Roboto Condensed"!important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-image: url("./assets/memphis-mini.png");
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+h2 {
+  text-decoration: underline;
+}
+
+span.var {
+  color:darkred;
+  font-weight: bold;
+}
+
+#header-container {
+  margin-top: 20px;
+}
+
+#main-container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}

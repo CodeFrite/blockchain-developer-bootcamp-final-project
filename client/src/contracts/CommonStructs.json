@@ -1,0 +1,473 @@
+{
+  "contractName": "CommonStructs",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.9+commit.e5eed63a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"details\":\"Struct and enum used accross the contracts\",\"kind\":\"dev\",\"methods\":{},\"title\":\"CommonStructs Library\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/CommonStructs.sol\":\"CommonStructs\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/CommonStructs.sol\":{\"keccak256\":\"0xbc2b7597608aeb9715d800a4a31ea6f79c28985f8cbbfbea747edcdc28da50cc\",\"license\":\"GPL-3.0\",\"urls\":[\"bzz-raw://7012c3e0f7cf19580a53106c43425d8e84d882fede400744212c5ba88d411ad1\",\"dweb:/ipfs/QmUqag6QxGTZkSm4xVZsajyYV5XmVpJTmV55M7BfA8Nmp1\"]}},\"version\":1}",
+  "bytecode": "0x60566050600b82828239805160001a6073146043577f4e487b7100000000000000000000000000000000000000000000000000000000600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220d7455f8a4b48267a0acd44ee6526d77eecab77b87aa6bc8ebc1021896053453264736f6c63430008090033",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220d7455f8a4b48267a0acd44ee6526d77eecab77b87aa6bc8ebc1021896053453264736f6c63430008090033",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "152:736:4:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "152:736:4:-:0;;;;;;;;",
+  "source": "// SPDX-License-Identifier: GPL-3.0\npragma solidity 0.8.9;\n\n/**\n * @title CommonStructs Library\n * @dev Struct and enum used accross the contracts\n */\n\nlibrary CommonStructs {\n\n    /// @dev List of instruction types supported\n    /// @notice Format: function param types (+ \"_R_\" + function return type)\n    enum InstructionTypes { VOID, ADDRESS_UINT_PAYABLE, ADDRESS_R_BOOL, BOOL_PAYABLE_R_BOOL, ADDRESS_ADDRESS_R_BOOL }\n\n    /**\n     * @dev Represent a single instruction with its parameters\n     * @param instructionName: Name of the instruction to be executed\n     * @param paramStr Instruction param of type string\n     * @param paramUInt Instruction param of type uint\n     * @param paramAddress Instruction param of type address\n     */\n    struct Article {\n        string instructionName;\n        string paramStr;\n        uint paramUInt;\n        address paramAddress;\n    }\n    \n}",
+  "sourcePath": "/home/shakalee/Documents/Consensys/PROJOT-v0/contracts/CommonStructs.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/CommonStructs.sol",
+    "exportedSymbols": {
+      "CommonStructs": [
+        537
+      ]
+    },
+    "id": 538,
+    "license": "GPL-3.0",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 520,
+        "literals": [
+          "solidity",
+          "0.8",
+          ".9"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "36:22:4"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "CommonStructs",
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": {
+          "id": 521,
+          "nodeType": "StructuredDocumentation",
+          "src": "60:90:4",
+          "text": " @title CommonStructs Library\n @dev Struct and enum used accross the contracts"
+        },
+        "fullyImplemented": true,
+        "id": 537,
+        "linearizedBaseContracts": [
+          537
+        ],
+        "name": "CommonStructs",
+        "nameLocation": "160:13:4",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "CommonStructs.InstructionTypes",
+            "id": 527,
+            "members": [
+              {
+                "id": 522,
+                "name": "VOID",
+                "nameLocation": "332:4:4",
+                "nodeType": "EnumValue",
+                "src": "332:4:4"
+              },
+              {
+                "id": 523,
+                "name": "ADDRESS_UINT_PAYABLE",
+                "nameLocation": "338:20:4",
+                "nodeType": "EnumValue",
+                "src": "338:20:4"
+              },
+              {
+                "id": 524,
+                "name": "ADDRESS_R_BOOL",
+                "nameLocation": "360:14:4",
+                "nodeType": "EnumValue",
+                "src": "360:14:4"
+              },
+              {
+                "id": 525,
+                "name": "BOOL_PAYABLE_R_BOOL",
+                "nameLocation": "376:19:4",
+                "nodeType": "EnumValue",
+                "src": "376:19:4"
+              },
+              {
+                "id": 526,
+                "name": "ADDRESS_ADDRESS_R_BOOL",
+                "nameLocation": "397:22:4",
+                "nodeType": "EnumValue",
+                "src": "397:22:4"
+              }
+            ],
+            "name": "InstructionTypes",
+            "nameLocation": "313:16:4",
+            "nodeType": "EnumDefinition",
+            "src": "308:113:4"
+          },
+          {
+            "canonicalName": "CommonStructs.Article",
+            "id": 536,
+            "members": [
+              {
+                "constant": false,
+                "id": 529,
+                "mutability": "mutable",
+                "name": "instructionName",
+                "nameLocation": "780:15:4",
+                "nodeType": "VariableDeclaration",
+                "scope": 536,
+                "src": "773:22:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_string_storage_ptr",
+                  "typeString": "string"
+                },
+                "typeName": {
+                  "id": 528,
+                  "name": "string",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "773:6:4",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_storage_ptr",
+                    "typeString": "string"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 531,
+                "mutability": "mutable",
+                "name": "paramStr",
+                "nameLocation": "812:8:4",
+                "nodeType": "VariableDeclaration",
+                "scope": 536,
+                "src": "805:15:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_string_storage_ptr",
+                  "typeString": "string"
+                },
+                "typeName": {
+                  "id": 530,
+                  "name": "string",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "805:6:4",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_storage_ptr",
+                    "typeString": "string"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 533,
+                "mutability": "mutable",
+                "name": "paramUInt",
+                "nameLocation": "835:9:4",
+                "nodeType": "VariableDeclaration",
+                "scope": 536,
+                "src": "830:14:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 532,
+                  "name": "uint",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "830:4:4",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 535,
+                "mutability": "mutable",
+                "name": "paramAddress",
+                "nameLocation": "862:12:4",
+                "nodeType": "VariableDeclaration",
+                "scope": 536,
+                "src": "854:20:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 534,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "854:7:4",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              }
+            ],
+            "name": "Article",
+            "nameLocation": "755:7:4",
+            "nodeType": "StructDefinition",
+            "scope": 537,
+            "src": "748:133:4",
+            "visibility": "public"
+          }
+        ],
+        "scope": 538,
+        "src": "152:736:4",
+        "usedErrors": []
+      }
+    ],
+    "src": "36:852:4"
+  },
+  "legacyAST": {
+    "absolutePath": "project:/contracts/CommonStructs.sol",
+    "exportedSymbols": {
+      "CommonStructs": [
+        537
+      ]
+    },
+    "id": 538,
+    "license": "GPL-3.0",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 520,
+        "literals": [
+          "solidity",
+          "0.8",
+          ".9"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "36:22:4"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "CommonStructs",
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": {
+          "id": 521,
+          "nodeType": "StructuredDocumentation",
+          "src": "60:90:4",
+          "text": " @title CommonStructs Library\n @dev Struct and enum used accross the contracts"
+        },
+        "fullyImplemented": true,
+        "id": 537,
+        "linearizedBaseContracts": [
+          537
+        ],
+        "name": "CommonStructs",
+        "nameLocation": "160:13:4",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "CommonStructs.InstructionTypes",
+            "id": 527,
+            "members": [
+              {
+                "id": 522,
+                "name": "VOID",
+                "nameLocation": "332:4:4",
+                "nodeType": "EnumValue",
+                "src": "332:4:4"
+              },
+              {
+                "id": 523,
+                "name": "ADDRESS_UINT_PAYABLE",
+                "nameLocation": "338:20:4",
+                "nodeType": "EnumValue",
+                "src": "338:20:4"
+              },
+              {
+                "id": 524,
+                "name": "ADDRESS_R_BOOL",
+                "nameLocation": "360:14:4",
+                "nodeType": "EnumValue",
+                "src": "360:14:4"
+              },
+              {
+                "id": 525,
+                "name": "BOOL_PAYABLE_R_BOOL",
+                "nameLocation": "376:19:4",
+                "nodeType": "EnumValue",
+                "src": "376:19:4"
+              },
+              {
+                "id": 526,
+                "name": "ADDRESS_ADDRESS_R_BOOL",
+                "nameLocation": "397:22:4",
+                "nodeType": "EnumValue",
+                "src": "397:22:4"
+              }
+            ],
+            "name": "InstructionTypes",
+            "nameLocation": "313:16:4",
+            "nodeType": "EnumDefinition",
+            "src": "308:113:4"
+          },
+          {
+            "canonicalName": "CommonStructs.Article",
+            "id": 536,
+            "members": [
+              {
+                "constant": false,
+                "id": 529,
+                "mutability": "mutable",
+                "name": "instructionName",
+                "nameLocation": "780:15:4",
+                "nodeType": "VariableDeclaration",
+                "scope": 536,
+                "src": "773:22:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_string_storage_ptr",
+                  "typeString": "string"
+                },
+                "typeName": {
+                  "id": 528,
+                  "name": "string",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "773:6:4",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_storage_ptr",
+                    "typeString": "string"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 531,
+                "mutability": "mutable",
+                "name": "paramStr",
+                "nameLocation": "812:8:4",
+                "nodeType": "VariableDeclaration",
+                "scope": 536,
+                "src": "805:15:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_string_storage_ptr",
+                  "typeString": "string"
+                },
+                "typeName": {
+                  "id": 530,
+                  "name": "string",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "805:6:4",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_storage_ptr",
+                    "typeString": "string"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 533,
+                "mutability": "mutable",
+                "name": "paramUInt",
+                "nameLocation": "835:9:4",
+                "nodeType": "VariableDeclaration",
+                "scope": 536,
+                "src": "830:14:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 532,
+                  "name": "uint",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "830:4:4",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 535,
+                "mutability": "mutable",
+                "name": "paramAddress",
+                "nameLocation": "862:12:4",
+                "nodeType": "VariableDeclaration",
+                "scope": 536,
+                "src": "854:20:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 534,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "854:7:4",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              }
+            ],
+            "name": "Article",
+            "nameLocation": "755:7:4",
+            "nodeType": "StructDefinition",
+            "scope": 537,
+            "src": "748:133:4",
+            "visibility": "public"
+          }
+        ],
+        "scope": 538,
+        "src": "152:736:4",
+        "usedErrors": []
+      }
+    ],
+    "src": "36:852:4"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.9+commit.e5eed63a.Emscripten.clang"
+  },
+  "networks": {
+    "5777": {
+      "events": {},
+      "links": {},
+      "address": "0x239777B606768e85c024866197Ad982A4c8B3694",
+      "transactionHash": "0x2362052f603115ca2a181ac759e5146addd61575bed8734e168b3084d0c3bb85"
+    }
+  },
+  "schemaVersion": "3.4.3",
+  "updatedAt": "2021-11-20T10:33:18.135Z",
+  "networkType": "ethereum",
+  "devdoc": {
+    "details": "Struct and enum used accross the contracts",
+    "kind": "dev",
+    "methods": {},
+    "title": "CommonStructs Library",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}
