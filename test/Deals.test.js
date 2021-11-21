@@ -10,9 +10,9 @@ const {
 
 contract("Deals", function (accounts) {
   const [CEO, CHAIRMAIN, ACCOUNTANT] = accounts;
+
   const emptyAddress = "0x0000000000000000000000000000000000000000";
-  const externalAccounts = [ACCOUNTANT];
-  const internalAccounts = [CEO,CHAIRMAIN];
+  const dealAccounts = [ACCOUNTANT,CEO,CHAIRMAIN];
 
   const ruleList = 
     [
@@ -42,7 +42,7 @@ contract("Deals", function (accounts) {
       let tx;
 
       it("... should emit `CreateDeal` event", async () => {
-        tx = await instanceDeals.createDeal(externalAccounts, internalAccounts, ruleList);
+        tx = await instanceDeals.createDeal(dealAccounts, ruleList);
         expectEvent(tx,'CreateDeal');
       });
 
@@ -59,23 +59,32 @@ contract("Deals", function (accounts) {
     describe("Get the deal 0", () => {
       let tx;
 
-      it("... externalAccounts should match", async () => {
+      it("... accounts should match", async () => {
         // Compare external account one by one
-        const externalAccountsCount = await instanceDeals.getExternalAccountsCount(0);
-        for (i=0;i<externalAccountsCount.toNumber();i++) {
-          tx = await instanceDeals.getExternalAccount(0, i);
-          assert.equal(tx,externalAccounts[i],"address should match");
+        const dealAccountsCount = await instanceDeals.getAccountsCount(0);
+        for (i=0;i<dealAccountsCount.toNumber();i++) {
+          tx = await instanceDeals.getAccount(0, i);
+          assert.equal(tx,dealAccounts[i],"address should match");
         }
       });
 
-      it("... internalAccounts should match", async () => {
-        // Compare internal account one by one
-        const internalAccountsCount = await instanceDeals.getInternalAccountsCount(0);
-        for (i=0;i<internalAccountsCount.toNumber();i++) {
-          tx = await instanceDeals.getInternalAccount(0, i);
-          assert.equal(tx,internalAccounts[i],"address should match");
+      it("... rules should match", async () => {
+        // Compare external account one by one
+        const rulesCount = await instanceDeals.getRulesCount(0);
+        for (i=0;i<rulesCount.toNumber();i++) {
+          const articlesCount = await instanceDeals.getArticlesCount(0,i);
+          for (j=0;j<articlesCount;j++){
+            tx = await instanceDeals.getArticle(0, i, j);
+            assert.equal(tx.instructionName,ruleList[i][j][0],"instructionName not matching for Article(i,j)=(" + i + "," + j + ")");
+            assert.equal(tx.paramStr,ruleList[i][j][1],"PparamStr not matching for Article(i,j)=(" + i + "," + j + ")");
+            assert.equal(tx.paramUInt,ruleList[i][j][2],"paramUInt not matching for Article(i,j)=(" + i + "," + j + ")");
+            assert.equal(tx.paramAddress,ruleList[i][j][3],"paramAddress not matching for Article(i,j)=(" + i + "," + j + ")");
+          }
+          
+          //
         }
       });
+
     });
   });
 

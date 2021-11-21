@@ -16,8 +16,7 @@ contract("Interpreter", async (accounts) => {
   const [CEO, CHAIRMAIN, ACCOUNTANT] = accounts;
   const emptyAddress = "0x0000000000000000000000000000000000000000";
 
-  const externalAccounts = [ACCOUNTANT];
-  const internalAccounts = [CEO,CHAIRMAIN];
+  const dealAccounts = [ACCOUNTANT,CEO,CHAIRMAIN];
   const ruleList = 
     [
       [
@@ -79,7 +78,7 @@ contract("Interpreter", async (accounts) => {
   describe ("Load data in contracts", () => {
 
     it("... create deal 1 : IF-ADDR('CEO')", async () => {
-      tx = await instanceDeals.createDeal(externalAccounts, internalAccounts, ruleList, {from: CEO});
+      tx = await instanceDeals.createDeal(dealAccounts, ruleList, {from: CEO});
       expectEvent(tx, 'CreateDeal');
       
     });

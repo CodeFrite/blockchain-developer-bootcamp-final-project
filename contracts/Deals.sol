@@ -23,17 +23,11 @@ contract Deals {
     /// @dev Number of articles for a particular rule (key = dealId, ruleId)
     mapping (uint => mapping(uint => uint)) private articlesCount;
 
-    /// @dev Number of internal accounts for a particular deal (key = dealId)
-    mapping (uint => uint) private internalAccountsCount;
+    /// @dev Number of accounts for a particular deal (key = dealId)
+    mapping (uint => uint) private accountsCount;
 
-    /// @dev Number of external accounts for a particular deal (key = dealId)
-    mapping (uint => uint) private externalAccountsCount;
-
-    /// @dev Mapping of internal accounts for a particular deal (key = dealId)
-    mapping (uint => address[]) private internalAccounts;
-
-    /// @dev Mapping of external accounts for a particular deal (key = dealId)
-    mapping (uint => address[]) private externalAccounts;
+    /// @dev Mapping of accounts for a particular deal (key = dealId)
+    mapping (uint => address[]) private accounts;
 
     /// @dev Mapping of Articles composing a particular deal (key = dealId, ruleId, ArticleId)
     mapping (uint => mapping (uint => mapping (uint => CommonStructs.Article))) private deals;
@@ -71,41 +65,22 @@ contract Deals {
     }
 
     /** 
-    * @dev Returns the number of internal accounts of a deal
+    * @dev Returns the number of accounts of a deal
     * @param _dealId Id of the deal
-    * @return Number of internal accounts in the deal
+    * @return Number of accounts in the deal
     */
-    function getInternalAccountsCount(uint _dealId) public view returns(uint) {
-        return internalAccountsCount[_dealId];
-    }
-
-    /** 
-    * @dev Returns the number of external accounts of a deal
-    * @param _dealId Id of the deal
-    * @return Number of external accounts in the deal
-    */
-    function getExternalAccountsCount(uint _dealId) public view returns(uint) {
-        return externalAccountsCount[_dealId];
+    function getAccountsCount(uint _dealId) public view returns(uint) {
+        return accountsCount[_dealId];
     }
     
     /** 
-    * @dev Returns the address of an internal account of a deal
+    * @dev Returns the address of an account of a deal
     * @param _dealId Id of the deal
     * @param _accountId Id of the account
-    * @return Internal account address
+    * @return Account address
     */
-    function getInternalAccount(uint _dealId, uint _accountId) public view returns(address) {
-        return internalAccounts[_dealId][_accountId];
-    }
-
-    /** 
-    * @dev Returns the address of an external account of a deal
-    * @param _dealId Id of the deal
-    * @param _accountId Id of the account
-    * @return External account address
-    */
-    function getExternalAccount(uint _dealId, uint _accountId) public view returns(address) {
-        return externalAccounts[_dealId][_accountId];
+    function getAccount(uint _dealId, uint _accountId) public view returns(address) {
+        return accounts[_dealId][_accountId];
     }
 
     /** 
@@ -120,43 +95,28 @@ contract Deals {
     }
     
     /**
-    * @dev Returns the list of addresses of the internal accounts for a deal
-    * @param _dealId Id of the deal
-    * @return Address list of internal accounts
-    */
-    function getInternalAccounts(uint _dealId) public view returns(address[] memory) {
-        return internalAccounts[_dealId];
-    }
-    
-    /**
     * @dev Creates a deal and returns its id
-    * @param _externalAccounts List of the external accounts addresses linked to the deal
-    * @param _internalAccounts List of the internal accounts addresses linked to the deal
+    * @param _accounts List of the external accounts addresses linked to the deal
     * @param _rulesList List of the rules linked to the deal (rule = list of Articles)
     * @return Deal Id
     */
     function createDeal
     (
-        address[] memory _externalAccounts, 
-        address[] memory _internalAccounts, 
+        address[] memory _accounts, 
         CommonStructs.Article[][] memory _rulesList
     ) 
     public returns (uint) {
-        // Save external accounts
-        externalAccountsCount[dealId] = _externalAccounts.length;
-        for(uint i=0;i<_externalAccounts.length;i++)
-            externalAccounts[dealId].push(_externalAccounts[i]);
-
-        // Save internal accounts
-        internalAccountsCount[dealId] = _internalAccounts.length;
-        for(uint i=0;i<_internalAccounts.length;i++)
-            internalAccounts[dealId].push(_internalAccounts[i]);
+        // Save accounts
+        accountsCount[dealId] = _accounts.length;
+        for(uint i=0;i<_accounts.length;i++)
+            accounts[dealId].push(_accounts[i]);
 
         // Save the rule count
         rulesCount[dealId] = _rulesList.length;
 
         // Save the rule list
         for (uint i=0;i<_rulesList.length;i++){
+            // Save the number of articles in the current rule
             articlesCount[dealId][i] = _rulesList[i].length;
             for (uint j=0;j<_rulesList[i].length;j++){
                 deals[dealId][i][j] = _rulesList[i][j];

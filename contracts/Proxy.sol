@@ -276,20 +276,18 @@ contract Proxy is Ownable {
 
     /**
     * @dev Creates a deal and returns its id
-    * @param _externalAccounts List of the external accounts addresses linked to the deal
-    * @param _internalAccounts List of the internal accounts addresses linked to the deal
+    * @param _accounts List of accounts addresses linked to the deal
     * @param _rulesList List of the rules linked to the deal (rule = list of Articles)
     * @return Id of the deal created
     */
     function createDeal
     (
-        address[] memory _externalAccounts, 
-        address[] memory _internalAccounts, 
+        address[] memory _accounts, 
         CommonStructs.Article[][] memory _rulesList
     ) 
     public payable returns (uint) {
         // Compute creation fees
-        uint creationFees = _computeCreationFees(_externalAccounts.length, _internalAccounts.length, _rulesList.length);
+        uint creationFees = _computeCreationFees(_accounts.length, _rulesList.length);
 
         // Check 1: Amount sent by the user should cover the deal creation fees
         require(msg.value >= creationFees, "Insufficient value to cover the deal creation fees");
@@ -310,7 +308,7 @@ contract Proxy is Ownable {
         require(sent, "Proxy.createDeal: Failed to reimburse excess Ether");
 
         // Create the deal
-        uint dealId = dealsContractRef.createDeal(_externalAccounts, _internalAccounts, _rulesList);
+        uint dealId = dealsContractRef.createDeal(_accounts, _rulesList);
 
         // Emit a PayDealCreationFees
         emit PayDealCreationFees(msg.sender, dealId, creationFees);
@@ -340,19 +338,17 @@ contract Proxy is Ownable {
     
     /**
     * @dev Computes the deal creation cost
-    * @param _externalAccountsCount Number of external accounts defined in the deal
-    * @param _internalAccountsCount Number of internal accounts defined in the deal
+    * @param _accountsCount Number of external accounts defined in the deal
     * @param _rulesCount Number of rules defined in the deal
     * @return Deal creation cost
     */
     function _computeCreationFees
     (
-        uint _externalAccountsCount, 
-        uint _internalAccountsCount, 
+        uint _accountsCount, 
         uint _rulesCount
     ) 
     internal view returns (uint) {
-        return (_externalAccountsCount + _internalAccountsCount) * accountCreationFees + _rulesCount * ruleCreationFees;
+        return _accountsCount * accountCreationFees + _rulesCount * ruleCreationFees;
     }
 
     /**
