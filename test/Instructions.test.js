@@ -61,6 +61,10 @@ contract("Instructions", function (accounts) {
     let instructionSignature = "_IfAddress(address)";
     let tx;
 
+    it("Only owner should be able to call addInstruction", async () => {
+      await expectRevert.unspecified(instance.addInstruction(instructionName, instructionType, instructionSignature, { from: CHAIRMAIN }));
+    });
+
     it("Add instruction should emit AddInstruction with the correct values", async () => {
       tx = await instance.addInstruction(instructionName, instructionType, instructionSignature, { from: CEO });
       expectEvent(tx, "AddInstruction", {_instructionName:instructionName,_instructionType:instructionType,_instructionSignature:instructionSignature});
