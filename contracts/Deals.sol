@@ -141,6 +141,7 @@ contract Deals is Ownable, Pausable {
     * @dev Access control inherited from OpenZeppelin Ownable contract
     *      Pausing the contract makes the createDeal function not callable
     *      Getters are still callable
+    *      onlyOwner can call
     */
     function pause() public onlyOwner() whenNotPaused() {
         _pause();
@@ -149,8 +150,19 @@ contract Deals is Ownable, Pausable {
     /**
     * @dev Access control inherited from OpenZeppelin Ownable contract
     *      Unpausing the contract makes the createDeal function callable
+    *      onlyOwner can call
     */
     function unpause() public onlyOwner() whenPaused() {
         _unpause();
+    }
+
+    /* OVERRIDE & BLOCK UNUSED INHERITED FUNCTIONS */
+
+    /**
+    * @dev Block OpenZeppelin Ownable.renounceOwnership
+    * @notice Will always revert
+    */ 
+    function renounceOwnership() public pure override {
+        revert('Contract cannot be revoked');
     }
 }
