@@ -25,33 +25,33 @@ contract Proxy is Ownable {
     // References to external contracts
     
     /// @dev Reference to the Instructions contract
-    Instructions private instructionsContractRef;
+    Instructions public instructionsContractRef;
 
     /// @dev Reference to the Deals contract
-    Deals private dealsContractRef;
+    Deals public dealsContractRef;
 
     /// @dev Reference to the Interpreter contract
-    Interpreter private interpreterContractRef;
+    Interpreter public interpreterContractRef;
 
     // Contract fees
 
     /// @dev Price per account added to the deal in USD
-    uint private accountCreationFees;
+    uint public accountCreationFees;
     
     /// @dev Price per rule added to the deal in USD
-    uint private ruleCreationFees;
+    uint public ruleCreationFees;
 
     /// @dev Price to allow incoming payments from all addresses others than internal/external accounts in USD
-    uint private allowAllAddressesFees;
+    uint public allowAllAddressesFees;
 
     /// @dev Minimal transaction value able to trigger an execution in USD
-    uint private transactionMinimalValue;
+    uint public transactionMinimalValue;
 
     /// @dev Transaction fees in % of the msg.value perceived on a deal execution in USD
-    uint private transactionFees;
+    uint public transactionFees;
 
     /// @dev USD/WEI rate
-    uint private WEI2USDConversionRate;
+    uint public USD2WEIConversionRate;
 
     /* MAPPINGS */
     
@@ -133,7 +133,7 @@ contract Proxy is Ownable {
     * @param _old : old WEI to USD conversion rate in WEI
     * @param _new : new WEI to USD conversion rate in WEI
     */
-    event ModifyWEI2USDConversionRate(address _from, uint _old, uint _new);
+    event ModifyUSD2WEIConversionRate(address _from, uint _old, uint _new);
 
     /** 
     * @dev Event emitted when the deal creation fees are paid
@@ -155,21 +155,29 @@ contract Proxy is Ownable {
 
     /* CONSTRUCTOR */
 
-    /// @dev Constructor: Initialize storage variables
+    /** 
+    * @dev Constructor: Initialize storage variables
+    * @param _accountCreationFees Creation fees per account in Wei 
+    * @param _ruleCreationFees Creation fees per rule in Wei 
+    * @param _allowAllAddressesFees Creation fees to allow incoming payments from all addresses
+    * @param _transactionMinimalValue Minimal value to trigger a rule execution
+    * @param _transactionFees Transaction fees paid to execute a rule in % of msg.value (1=1%)
+    * @param _USD2WEIConversionRate Wei per USD conversion rate
+    */
     constructor (
         uint _accountCreationFees, 
         uint _ruleCreationFees,
         uint _allowAllAddressesFees,
         uint _transactionMinimalValue,
         uint _transactionFees,
-        uint _WEI2USDConversionRate
+        uint _USD2WEIConversionRate
     ) {
         accountCreationFees = _accountCreationFees;
         ruleCreationFees = _ruleCreationFees;
         allowAllAddressesFees = _allowAllAddressesFees;
         transactionMinimalValue = _transactionMinimalValue;
         transactionFees = _transactionFees;
-        WEI2USDConversionRate = _WEI2USDConversionRate;
+        USD2WEIConversionRate = _USD2WEIConversionRate;
     }
     
     /* SEND & FALLBACK */
@@ -264,12 +272,12 @@ contract Proxy is Ownable {
 
     /**
     * @dev Sets the WEI to USD conversion rate to a new value
-    * @param _new New value for the WEI to USD conversion rate in USD
+    * @param _new New value for the USD to WEI conversion rate in USD
     */
-    function setWEI2USDRate(uint _new) public onlyOwner {
-        uint old = WEI2USDConversionRate;
-        WEI2USDConversionRate = _new;
-        emit ModifyWEI2USDConversionRate(msg.sender, old, _new);
+    function setUSD2WEIConversionRate(uint _new) public onlyOwner {
+        uint old = USD2WEIConversionRate;
+        USD2WEIConversionRate = _new;
+        emit ModifyUSD2WEIConversionRate(msg.sender, old, _new);
     }
 
     /* PUBLIC INTERFACE */
@@ -286,32 +294,18 @@ contract Proxy is Ownable {
         CommonStructs.Article[][] memory _rulesList
     ) 
     public payable returns (uint) {
-        // Compute creation fees
-        uint creationFees = _computeCreationFees(_accounts.length, _rulesList.length);
+        // Compute creation fees in ETH
+        uint creationFeesInETH = computeDealCreationFeesInETH(_accounts.length, _rulesList.length);
 
         // Check 1: Amount sent by the user should cover the deal creation fees
-        require(msg.value >= creationFees, "Insufficient value to cover the deal creation fees");
+        require(msg.value >= creationFeesInETH, "Insufficient value to cover the deal creation fees");
 
-        // Check 2: Make sure that the instructions are all supported
-        for (uint i=0;i<_rulesList.length;i++) {
-            for (uint j=0;j<_rulesList[i].length;j++) {
-                // Get the instruction type & signature
-                (, string memory instructionSignature) = instructionsContractRef.getInstruction(_rulesList[i][j].instructionName);
-                
-                // If the signature is empty, this means that the instruction is not present => revert
-                require(stringsEqual(instructionSignature,''),"Proxy.CreateDeal: Instruction is not supported");
-            }
-        }
-
-        // Reimburse excess value to the caller
-        (bool sent, ) = msg.sender.call{value: (msg.value - creationFees)}("");
-        require(sent, "Proxy.createDeal: Failed to reimburse excess Ether");
 
         // Create the deal
         uint dealId = dealsContractRef.createDeal(_accounts, _rulesList);
 
         // Emit a PayDealCreationFees
-        emit PayDealCreationFees(msg.sender, dealId, creationFees);
+        emit PayDealCreationFees(msg.sender, dealId, creationFeesInETH);
 
         return dealId;
     }
@@ -323,7 +317,7 @@ contract Proxy is Ownable {
     */
     function executeRule(uint _dealId, uint _ruleId) public payable {
         // Amount sent by the user should be higher or equal to the minimal transaction value
-        uint msgValueInUSD = _convertWEI2USD(msg.value);
+        uint msgValueInUSD = convertWEI2USD(msg.value);
         require( msgValueInUSD >= transactionMinimalValue, "Transaction minimal value not reached");
 
         // Call Interpreter.interpretRule() and include in the call the msg.value - execution fees
@@ -334,21 +328,23 @@ contract Proxy is Ownable {
         emit PayTransactionFees(msg.sender, _dealId, _ruleId, executionFees);
     }
 
-    /* INTERNAL HELPER FUNCTIONS */
+    //TODO: add escrow get balance & withdraw function
+
+    /* HELPER FUNCTIONS */
     
     /**
-    * @dev Computes the deal creation cost
+    * @dev Computes the deal creation cost in ETH
     * @param _accountsCount Number of external accounts defined in the deal
     * @param _rulesCount Number of rules defined in the deal
-    * @return Deal creation cost
+    * @return Deal creation cost in ETH
     */
-    function _computeCreationFees
+    function computeDealCreationFeesInETH
     (
         uint _accountsCount, 
         uint _rulesCount
     ) 
-    internal view returns (uint) {
-        return _accountsCount * accountCreationFees + _rulesCount * ruleCreationFees;
+    public view returns (uint) {
+        return (_accountsCount * accountCreationFees + _rulesCount * ruleCreationFees)*USD2WEIConversionRate;
     }
 
     /**
@@ -356,8 +352,8 @@ contract Proxy is Ownable {
     * @param _amountInWEI Amount in WEI
     * @return Converted amount in USD
     */
-    function _convertWEI2USD(uint _amountInWEI) internal view returns(uint) {
-        return _amountInWEI / WEI2USDConversionRate;
+    function convertWEI2USD(uint _amountInWEI) public view returns(uint) {
+        return _amountInWEI / USD2WEIConversionRate;
     }
 
     /**
@@ -365,8 +361,8 @@ contract Proxy is Ownable {
     * @param _amountInUSD Amount in USD
     * @return Converted amount in WEI
     */
-    function _convertUSD2WEI(uint _amountInUSD) internal view returns(uint) {
-        return _amountInUSD * WEI2USDConversionRate;
+    function convertUSD2WEI(uint _amountInUSD) public view returns(uint) {
+        return _amountInUSD * USD2WEIConversionRate;
     }
 
     /** 

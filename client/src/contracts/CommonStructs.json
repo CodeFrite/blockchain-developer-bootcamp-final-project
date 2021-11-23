@@ -456,8 +456,7 @@
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-11-20T10:33:18.135Z",
-  "networkType": "ethereum",
+  "updatedAt": "2021-11-21T23:05:01.341Z",
   "devdoc": {
     "details": "Struct and enum used accross the contracts",
     "kind": "dev",

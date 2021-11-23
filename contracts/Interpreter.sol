@@ -88,6 +88,7 @@ contract Interpreter {
         }
     }
 
+    //TODO: make it internal and adapt tests
     function interpretArticle(uint _dealId, uint _ruleId, uint _articleId) public payable returns (bool) {
         // Get Article
         CommonStructs.Article memory article = dealsInstance.getArticle(_dealId, _ruleId, _articleId);
