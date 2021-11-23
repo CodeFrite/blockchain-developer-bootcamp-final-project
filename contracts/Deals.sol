@@ -17,6 +17,9 @@ import "./CommonStructs.sol";
 contract Deals is Ownable, Pausable {
     /* STORAGE VARIABLES */
 
+    /// @dev Proxy contract address
+    address public proxyContractAddress;
+
     /// @dev Incremental number that represents and gives access to a particular deal
     uint dealId = 0;
 
@@ -39,6 +42,14 @@ contract Deals is Ownable, Pausable {
    
     /* EVENTS */
 
+    /**
+    * @dev Event emitted when the Proxy contract address is changed
+    * @param _from Caller address
+    * @param _old Old address of the Proxy contract
+    * @param _new New address of the Proxy contract
+    */
+    event SetProxyContractAddress(address _from, address _old, address _new);
+
     /** 
     * @dev Event emitted when a deal is created
     * @param _from address that initiated the deal creation
@@ -46,7 +57,25 @@ contract Deals is Ownable, Pausable {
     */
     event CreateDeal(address _from, uint _dealId);
 
+    /* MODIFIERS */
+
+    /// @dev Modifier used to assess that the caller is the interpreter contract instance 
+    modifier onlyProxy() {
+        require(msg.sender==proxyContractAddress, "Only Proxy may call");
+        _;
+    }
+
     /* PUBLIC INTERFACE */
+
+    /**
+    * @dev Sets the Proxy contract reference. Emits a SetInterpreterInstance event
+    * @param _new Address of the Interpreter contract
+    */
+    function setProxyContractAddress(address _new) public onlyOwner {
+        address old = proxyContractAddress;
+        proxyContractAddress = _new;
+        emit SetProxyContractAddress(msg.sender, old, _new);
+    }
 
     /** 
     * @dev Returns the number of rules of a deal
@@ -99,6 +128,7 @@ contract Deals is Ownable, Pausable {
     
     /**
     * @dev Creates a deal and returns its id
+    *      Only the Proxy contract can call it
     * @param _accounts List of the external accounts addresses linked to the deal
     * @param _rulesList List of the rules linked to the deal (rule = list of Articles)
     * @return Deal Id
@@ -110,6 +140,7 @@ contract Deals is Ownable, Pausable {
     ) 
     public 
     whenNotPaused()
+    onlyProxy()
     returns (uint) {
         // Save accounts
         accountsCount[dealId] = _accounts.length;
