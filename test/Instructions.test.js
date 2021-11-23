@@ -61,19 +61,24 @@ contract("Instructions", function (accounts) {
     let instructionSignature = "_IfAddress(address)";
     let tx;
 
-    it("Only owner should be able to call addInstruction", async () => {
-      await expectRevert.unspecified(instance.addInstruction(instructionName, instructionType, instructionSignature, { from: CHAIRMAIN }));
-    });
-
+    
     it("Add instruction should emit AddInstruction with the correct values", async () => {
       tx = await instance.addInstruction(instructionName, instructionType, instructionSignature, { from: CEO });
       expectEvent(tx, "AddInstruction", {_instructionName:instructionName,_instructionType:instructionType,_instructionSignature:instructionSignature});
     });
-
+    
     it("Get instruction should match input data", async () => {
       tx = await instance.getInstruction(instructionName, {from: CEO});
       assert.equal(instructionType, tx[0].toNumber(), "`instructionType` is not matching");
       assert.equal(instructionSignature, tx[1], "`instructionSignature` is not matching");
+    });
+    
+    it("Only owner should be able to call addInstruction", async () => {
+      await expectRevert.unspecified(instance.addInstruction(instructionName, instructionType, instructionSignature, { from: CHAIRMAIN }));
+    });
+
+    it("Ownable: should revert on renounceOwnership even from owner", async () => {
+      await expectRevert.unspecified(instance.renounceOwnership({from: CEO}));
     });
 
   });

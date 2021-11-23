@@ -105,6 +105,10 @@ contract("Deals", function (accounts) {
         await expectRevert.unspecified(instanceDeals.unpause({from: ACCOUNTANT}));
       });  
 
+      it("... should revert on renounceOwnership even from owner", async () => {
+        await expectRevert.unspecified(instanceDeals.renounceOwnership({from: CEO}));
+      });
+
     });
 
     describe("OpenZeppelin Pausable",() => {
