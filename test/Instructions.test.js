@@ -1,8 +1,7 @@
 let BN = web3.utils.BN;
 let Instructions = artifacts.require("Instructions");
-let { catchRevert } = require("./exceptionsHelpers");
 const { getMapping, isDefined, isPayable, isType } = require("./ast-helper");
-
+const { expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 contract("Instructions", function (accounts) {
   const [CEO, CHAIRMAIN, ACCOUNTANT] = accounts;
   const emptyAddress = "0x0000000000000000000000000000000000000000";
@@ -57,45 +56,20 @@ contract("Instructions", function (accounts) {
   });
 
   describe("Use cases", () => {
+    let instructionName = "IF-ADDR";
+    let instructionType = new BN(0);
+    let instructionSignature = "_IfAddress(address)";
+    let tx;
 
-    describe("Add an instruction and get it from the contract", () => {
-      let _instructionName = "IF-ADDR";
-      let _instructionType = 0;
-      let _instructionSignature = "_IfAddress(address)";
-      let tx, args;
+    it("Add instruction should emit AddInstruction with the correct values", async () => {
+      tx = await instance.addInstruction(instructionName, instructionType, instructionSignature, { from: CEO });
+      expectEvent(tx, "AddInstruction", {_instructionName:instructionName,_instructionType:instructionType,_instructionSignature:instructionSignature});
+    });
 
-      before(async ()=> {
-        // Call addInstruction
-        tx = await instance.addInstruction(_instructionName, _instructionType, _instructionSignature, { from: CEO });
-        args = tx.logs[0].args;
-      });
-
-      describe("Add instruction", () => {
-        it("... should emit AddInstruction",() => {
-          assert.equal(tx.logs[0].event, "AddInstruction","adding an instruction should emit an AddInstruction event");
-        });
-
-        it("... arg instructionName should match input", () => {
-          assert.equal(args[0], _instructionName, "`instructionName` is not matching");
-        });
-
-        it("... arg instructionType should match input", () => {
-          assert.equal(args[1], _instructionType, "`instructionType` is not matching");
-        });
-
-        it("... arg instructionSignature should match input", () => {
-          assert.equal(args[2], _instructionSignature, "`instructionSignature` is not matching");
-        });
-      });
-
-      describe("Get instruction", async () => {
-        it("... instructionName should match input", async () => {
-          tx = await instance.getInstruction(_instructionName, {from: CEO});
-          assert.equal(_instructionType, tx[0].toNumber(), "`instructionType` is not matching");
-          assert.equal(_instructionSignature, tx[1], "`instructionSignature` is not matching");
-        });
-      });
-      
+    it("Get instruction should match input data", async () => {
+      tx = await instance.getInstruction(instructionName, {from: CEO});
+      assert.equal(instructionType, tx[0].toNumber(), "`instructionType` is not matching");
+      assert.equal(instructionSignature, tx[1], "`instructionSignature` is not matching");
     });
 
   });
