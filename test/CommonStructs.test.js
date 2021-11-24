@@ -31,17 +31,17 @@ contract("CommonStructs", function (accounts) {
         );
       });
 
-      it("should define `ADDRESS_UINT_PAYABLE`", () => {
+      it("should define `ADDRESS_ADDRESS_R_BOOL`", () => {
         assert(
-          enumState.hasOwnProperty('ADDRESS_UINT_PAYABLE'),
-          "The enum does not have a `ADDRESS_UINT_PAYABLE` value"
+          enumState.hasOwnProperty('ADDRESS_ADDRESS_R_BOOL'),
+          "The enum does not have a `ADDRESS_ADDRESS_R_BOOL` value"
         );
       });
 
-      it("should define `ADDRESS_R_BOOL`", () => {
+      it("should define `ADDRESS_PAYABLE`", () => {
         assert(
-          enumState.hasOwnProperty('ADDRESS_R_BOOL'),
-          "The enum does not have a `ADDRESS_R_BOOL` value"
+          enumState.hasOwnProperty('ADDRESS_PAYABLE'),
+          "The enum does not have a `ADDRESS_PAYABLE` value"
         );
       });
     })

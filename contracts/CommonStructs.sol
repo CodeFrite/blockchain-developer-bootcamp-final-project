@@ -10,7 +10,7 @@ library CommonStructs {
 
     /// @dev List of instruction types supported
     /// @notice Format: function param types (+ "_R_" + function return type)
-    enum InstructionTypes { VOID, ADDRESS_UINT_PAYABLE, ADDRESS_R_BOOL, BOOL_PAYABLE_R_BOOL, ADDRESS_ADDRESS_R_BOOL }
+    enum InstructionTypes { VOID, ADDRESS_ADDRESS_R_BOOL, ADDRESS_PAYABLE }
 
     /**
      * @dev Represent a single instruction with its parameters
