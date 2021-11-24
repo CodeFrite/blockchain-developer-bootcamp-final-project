@@ -53,7 +53,12 @@ contract Instructions is Ownable {
     * @param _instructionType Type of the instruction, for ex: "ADDRESS_ADDRESS_R_BOOL"
     * @param _instructionSignature Signature of the instruction, for ex: "_ifAddress(address, address)"
     */
-    function addInstruction(string memory _instructionName, CommonStructs.InstructionTypes _instructionType, string memory _instructionSignature) public onlyOwner {
+    function addInstruction(
+        string memory _instructionName, 
+        CommonStructs.InstructionTypes _instructionType, 
+        string memory _instructionSignature
+    )
+    public onlyOwner {
         instructionsType[_instructionName] = CommonStructs.InstructionTypes(_instructionType);
         instructionsSignature[_instructionName] = _instructionSignature;
         emit AddInstruction(_instructionName, _instructionType, _instructionSignature);

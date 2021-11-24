@@ -51,12 +51,12 @@ contract("InstructionsProvider", function (accounts) {
 
       it("... should return true when addresses are equal", async () => {
         tx = await instanceInstructionsProvider._ifAddress(CEO, CEO, {from: INTERPRETER});
-        assert(tx[1]!='',"instruction `IF-ADDR` is not present");
+        assert.equal(tx,true,"instruction `IF-ADDR` should return `true`");
       });
 
       it("... should return false when addresses are not equal", async () => {
         tx = await instanceInstructionsProvider._ifAddress(CEO, ACCOUNTANT, {from: INTERPRETER});
-        assert(tx[1]!='',"instruction `IF-ADDR` is not present");
+        assert.equal(tx,false,"instruction `IF-ADDR` should return `false`");
       });
 
     });
