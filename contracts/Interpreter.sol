@@ -78,7 +78,7 @@ contract Interpreter is Ownable {
     
     /// @dev Modifier used to assess that the caller is the Proxy contract
     modifier onlyProxy() {
-        require(msg.sender==proxyContractAddress, "Only Proxy may call");
+        require(msg.sender==proxyContractAddress, "Interpreter: Only Proxy may call");
         _;
     }
 
@@ -131,6 +131,7 @@ contract Interpreter is Ownable {
         }
     }
 
+    event PACH(string, string, address, uint);
     /**
     * @dev Interprets a rule
     * @param _from Address of the user who initiated the call
@@ -181,7 +182,17 @@ contract Interpreter is Ownable {
         
         // Emit an event to inform the front-end that a particular article in the rule successed or not
         emit InterpretArticle(_from, _dealId, _ruleId, _articleId);
+        emit PACH(article.instructionName, instructionSignature, article.paramAddress, msg.value);
         return success;
     }
 
+    /* OVERRIDE & BLOCK UNUSED INHERITED FUNCTIONS */
+
+    /**
+    * @dev Block OpenZeppelin Ownable.renounceOwnership
+    * @notice Will always revert
+    */ 
+    function renounceOwnership() public pure override {
+        revert('Contract cannot be revoked');
+    }
 }

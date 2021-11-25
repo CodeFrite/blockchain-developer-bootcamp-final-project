@@ -38,16 +38,16 @@ contract("Interpreter", async (accounts) => {
       instanceInstructions = await Instructions.new();
       
       instanceInterpreter = await Interpreter.new();
-      instanceInstructionsProvider = await InstructionsProvider.new();
+      instanceInstructionsProvider = await InstructionsProvider.new(emptyAddress);
       
       await instanceInstructions.addInstruction("IF-ADDR", "1", "_ifAddress(address,address)");
       await instanceInstructions.addInstruction("TRANSFER", "2", "_transfer(address)");
       
       instanceDeals = await Deals.new();
-      instanceDeals.setProxyContractAddress(PROXY, {from:CEO});
     });
-
+    
     it("... link contracts", async () => {
+      await instanceDeals.setProxyContractAddress(PROXY, {from:CEO});
       await instanceInstructionsProvider.setInterpreterContractRef(instanceInterpreter.address);
       await instanceInterpreter.setInstructionsInstance(instanceInstructions.address);
       await instanceInterpreter.setInstructionsProviderInstance(instanceInstructionsProvider.address);

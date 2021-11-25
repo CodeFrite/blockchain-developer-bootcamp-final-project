@@ -1,4 +1,3 @@
-let BN = web3.utils.BN;
 let CommonStructs = artifacts.require("CommonStructs");
 let Instructions = artifacts.require("Instructions");
 let InstructionsProvider = artifacts.require("InstructionsProvider");
@@ -13,9 +12,11 @@ const {
 } = require('@openzeppelin/test-helpers');
 const { assertion } = require("@openzeppelin/test-helpers/src/expectRevert");
 const ether = require("@openzeppelin/test-helpers/src/ether");
+const { web3 } = require("@openzeppelin/test-helpers/src/setup");
+let BN = web3.utils.BN;
 
 contract("Proxy", async (accounts) => {
-  const [CEO, CHAIRMAIN, ACCOUNTANT] = accounts;
+  const [CEO, CHAIRMAN, ACCOUNTANT] = accounts;
   const emptyAddress = "0x0000000000000000000000000000000000000000";
   let _accountCreationFees = 25;
   let _ruleCreationFees = 25;
@@ -30,16 +31,16 @@ contract("Proxy", async (accounts) => {
        1 USD = (10**18)/4400 WEI
   */
 
-  const dealAccounts = [ACCOUNTANT,CEO,CHAIRMAIN];
+  const dealAccounts = [ACCOUNTANT,CEO,CHAIRMAN];
   const ruleList = 
     [
       [
-        ["IF-ADDR", "CHAIRMAN", 0, CHAIRMAIN],
-        ["TRANSFER-E", "ACCOUNTANT", 0, ACCOUNTANT]
+        ["IF-ADDR", "CHAIRMAN", 0, CHAIRMAN],
+        ["TRANSFER", "ACCOUNTANT", 0, ACCOUNTANT]
       ]
     ];
 
-  let instanceCommon, instanceInstructions, instanceInstructionsProvider, instanceDeals, instanceInterpreter, instanceProxy;
+  let instanceInstructions, instanceInstructionsProvider, instanceDeals, instanceInterpreter, instanceProxy;
   
   let tx;
   let dealId=0, ruleId=0;
@@ -49,24 +50,17 @@ contract("Proxy", async (accounts) => {
   before(async () => {
 
     // Instantiate contracts
-    instanceCommon = await CommonStructs.new();
-    instanceInstructions = await Instructions.new();      
-    instanceInterpreter = await Interpreter.new();
-    instanceInstructionsProvider = await InstructionsProvider.new(instanceInterpreter.address);
-    instanceDeals = await Deals.new();
     instanceProxy = await Proxy.new(0,0,0,0,0,0);
+    instanceInstructions = await Instructions.new();
+    instanceDeals = await Deals.new();
+    instanceInterpreter = await Interpreter.new();
 
     // Link contracts
-    await instanceInterpreter.setInstructionsInstance(instanceInstructions.address);
-    await instanceInterpreter.setInstructionsProviderInstance(instanceInstructionsProvider.address);
-    await instanceInterpreter.setDealsInstance(instanceDeals.address);
     
     // Load instructions
-    await instanceInstructions.addInstruction("IF-ADDR", "4", "_ifAddress(address,address)");
-    await instanceInstructions.addInstruction("TRANSFER-E", "1", "_transferExternal(address)");
   });
 
-  describe.skip("Setters & Getters", ()=> {
+  describe("Setters & Getters", ()=> {
 
     describe("instructionsContractRef :", () => {
       
@@ -199,6 +193,11 @@ contract("Proxy", async (accounts) => {
   describe("Use cases", () => {
 
     before(async () => {
+       // Instantiate contracts
+      instanceInstructions = await Instructions.new();      
+      instanceInterpreter = await Interpreter.new();
+      instanceInstructionsProvider = await InstructionsProvider.new("0x0000000000000000000000000000000000000000");
+      instanceDeals = await Deals.new();
       instanceProxy = await Proxy.new(
         _accountCreationFees,
         _ruleCreationFees,
@@ -206,10 +205,27 @@ contract("Proxy", async (accounts) => {
         _transactionMinimalValue,
         _transactionFees,
         _USD2WEIConversionRate
-        );
+      );
+
+      // Link contracts
+      await instanceDeals.setProxyContractAddress(instanceProxy.address);
+      await instanceInstructionsProvider.setInterpreterContractRef(instanceInterpreter.address);
+      await instanceInstructionsProvider.setProxyInstanceRef(instanceProxy.address);
+      await instanceInterpreter.setInstructionsInstance(instanceInstructions.address);
+      await instanceInterpreter.setInstructionsProviderInstance(instanceInstructionsProvider.address);
+      await instanceInterpreter.setDealsInstance(instanceDeals.address);
+      await instanceInterpreter.setProxyContractAddress(instanceProxy.address);
       await instanceProxy.setInstructionsContractRef(instanceInstructions.address);
+      await instanceProxy.setInstructionsProviderContractRef(instanceInstructionsProvider.address);
       await instanceProxy.setDealsContractRef(instanceDeals.address);
       await instanceProxy.setInterpreterContractRef(instanceInterpreter.address);
+
+      // Link Escrow
+
+      
+      // Load instructions
+      await instanceInstructions.addInstruction("IF-ADDR", "1", "_ifAddress(address,address)");
+      await instanceInstructions.addInstruction("TRANSFER", "2", "_transfer(address)");
     });
 
     describe("Create a deal with msg.value < deal creation fees", () => {
@@ -220,7 +236,7 @@ contract("Proxy", async (accounts) => {
         let rulesCount = ruleList.length;
         let dealCreationFeesInETH = await instanceProxy.computeDealCreationFeesInETH(accountsCount, rulesCount);
         
-        // Create the deal with exactly the right amount
+        // Create the deal
         await expectRevert(
           instanceProxy.createDeal(dealAccounts,ruleList, {from: CEO, value: dealCreationFeesInETH - 1000}),
           "Insufficient value to cover the deal creation fees"
@@ -228,18 +244,43 @@ contract("Proxy", async (accounts) => {
       });
     });
   
-    describe("Create a deal with msg.value >= deal creation fees", () => {
+    describe("Create a deal with msg.value >= deal creation fees, let's say 1 ETH", () => {
       let tx;
-      
+      let oldContractBalance;
+      let oldCallerBalance;
+      let dealCreationFeesInETH;     
+
       it("... should emit a PayDealCreationFees event", async () => {
+        // Save the old balance
+        oldContractBalance = await instanceProxy.getBalance();
+        oldCallerBalance = await web3.eth.getBalance(CEO);
+
         // Get the computes deal creation fees from contract
         let accountsCount = dealAccounts.length;
         let rulesCount = ruleList.length;
-        let dealCreationFeesInETH = await instanceProxy.computeDealCreationFeesInETH(accountsCount, rulesCount);
+        dealCreationFeesInETH = await instanceProxy.computeDealCreationFeesInETH(accountsCount, rulesCount);
 
-        // Create the deal with exactly the right amount
-        tx = await instanceProxy.createDeal(dealAccounts,ruleList, {from: CEO, value: dealCreationFeesInETH});
+        // Create the deal with 1ETH
+        tx = await instanceProxy.createDeal(dealAccounts,ruleList, {from: CEO, value: 10**18});
         expectEvent(tx, "PayDealCreationFees");
+      });
+
+      it("... the contract balance should receive 100$ worth of ETH", async () => {
+        let newContractBalance = await instanceProxy.getBalance();
+        assert.equal(oldContractBalance.add(dealCreationFeesInETH).toString(), newContractBalance.toString(), "newBalance != oldBalance + dealCreationFees");
+      });
+
+      it("... the excess amount payed (1ETH-100$-gas already used) should be reimbursed to the caller", async () => {
+        // Compute the expected excessValue
+        let newCallerBalance = await web3.eth.getBalance(CEO);
+        let gasPrice = await web3.eth.getGasPrice();
+        let sum = Number(newCallerBalance) + Number(dealCreationFeesInETH) + Number(tx.receipt.cumulativeGasUsed) * gasPrice;
+        // Get gas used in transaction        
+        assert.equal(Math.round(Number(oldCallerBalance) / 10000000000), Math.round(Number(sum) / 10000000000), "newBalance = (oldBalance - 1 ETH - gas used)");
+      });
+
+      it("... a ReimburseExcessValue event should be emitted with the excess value and caller address mentionned", async () => {
+        expectEvent(tx,"ReimburseExcessValue");
       });
   
     });
@@ -257,15 +298,45 @@ contract("Proxy", async (accounts) => {
   
     });
   
-    describe.skip("Execute rule with msg.value >= transaction minimal value", () => {
-  
+    describe("Execute rule with msg.value >= transaction minimal value", () => {
+      let tx;
+      let oldContractBalance;
+      let oldCallerBalance;
+      let oldAccountantEscrowBalance;
+      let transactionFees;
+
       it("... should emit a PayTransactionFees event", async () => {
-        let transactionMinimalValueInUSD = await instanceProxy.transactionMinimalValue();
-        let transactionMinimalValueInETH = await instanceProxy.convertUSD2WEI(transactionMinimalValueInUSD);
-        console.log(">tx min val:", transactionMinimalValueInETH.toString());
-        
-        tx = await instanceProxy.executeRule(0, 0, {from:CEO, value: transactionMinimalValueInETH});
+        oldContractBalance = await instanceProxy.getBalance();
+        oldCallerBalance = await web3.eth.getBalance(CHAIRMAN);
+
+        // Get escrow balance for CHAIRMAN
+        tx = await instanceProxy.depositsOf({from:ACCOUNTANT});
+        decodedLog = web3.eth.abi.decodeLog([{type: 'address',name: '_from'},{type: 'uint256',name: '_deposits'}], tx.receipt.rawLogs[0].data, tx.receipt.rawLogs[0].topics[0]);
+        oldAccountantEscrowBalance = decodedLog["_deposits"];
+
+        tx = await instanceProxy.executeRule(0, 0, {from:CHAIRMAN, value: 10**18});
         expectEvent(tx, "PayTransactionFees");
+      });
+
+      it("... the contract balance should receive 1% of value worth of ETH", async () => {
+        newContractBalance = await instanceProxy.getBalance();
+        transactionFees = await instanceProxy.transactionFees();
+        let executionFees = Number(transactionFees) * 10**16;
+        assert.equal(Number(newContractBalance), Number(oldContractBalance) + executionFees, "newBalance != oldBalance + msg.value * (transactionFees/100)");
+      });
+
+      it("... the ACCOUNTANT escrow account should receive a deposit of 1ETH - fees on his Escrow account", async () => {
+        let tx = await instanceProxy.depositsOf({from:ACCOUNTANT});
+        let decodedLog = web3.eth.abi.decodeLog([{type: 'address',name: '_from'},{type: 'uint256',name: '_deposits'}], tx.receipt.rawLogs[0].data, tx.receipt.rawLogs[0].topics[0]);
+        let newAccountantEscrowBalance = decodedLog["_deposits"];
+        
+        assert.equal(Number(newAccountantEscrowBalance), Number(oldAccountantEscrowBalance + (100 - transactionFees) * 10**16),"newBalance != oldBalance + ((100 - transactionFees) / 100) * 10**18 ");
+      });
+
+      it("... the CHAIRMAN account should pay 1 ETH + gas fees", async () => {
+        let newCallerBalance = await web3.eth.getBalance(CHAIRMAN);
+        
+        assert(newCallerBalance < (oldCallerBalance-1),"newBalance < oldBalance - 1  ETH");
       });
   
     });

@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity 0.8.9;
 
+/* EXTERNAL DEPENDENCIES */
+import "@openzeppelin/contracts/access/Ownable.sol";
+
 /* INTERNAL DEPENDENCIES */
 import "./CommonStructs.sol";
 import "./InstructionsProvider.sol";

@@ -11,7 +11,7 @@ contract("InstructionsProvider", function (accounts) {
   let instanceInstructionsProvider;
 
   before(async () => {
-    instanceInstructionsProvider = await InstructionsProvider.new();
+    instanceInstructionsProvider = await InstructionsProvider.new(emptyAddress);
   });
 
   describe("setInterpreterContractRef", () => {

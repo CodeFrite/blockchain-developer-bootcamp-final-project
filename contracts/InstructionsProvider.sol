@@ -12,11 +12,14 @@ contract InstructionsProvider is Ownable {
     
     /* STORAGE */
 
+    /// @dev Proxy instance reference
+    address private proxyInstanceRef;
+
     /// @dev Interpreter contract reference
     Interpreter private interpreterContractRef;
 
     /// @dev OpenZeppelin Escrow contract reference
-    Escrow private escrowInstance;
+    Escrow public escrowInstance;
 
     /* EVENTS */
     
@@ -36,16 +39,53 @@ contract InstructionsProvider is Ownable {
     */
     event SetEscrowContractRef(address _from, address _old, address _new);
 
+    /**
+    * @dev Retrieves the escrow balance for the msg.sender
+    * @param _from msg.sender passed by caller
+    * @param _deposits Deposit value for msg.sender
+    */
+    event DepositsOf(address _from, uint _deposits);
+
     /* MODIFIERS */
 
-    /// @dev Modifier used to assess that the caller is the interpreter contract instance 
+    /// @dev Assess that the caller is the Interpreter contract instance 
     modifier onlyInterpreter() {
-        require(msg.sender==address(interpreterContractRef), "Caller is not the Interpreter");
+        require(msg.sender==address(interpreterContractRef), "InstructionsProvider: Caller is not the Interpreter");
         _;
     }
 
+    /// @dev Assess that the caller is the Proxy contract instance 
+    modifier onlyProxy() {
+        require(msg.sender==proxyInstanceRef, "InstructionsProvider: Only Proxy may call");
+        _;
+    }
+
+    /**
+    * @dev OpenZeppelin Escrow: Modifier used to check whether the sender has a balance to withdraw 
+    * @param _from Address for which we check the balance
+    */
+    modifier hasBalance(address _from) {
+        require(depositsOf(msg.sender) > 0, "Not enough balance");
+        _;
+    }
+
+
     /* PUBLIC INTERFACE */
-    
+    constructor(address _address) {
+    if (_address==address(0))
+            escrowInstance = new Escrow();
+        else
+            escrowInstance = Escrow(_address);
+    }
+
+    /**
+    * @dev Sets the Interpreter contract reference. Emits a SetInterpreterInstance event
+    * @param _address Address of the Interpreter contract
+    */
+    function setProxyInstanceRef(address _address) external onlyOwner {
+        proxyInstanceRef = _address;
+    }
+
     /**
     * @dev Sets the Interpreter contract reference. Emits a SetInterpreterInstance event
     * @param _new Address of the Interpreter contract
@@ -66,6 +106,28 @@ contract InstructionsProvider is Ownable {
         emit SetEscrowContractRef(msg.sender, old, _new);
     }
 
+    function transferEscrow(address _address) external onlyOwner {
+        escrowInstance.transferOwnership(_address);
+        //escrowInstance = Escrow(address(0));
+    }
+
+    /**
+    * @dev Escrow: Returns the total amount that the msg.sender can withdraw
+    */
+    function depositsOf(address _from) public onlyProxy returns (uint) {
+        uint deposits = escrowInstance.depositsOf(_from);
+        emit DepositsOf(_from, deposits);
+        return deposits;
+    }
+
+    /**
+    * @dev msg.sender withdraws his total balance
+    *      Modifier hasBalance: msg.sender must have enough balance in the escrow
+    */
+    function withdraw(address _from) external onlyProxy hasBalance(_from) {
+        escrowInstance.withdraw(payable(_from));
+    }
+
     /* Instructions definitions */
 
     /**
@@ -77,11 +139,23 @@ contract InstructionsProvider is Ownable {
         return (_address1 == _address2);
     }
 
+    event Oye(address, uint);
     /**
      * @dev Escrow: Deposit msg.value to the _to address
      * @param _to The address to which we deposit ETH
      */
     function _transfer(address _to) public payable onlyInterpreter {
-        escrowInstance.deposit(_to);
+        emit Oye(_to, msg.value);
+        escrowInstance.deposit{value:msg.value}(_to);
+    }
+
+    /* OVERRIDE & BLOCK UNUSED INHERITED FUNCTIONS */
+
+    /**
+    * @dev Block OpenZeppelin Ownable.renounceOwnership
+    * @notice Will always revert
+    */ 
+    function renounceOwnership() public pure override {
+        revert('Contract cannot be revoked');
     }
 }

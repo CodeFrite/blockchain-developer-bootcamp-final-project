@@ -3,17 +3,18 @@ var Instructions = artifacts.require("./Instructions.sol");
 var InstructionsProvider = artifacts.require("./InstructionsProvider.sol");
 var Deals = artifacts.require("./Deals.sol");
 var Interpreter = artifacts.require("./Interpreter.sol");
-//var Proxy = artifacts.require("./Proxy.sol");
+var Proxy = artifacts.require("./Proxy.sol");
 
 module.exports = async function(deployer) {
   // Deploy contracts
+  
   await deployer.deploy(CommonStructs);
   await deployer.deploy(Interpreter);
   await deployer.deploy(Instructions);
-  await deployer.deploy(InstructionsProvider, Interpreter.address);
+  await deployer.deploy(InstructionsProvider,"0x0000000000000000000000000000000000000000");
   await deployer.deploy(Deals);
-//  await deployer.deploy(Proxy);
-  
+  await deployer.deploy(Proxy,25, 25, 100, 50, 1, 230000000000000);
+  /*
   // Get an instance to the deployed contracts
   const instanceInstructions = await Instructions.deployed();
   const instanceInstructionsProvider = await InstructionsProvider.deployed();
@@ -28,5 +29,5 @@ module.exports = async function(deployer) {
 //  await proxy.setClausesContract(clauses.address);
 //  await proxy.setDealsContract(deals.address);
 //  await proxy.setInterpreterContract(interpreter.address);
-
+*/
 };

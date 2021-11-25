@@ -61,7 +61,7 @@ contract Deals is Ownable, Pausable {
 
     /// @dev Modifier used to assess that the caller is the interpreter contract instance 
     modifier onlyProxy() {
-        require(msg.sender==proxyContractAddress, "Only Proxy may call");
+        require(msg.sender==proxyContractAddress, "Deals: Only Proxy may call");
         _;
     }
 

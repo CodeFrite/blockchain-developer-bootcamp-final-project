@@ -8,7 +8,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./CommonStructs.sol";
 import "./Instructions.sol";
 import "./Deals.sol";
-import "./Interpreter.sol";
 
 // TODO: Ajouter un payable fallback a tous les contracts pour voir ce qu'on fait quand on reçoit de l'argent par erreur
 //        ==> Hériter d'une classe qui redirige l'argent vers le proxy ou bien juste rembourser les sous
@@ -23,15 +22,18 @@ contract Proxy is Ownable {
     /* STORAGE VARIABLES */
 
     // References to external contracts
-    
+
     /// @dev Reference to the Instructions contract
     Instructions public instructionsContractRef;
 
-    /// @dev Reference to the Deals contract
+    /// @dev Reference to the InstructionsProvider contract
+    address public instructionsProviderContractRef;
+
+    /// @dev Reference to the Deals instance
     Deals public dealsContractRef;
 
     /// @dev Reference to the Interpreter contract
-    Interpreter public interpreterContractRef;
+    address public interpreterContractRef;
 
     // Contract fees
 
@@ -44,7 +46,7 @@ contract Proxy is Ownable {
     /// @dev Price to allow incoming payments from all addresses others than internal/external accounts in USD
     uint public allowAllAddressesFees;
 
-    /// @dev Minimal transaction value able to trigger an execution in USD
+    /// @dev Minimal transaction value able to trigger an execution in USDimport "@openzeppelin/contracts/security/Pausable.sol";
     uint public transactionMinimalValue;
 
     /// @dev Transaction fees in % of the msg.value perceived on a deal execution in USD
@@ -56,7 +58,7 @@ contract Proxy is Ownable {
     /* MAPPINGS */
     
     /* MODIFIERS */
-    
+
     /* EVENTS */
 
     // Modify contract references
@@ -68,6 +70,14 @@ contract Proxy is Ownable {
     * @param _new New address of the Instructions contract
     */
     event ModifyInstructionsContractAddress(address _from, address _old, address _new);
+
+    /**
+    * @dev Event emitted when the InstructionsProvider contract reference is changed
+    * @param _from Caller address
+    * @param _old Old address of the InstructionsProvider contract
+    * @param _new New address of the InstructionsProvider contract
+    */
+    event ModifyInstructionsProviderContractAddress(address _from, address _old, address _new);
 
     /**
     * @dev Event emitted when the Deals contract reference is changed
@@ -151,6 +161,14 @@ contract Proxy is Ownable {
     * @param _fees : Fees paid by the user in ETH
     */
     event PayTransactionFees(address _from, uint _dealId, uint _ruleId, uint _fees);
+
+    /** 
+    * @dev Event emitted when an excess value is reimbursed to the user
+    * @param _to : address of the caller (msg.sender) where the excess value is reimbursed
+    * @param _dealId : Id of the created deal 
+    * @param _amount : Amount reimbursed to the user in ETH
+    */
+    event ReimburseExcessValue(address _to, uint _dealId, uint _amount);
     
 
     /* CONSTRUCTOR */
@@ -199,6 +217,16 @@ contract Proxy is Ownable {
     }
 
     /**
+    * @dev Sets the InstructionsProvider contract reference to a new value
+    * @param _new New address of the InstructionsProvider contract
+    */
+    function setInstructionsProviderContractRef(address _new) public onlyOwner {
+        address old = instructionsProviderContractRef;
+        instructionsProviderContractRef = _new;
+        emit ModifyInstructionsProviderContractAddress(msg.sender, old, _new);
+    }
+
+    /**
     * @dev Sets the Deals contract reference to a new value
     * @param _new New address of the Deals contract
     */
@@ -213,8 +241,8 @@ contract Proxy is Ownable {
     * @param _new New address of the Interpreter contract
     */
     function setInterpreterContractRef(address _new) public onlyOwner {
-        address old = address(interpreterContractRef);
-        interpreterContractRef = Interpreter(_new);
+        address old = interpreterContractRef;
+        interpreterContractRef = _new;
         emit ModifyInterpreterContractAddress(msg.sender, old, _new);
     }
 
@@ -282,6 +310,8 @@ contract Proxy is Ownable {
 
     /* PUBLIC INTERFACE */
 
+    event Log(uint);
+
     /**
     * @dev Creates a deal and returns its id
     * @param _accounts List of accounts addresses linked to the deal
@@ -293,16 +323,34 @@ contract Proxy is Ownable {
         address[] memory _accounts, 
         CommonStructs.Article[][] memory _rulesList
     ) 
-    public payable returns (uint) {
+    external payable returns (uint) {
         // Compute creation fees in ETH
         uint creationFeesInETH = computeDealCreationFeesInETH(_accounts.length, _rulesList.length);
 
         // Check 1: Amount sent by the user should cover the deal creation fees
         require(msg.value >= creationFeesInETH, "Insufficient value to cover the deal creation fees");
-
+        
+        // Check 2: Make sure that the instructions are all supported
+        for (uint i=0;i<_rulesList.length;i++) {
+            for (uint j=0;j<_rulesList[i].length;j++) {
+                // Get the instruction type & signature
+                (, string memory instructionSignature) = instructionsContractRef.getInstruction(_rulesList[i][j].instructionName);
+                
+                // If the signature is empty, this means that the instruction is not present => revert
+                require(!stringsEqual(instructionSignature,''),"Proxy.CreateDeal: Instruction is not supported");
+            }
+        }
 
         // Create the deal
         uint dealId = dealsContractRef.createDeal(_accounts, _rulesList);
+        
+        // Reimburse excess value to the caller if necessary
+        uint excessValue = (msg.value - creationFeesInETH);
+        if (excessValue > 0){
+            (bool sent, ) = msg.sender.call{value: excessValue } ("");
+            require(sent, "Proxy.createDeal: Failed to reimburse excess Ether");
+            emit ReimburseExcessValue(msg.sender, dealId, excessValue);
+        }
 
         // Emit a PayDealCreationFees
         emit PayDealCreationFees(msg.sender, dealId, creationFeesInETH);
@@ -310,25 +358,67 @@ contract Proxy is Ownable {
         return dealId;
     }
 
+    event Log(uint,uint);
     /**
     * @dev Execute a deal's rule
     * @param _dealId : Id of the deal to execute
     * @param _ruleId : Id of the rule to execute
     */
-    function executeRule(uint _dealId, uint _ruleId) public payable {
+    function executeRule(uint _dealId, uint _ruleId) external payable {
         // Amount sent by the user should be higher or equal to the minimal transaction value
         uint msgValueInUSD = convertWEI2USD(msg.value);
         require( msgValueInUSD >= transactionMinimalValue, "Transaction minimal value not reached");
 
         // Call Interpreter.interpretRule() and include in the call the msg.value - execution fees
-        uint executionFees = msg.value * (transactionFees/100);
-        interpreterContractRef.interpretRule{value: (msg.value - executionFees)}(_dealId, _ruleId);
+        uint executionFees = (msg.value / 100) * transactionFees;
+        (bool success, ) = interpreterContractRef.call{value: (msg.value - executionFees)}(
+            abi.encodeWithSignature(
+                "interpretRule(address,uint256,uint256)",
+                msg.sender,
+                _dealId, 
+                _ruleId
+            )
+        );
+
+        require(success,"Proxy: Unable to execute rule");
 
         // Emit a PayTransactionFees
         emit PayTransactionFees(msg.sender, _dealId, _ruleId, executionFees);
     }
 
-    //TODO: add escrow get balance & withdraw function
+    /**
+    * @dev Retrieves caller escrow balance.
+    */
+    function depositsOf() public returns (uint) {
+        (bool success, bytes memory _result) = instructionsProviderContractRef.call(
+            abi.encodeWithSignature(
+                "depositsOf(address)",
+                msg.sender
+            )
+        );
+        require(success,"Proxy: Unable to get the deposit of caller!");
+
+        uint result = abi.decode(_result, (uint256));
+        return result;
+    }
+
+    /**
+    * @dev Withdraw all deposit from escrow for msg.sender
+    */
+    function withdraw() external {
+        (bool success,) = instructionsProviderContractRef.call(
+            abi.encodeWithSignature(
+                "withdraw(address)",
+                msg.sender
+            )
+        );
+        require(success,"Proxy: Unable to withdraw!");
+    }
+
+    function getBalance() external view onlyOwner returns(uint) {
+        return address(this).balance;
+    }
+    
 
     /* HELPER FUNCTIONS */
     
@@ -373,5 +463,15 @@ contract Proxy is Ownable {
     */
     function stringsEqual(string memory _s1, string memory _s2) public pure returns(bool) {
         return keccak256(bytes(_s1)) == keccak256(bytes(_s2));
+    }
+
+    /* OVERRIDE & BLOCK UNUSED INHERITED FUNCTIONS */
+
+    /**
+    * @dev Block OpenZeppelin Ownable.renounceOwnership
+    * @notice Will always revert
+    */ 
+    function renounceOwnership() public pure override {
+        revert('Contract cannot be revoked');
     }
 }
