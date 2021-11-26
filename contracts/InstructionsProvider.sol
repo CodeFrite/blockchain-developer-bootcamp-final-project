@@ -75,8 +75,8 @@ contract InstructionsProvider is Ownable {
         _;
     }
 
-
     /* PUBLIC INTERFACE */
+
     constructor(address _address) {
     if (_address==address(0))
             escrowInstance = new Escrow();
@@ -112,6 +112,11 @@ contract InstructionsProvider is Ownable {
         emit SetEscrowContractRef(msg.sender, old, _new);
     }
 
+    /**
+    * @dev Upgrability: Allow the old InstructionsProvider instance
+    * to transfer the Escrow ownership to the new instance
+    * @param _address Address of the new InstructionsProvider instance
+    */
     function transferEscrow(address _address) external onlyOwner {
         escrowInstance.transferOwnership(_address);
         //escrowInstance = Escrow(address(0));
@@ -134,7 +139,7 @@ contract InstructionsProvider is Ownable {
         escrowInstance.withdraw(payable(_from));
     }
 
-    /* Instructions definitions */
+    /* Upgrability: Instructions implementations */
 
     /**
     * @dev Checks if the addresses in parameters are equal
