@@ -13,22 +13,24 @@ import CustomModal from "./components/CustomModal";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./App.css";
 
+/* IMPORT CONTRACTS */
+import Proxy from "./contracts/Proxy.json";
+
 // GLOBALS
 var {ethereum} = window;
 
 class App extends Component {
 
-  state = { 
-    // Instances to the different contracts
-    contracts: {CommonStructs: null, Instructions: null},   
-    accounts: null, 
+  state = {
+    contract: null,
+    accounts: null,
     profile: null,
     metamask: {
       showModal: false,
       installed: false,
       unlocked: false,
       connected: false
-    }, 
+    },
     ethereum: null,
     web3:null
   };
@@ -144,21 +146,21 @@ class App extends Component {
       console.log("Creating web3 object ...");
       this.setState({ web3: new Web3(this.state.ethereum) });
 
-      // Create contract object
-      /*
+      // Create contract objects
+      
       const networkId = await this.state.web3.eth.net.getId();
-      const deployedNetwork = SimpleStorageContract.networks[networkId];
-      this.setState({ contract: new this.state.web3.eth.Contract(SimpleStorageContract.abi, deployedNetwork && deployedNetwork.address) });
+      const deployedNetwork = Proxy.networks[networkId];
+      this.setState({ contract: new this.state.web3.eth.Contract(Proxy.abi, deployedNetwork && deployedNetwork.address) });
       console.log("Contract instance created ...");
 
       // Call contract
-      console.log("Calling contract ...");
+      
+      console.log("Calling Proxy: Get rule creation fees ...");
       await this.transferOwner();
       const _newValue =  await this.getOwner();
       this.setState({ storageValue: _newValue });
       console.log("... Contract call returned value ",  _newValue);
-      */
-
+      
     } catch (error) {
       console.error(error);
     }

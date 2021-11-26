@@ -228,20 +228,6 @@ contract("Proxy", async (accounts) => {
       
     });
 
-    describe("USD2WEIConversionRate :", () => {
-
-      it("... setUSD2WEIConversionRate should return a ModifyUSD2WEIConversionRate", async () => {
-        tx = await instanceProxy.setUSD2WEIConversionRate(_USD2WEIConversionRate);
-        expectEvent(tx, "ModifyUSD2WEIConversionRate",{_from:CEO, _old:new BN(0), _new: new BN(_USD2WEIConversionRate)});
-      });
-
-      it("... USD2WEIConversionRate should return the correct address", async () => {
-        tx = await instanceProxy.USD2WEIConversionRate();
-        assert.equal(tx, _USD2WEIConversionRate);
-      });
-      
-    });
-
   });
 
   describe("Use cases", () => {
@@ -290,11 +276,11 @@ contract("Proxy", async (accounts) => {
         // Get the computes deal creation fees from contract
         let accountsCount = dealAccounts.length;
         let rulesCount = ruleList.length;
-        let dealCreationFeesInETH = await instanceProxy.computeDealCreationFeesInETH(accountsCount, rulesCount);
+        let dealCreationFeesInWEI = await instanceProxy.computeDealCreationFeesInWEI(accountsCount, rulesCount);
         
         // Create the deal
         await expectRevert(
-          instanceProxy.createDeal(dealAccounts,ruleList, {from: CEO, value: dealCreationFeesInETH - 1000}),
+          instanceProxy.createDeal(dealAccounts,ruleList, {from: CEO, value: dealCreationFeesInWEI - 1000}),
           "Insufficient value to cover the deal creation fees"
         );
       });
@@ -304,7 +290,7 @@ contract("Proxy", async (accounts) => {
       let tx;
       let oldContractBalance;
       let oldCallerBalance;
-      let dealCreationFeesInETH;     
+      let dealCreationFeesInWEI;     
 
       it("... should emit a PayDealCreationFees event", async () => {
         // Save the old balance
@@ -314,7 +300,7 @@ contract("Proxy", async (accounts) => {
         // Get the computes deal creation fees from contract
         let accountsCount = dealAccounts.length;
         let rulesCount = ruleList.length;
-        dealCreationFeesInETH = await instanceProxy.computeDealCreationFeesInETH(accountsCount, rulesCount);
+        dealCreationFeesInWEI = await instanceProxy.computeDealCreationFeesInWEI(accountsCount, rulesCount);
 
         // Create the deal with 1ETH
         tx = await instanceProxy.createDeal(dealAccounts,ruleList, {from: CEO, value: 10**18});
@@ -323,14 +309,14 @@ contract("Proxy", async (accounts) => {
 
       it("... the contract balance should receive 100$ worth of ETH", async () => {
         let newContractBalance = await instanceProxy.getBalance();
-        assert.equal(oldContractBalance.add(dealCreationFeesInETH).toString(), newContractBalance.toString(), "newBalance != oldBalance + dealCreationFees");
+        assert.equal(oldContractBalance.add(dealCreationFeesInWEI).toString(), newContractBalance.toString(), "newBalance != oldBalance + dealCreationFees");
       });
 
       it("... the excess amount payed (1ETH-100$-gas already used) should be reimbursed to the caller", async () => {
         // Compute the expected excessValue
         let newCallerBalance = await web3.eth.getBalance(CEO);
         let gasPrice = await web3.eth.getGasPrice();
-        let sum = Number(newCallerBalance) + Number(dealCreationFeesInETH) + Number(tx.receipt.cumulativeGasUsed) * gasPrice;
+        let sum = Number(newCallerBalance) + Number(dealCreationFeesInWEI) + Number(tx.receipt.cumulativeGasUsed) * gasPrice;
         // Get gas used in transaction        
         assert.equal(Math.round(Number(oldCallerBalance) / 10000000000), Math.round(Number(sum) / 10000000000), "newBalance = (oldBalance - 1 ETH - gas used)");
       });

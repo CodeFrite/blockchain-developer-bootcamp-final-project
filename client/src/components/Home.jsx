@@ -8,9 +8,7 @@ class Home extends Component {
   
   render() { 
     return ( 
-      <>
       <h1>Welcome on Make A Deal</h1>
-      </>
     );
   }
 }

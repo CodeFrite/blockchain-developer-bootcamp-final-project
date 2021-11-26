@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 /* EXTERNAL DEPENDENCIES */
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 /* INTERNAL DEPENDENCIES */
 import "./CommonStructs.sol";
@@ -21,6 +22,15 @@ import "./Deals.sol";
 contract Proxy is Ownable, Pausable {
     
     /* STORAGE VARIABLES */
+
+    /// @dev Chainlink ETH/USD price feed aggregator link on Rinkeby
+    AggregatorV3Interface public priceFeedRef;
+
+    /// @dev Last quotation value in USD per ETH with 8 decimals precision fetched from Chainlink
+    uint public lastQuotationValue;
+
+    /// @dev Last quotation timestamp fetched from Chainlink
+    uint public lastQuotationTimestamp;
 
     // References to external contracts
 
@@ -53,15 +63,22 @@ contract Proxy is Ownable, Pausable {
     /// @dev Transaction fees in % of the msg.value perceived on a deal execution in USD
     uint public transactionFees;
 
-    /// @dev USD/WEI rate
-    uint public USD2WEIConversionRate;
-
     /* MAPPINGS */
     
     /* MODIFIERS */
 
     /* EVENTS */
 
+    // Modify Chainlink ETH/USD price feed aggregator address
+
+    /**
+    * @dev Event emitted when the Chainlink ETH/USD price feed aggregator address is changed
+    * @param _from Caller address
+    * @param _old Old address of the Chainlink ETH/USD price feed aggregator address
+    * @param _new New address of the Chainlink ETH/USD price feed aggregator address
+    */
+    event ModifyPriceFeedRefAggregatorAddress(address _from, address _old, address _new);
+    
     // Modify contract references
 
     /**
@@ -131,20 +148,20 @@ contract Proxy is Ownable, Pausable {
     event ModifyTransactionMinimalValue(address _from, uint _old, uint _new);
 
     /** 
-    * @dev Event emitted when the ETH/USD rate is changed
+    * @dev Event emitted when the transaction fees are changed
     * @param _from : msg.sender
-    * @param _old : old ETH/USD rate in ETH per USD
-    * @param _new : new ETH/USD rate in ETH per USD
+    * @param _old : old transaction fees value in % of msg.value
+    * @param _new : new transaction fees value in % of msg.value
     */
     event ModifyTransactionFees(address _from, uint _old, uint _new);
     
     /** 
-    * @dev Event emitted when the WEI to USD conversion rate is changed
+    * @dev Event emitted when the WEI to USD conversion rate is updated from Chainlink
     * @param _from : msg.sender
-    * @param _old : old WEI to USD conversion rate in WEI
-    * @param _new : new WEI to USD conversion rate in WEI
+    * @param _value : WEI/USD price at the time the Chainlink Oracle was called
+    * @param _timestamp : timestamp at which the price was fetched from Chainlink
     */
-    event ModifyUSD2WEIConversionRate(address _from, uint _old, uint _new);
+    event QueryLastQuotationFromChainlink(address _from, uint _value, uint _timestamp);
 
     /** 
     * @dev Event emitted when the deal creation fees are paid
@@ -181,7 +198,7 @@ contract Proxy is Ownable, Pausable {
     * @param _allowAllAddressesFees Creation fees to allow incoming payments from all addresses
     * @param _transactionMinimalValue Minimal value to trigger a rule execution
     * @param _transactionFees Transaction fees paid to execute a rule in % of msg.value (1=1%)
-    * @param _USD2WEIConversionRate Wei per USD conversion rate
+    * @param _lastQuotationValue Wei per USD conversion rate
     */
     constructor (
         uint _accountCreationFees, 
@@ -189,14 +206,14 @@ contract Proxy is Ownable, Pausable {
         uint _allowAllAddressesFees,
         uint _transactionMinimalValue,
         uint _transactionFees,
-        uint _USD2WEIConversionRate
+        uint _lastQuotationValue
     ) {
         accountCreationFees = _accountCreationFees;
         ruleCreationFees = _ruleCreationFees;
         allowAllAddressesFees = _allowAllAddressesFees;
         transactionMinimalValue = _transactionMinimalValue;
         transactionFees = _transactionFees;
-        USD2WEIConversionRate = _USD2WEIConversionRate;
+        lastQuotationValue = _lastQuotationValue;
     }
     
     /* SEND & FALLBACK */
@@ -205,6 +222,18 @@ contract Proxy is Ownable, Pausable {
     // https://docs.soliditylang.org/en/v0.8.9/contracts.html#receive-ether-function
     
     /* OWNER INTERFACE */
+
+    // Address to Chainlink ETH/USD price feed aggregator
+    
+    /**
+    * @dev Set the address to the Chainlink ETH/USD price feed aggregator
+    * @param _new New address to the Chainlink ETH/USD price feed aggregator
+    */
+    function setPriceFeedRefAggregatorAddress(address _new) public onlyOwner {
+        address old = address(priceFeedRef);
+        priceFeedRef = AggregatorV3Interface(_new);
+        emit ModifyPriceFeedRefAggregatorAddress(msg.sender, old, _new);
+    }
 
     // References to external contracts
     
@@ -300,16 +329,6 @@ contract Proxy is Ownable, Pausable {
         emit ModifyTransactionFees(msg.sender, old, _new);
     }
 
-    /**
-    * @dev Sets the WEI to USD conversion rate to a new value
-    * @param _new New value for the USD to WEI conversion rate in USD
-    */
-    function setUSD2WEIConversionRate(uint _new) public onlyOwner whenPaused {
-        uint old = USD2WEIConversionRate;
-        USD2WEIConversionRate = _new;
-        emit ModifyUSD2WEIConversionRate(msg.sender, old, _new);
-    }
-
     /* PUBLIC INTERFACE */
 
     /**
@@ -327,11 +346,11 @@ contract Proxy is Ownable, Pausable {
     payable 
     whenNotPaused
     returns (uint) {
-        // Compute creation fees in ETH
-        uint creationFeesInETH = computeDealCreationFeesInETH(_accounts.length, _rulesList.length);
+        // Compute creation fees in WEI
+        uint creationFeesInWEI = computeDealCreationFeesInWEI(_accounts.length, _rulesList.length);
 
         // Check 1: Amount sent by the user should cover the deal creation fees
-        require(msg.value >= creationFeesInETH, "Insufficient value to cover the deal creation fees");
+        require(msg.value >= creationFeesInWEI, "Insufficient value to cover the deal creation fees");
         
         // Check 2: Make sure that the instructions are all supported
         for (uint i=0;i<_rulesList.length;i++) {
@@ -348,15 +367,15 @@ contract Proxy is Ownable, Pausable {
         uint dealId = dealsContractRef.createDeal(_accounts, _rulesList);
         
         // Reimburse excess value to the caller if necessary
-        uint excessValue = (msg.value - creationFeesInETH);
+        uint excessValue = (msg.value - creationFeesInWEI);
         if (excessValue > 0){
             (bool sent, ) = msg.sender.call{value: excessValue } ("");
-            require(sent, "Proxy.createDeal: Failed to reimburse excess Ether");
+            require(sent, "Proxy.createDeal: Failed to reimburse excess ETH");
             emit ReimburseExcessValue(msg.sender, dealId, excessValue);
         }
 
         // Emit a PayDealCreationFees
-        emit PayDealCreationFees(msg.sender, dealId, creationFeesInETH);
+        emit PayDealCreationFees(msg.sender, dealId, creationFeesInWEI);
 
         return dealId;
     }
@@ -429,23 +448,48 @@ contract Proxy is Ownable, Pausable {
     function getBalance() external view onlyOwner returns(uint) {
         return address(this).balance;
     }
+
+    /* CHAINLINK ETH/USD PRICE FEED AGGREGATOR */    
     
+    /**
+     * @dev Query & save the latest quotation from ChainLink price feed aggregator on Rinkeby
+     */
+    function saveLatestQuotation() public onlyOwner {
+        // Query last ETH/USD price from ChainLink
+        (
+            //uint80 roundID, 
+            ,
+            int price,
+            ,
+            uint timestamp,
+            
+        ) = priceFeedRef.latestRoundData();
+        
+        // Save latest quotation (rounID, price & timestamp)
+        lastQuotationValue = (10**18)*(10**8)/uint(price);
+        lastQuotationTimestamp = timestamp;
+        emit QueryLastQuotationFromChainlink(msg.sender, lastQuotationValue, timestamp);
+    }
+
+    function getLatestQuotation() public view returns(uint, uint) {
+        return (lastQuotationValue, lastQuotationTimestamp);
+    }
 
     /* HELPER FUNCTIONS */
     
     /**
-    * @dev Computes the deal creation cost in ETH
+    * @dev Computes the deal creation cost in WEI
     * @param _accountsCount Number of external accounts defined in the deal
     * @param _rulesCount Number of rules defined in the deal
-    * @return Deal creation cost in ETH
+    * @return Deal creation cost in WEI
     */
-    function computeDealCreationFeesInETH
+    function computeDealCreationFeesInWEI
     (
         uint _accountsCount, 
         uint _rulesCount
     ) 
     public view returns (uint) {
-        return (_accountsCount * accountCreationFees + _rulesCount * ruleCreationFees)*USD2WEIConversionRate;
+        return (_accountsCount * accountCreationFees + _rulesCount * ruleCreationFees)*lastQuotationValue;
     }
 
     /**
@@ -454,7 +498,7 @@ contract Proxy is Ownable, Pausable {
     * @return Converted amount in USD
     */
     function convertWEI2USD(uint _amountInWEI) public view returns(uint) {
-        return _amountInWEI / USD2WEIConversionRate;
+        return _amountInWEI / lastQuotationValue;
     }
 
     /**
@@ -463,7 +507,7 @@ contract Proxy is Ownable, Pausable {
     * @return Converted amount in WEI
     */
     function convertUSD2WEI(uint _amountInUSD) public view returns(uint) {
-        return _amountInUSD * USD2WEIConversionRate;
+        return _amountInUSD * lastQuotationValue;
     }
 
     /** 

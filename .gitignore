@@ -2,3 +2,8 @@ node_modules
 build
 bin
 .env
+
+client/package-lock.json
+client/yarn.lock
+
+client/src/contracts/*.json
