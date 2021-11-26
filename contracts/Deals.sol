@@ -3,8 +3,6 @@ pragma solidity 0.8.9;
 
 /* EXTERNAL DEPENDENCIES */
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-
 
 /* INTERNAL DEPENDENCIES */
 import "./CommonStructs.sol";
@@ -14,7 +12,7 @@ import "./CommonStructs.sol";
  * @notice Contains the client data: mapping of the rules and accounts defined by the client
  */
 
-contract Deals is Ownable, Pausable {
+contract Deals is Ownable {
     /* STORAGE VARIABLES */
 
     /// @dev Proxy contract address
@@ -138,8 +136,7 @@ contract Deals is Ownable, Pausable {
         address[] memory _accounts, 
         CommonStructs.Article[][] memory _rulesList
     ) 
-    public 
-    whenNotPaused()
+    public
     onlyProxy()
     returns (uint) {
         // Save accounts
@@ -166,25 +163,6 @@ contract Deals is Ownable, Pausable {
 
         // Return the deal Id
         return currentDealId;
-    }
-
-    /**
-    * @dev Access control inherited from OpenZeppelin Ownable contract
-    *      Pausing the contract makes the createDeal function not callable
-    *      Getters are still callable
-    *      onlyOwner can call
-    */
-    function pause() public onlyOwner() whenNotPaused() {
-        _pause();
-    }
-
-    /**
-    * @dev Access control inherited from OpenZeppelin Ownable contract
-    *      Unpausing the contract makes the createDeal function callable
-    *      onlyOwner can call
-    */
-    function unpause() public onlyOwner() whenPaused() {
-        _unpause();
     }
 
     /* OVERRIDE & BLOCK UNUSED INHERITED FUNCTIONS */

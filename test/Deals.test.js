@@ -50,39 +50,8 @@ contract("Deals", function (accounts) {
 
     describe("OpenZeppelin Ownable",() => {
 
-      it("... only owner can pause the contract", async () => {
-        await expectRevert.unspecified(instanceDeals.pause({from: ACCOUNTANT}));
-      });
-  
-      it("... only owner can unpause the contract", async () => {
-        await expectRevert.unspecified(instanceDeals.unpause({from: ACCOUNTANT}));
-      });  
-
       it("... should revert on renounceOwnership even from owner", async () => {
         await expectRevert.unspecified(instanceDeals.renounceOwnership({from: CEO}));
-      });
-
-    });
-
-    describe("OpenZeppelin Pausable",() => {
-
-      it("... when the contract is paused, it should emit a `Paused` event", async () => {
-        let tx = await instanceDeals.pause({from:CEO});
-        expectEvent(tx, "Paused");
-      });
-
-      it("... createDeal should not be callable by anyone", async () => {
-        await expectRevert.unspecified(instanceDeals.createDeal(dealAccounts, ruleList));
-      });
-
-      it("... when the contract is unpaused, it should emit a `Unpaused` event", async () => {
-        let tx = await instanceDeals.unpause({from:CEO});
-        expectEvent(tx, "Unpaused");
-      });
-
-      it("... createDeal should then be callable by the Proxy", async () => {
-        let tx = await instanceDeals.createDeal(dealAccounts, ruleList, {from:PROXY});
-        expectEvent(tx,"CreateDeal");
       });
 
     });
@@ -104,13 +73,13 @@ contract("Deals", function (accounts) {
 
       it("... should emit `CreateDeal` event", async () => {
         tx = await instanceDeals.createDeal(dealAccounts, ruleList, {from:PROXY});
-        expectEvent(tx,'CreateDeal',{_from:PROXY,_dealId:new BN(1)});
+        expectEvent(tx,'CreateDeal',{_from:PROXY,_dealId:new BN(0)});
       });
 
     });
 
     describe("Get the deal", () => {
-      let dealId=1;
+      let dealId=0;
       let tx;
 
       it("... rules count should match", async () => {
