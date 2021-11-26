@@ -65,7 +65,7 @@ contract InstructionsProvider is Ownable {
     * @param _from Address for which we check the balance
     */
     modifier hasBalance(address _from) {
-        require(depositsOf(msg.sender) > 0, "Not enough balance");
+        require(depositsOf(_from) > 0, "Not enough balance");
         _;
     }
 
