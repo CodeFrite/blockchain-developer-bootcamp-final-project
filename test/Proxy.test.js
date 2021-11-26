@@ -58,9 +58,63 @@ contract("Proxy", async (accounts) => {
     // Link contracts
     
     // Load instructions
+
+    // pause the contract
+  });
+
+  describe("Access Control: ", () => {
+
+    describe("OpenZeppelin Ownable",() => {
+
+      it("... only owner can pause the contract", async () => {
+        await expectRevert.unspecified(instanceProxy.pause({from: ACCOUNTANT}));
+      });
+  
+      it("... only owner can unpause the contract", async () => {
+        await expectRevert.unspecified(instanceProxy.unpause({from: ACCOUNTANT}));
+      });  
+
+      it("... should revert on renounceOwnership even from owner", async () => {
+        await expectRevert.unspecified(instanceProxy.renounceOwnership({from: CEO}));
+      });
+
+    });
+
+    describe("OpenZeppelin Pausable",() => {
+
+      it("... when the contract is paused, it should emit a `Paused` event", async () => {
+        let tx = await instanceProxy.pause({from:CEO});
+        expectEvent(tx, "Paused");
+      });
+
+      it("... createDeal should not be callable by anyone", async () => {
+        await expectRevert.unspecified(instanceProxy.createDeal(dealAccounts, ruleList));
+      });
+
+      it("... executeRule should not be callable by anyone", async () => {
+        await expectRevert.unspecified(instanceProxy.executeRule(0, 1));
+      });
+
+      it("... when the contract is unpaused, it should emit a `Unpaused` event", async () => {
+        let tx = await instanceProxy.unpause({from:CEO});
+        expectEvent(tx, "Unpaused");
+      });
+
+      it.skip("... createDeal should then be callable by the Proxy", async () => {
+        let tx = await instanceProxy.createDeal(dealAccounts, ruleList, {from:PROXY});
+        expectEvent(tx,"CreateDeal");
+      });
+
+    });
+
   });
 
   describe("Setters & Getters", ()=> {
+    
+    before(async () => {
+      // Pause the contract
+      await instanceProxy.pause();
+    });
 
     describe("instructionsContractRef :", () => {
       
@@ -215,10 +269,12 @@ contract("Proxy", async (accounts) => {
       await instanceInterpreter.setInstructionsProviderInstance(instanceInstructionsProvider.address);
       await instanceInterpreter.setDealsInstance(instanceDeals.address);
       await instanceInterpreter.setProxyContractAddress(instanceProxy.address);
+      await instanceProxy.pause();
       await instanceProxy.setInstructionsContractRef(instanceInstructions.address);
       await instanceProxy.setInstructionsProviderContractRef(instanceInstructionsProvider.address);
       await instanceProxy.setDealsContractRef(instanceDeals.address);
       await instanceProxy.setInterpreterContractRef(instanceInterpreter.address);
+      await instanceProxy.unpause();
 
       // Link Escrow
 
@@ -339,6 +395,19 @@ contract("Proxy", async (accounts) => {
         assert(newCallerBalance < (oldCallerBalance-1),"newBalance < oldBalance - 1  ETH");
       });
   
+    });
+
+    describe("Withdraw deposits from escrow account", () => {
+
+      it("... balance shoud increase by 1ETH - fees", async () => {
+        let oldAccountBalance = await web3.eth.getBalance(ACCOUNTANT);
+        let tx = await debug(instanceProxy.withdraw({from:ACCOUNTANT}));
+        console.log(tx);
+        let newAccountBalance = await web3.eth.getBalance(ACCOUNTANT);
+        console.log(newAccountBalance,oldAccountBalance);
+        //assert((newAccountBalance-oldAccountBalance)>.8,"ERROR");
+      });
+
     });
   });
 

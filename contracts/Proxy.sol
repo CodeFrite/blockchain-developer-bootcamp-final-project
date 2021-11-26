@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 /* EXTERNAL DEPENDENCIES */
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 
 /* INTERNAL DEPENDENCIES */
 import "./CommonStructs.sol";
@@ -17,7 +18,7 @@ import "./Deals.sol";
 /// @title Proxy Contract
 /// @dev Main DApp entry point. Exposes the public interface and decouple the data and the logic
 /// @notice lets-make-a-deal.eth allows you to make an agreement between different parties and automatically route ETH to different addresses based on simple rules.
-contract Proxy is Ownable {
+contract Proxy is Ownable, Pausable {
     
     /* STORAGE VARIABLES */
 
@@ -199,8 +200,9 @@ contract Proxy is Ownable {
     }
     
     /* SEND & FALLBACK */
-    // TODO: https://docs.soliditylang.org/en/v0.8.9/contracts.html#receive-ether-function
-    // If I do not include a payable send or fallback, the contract will return any ETH send to the contract with a call without call values (ok for me i think)
+    
+    // No payable send or fallback function includes so that the contract will return any ETH send with a call without call values
+    // https://docs.soliditylang.org/en/v0.8.9/contracts.html#receive-ether-function
     
     /* OWNER INTERFACE */
 
@@ -210,7 +212,7 @@ contract Proxy is Ownable {
     * @dev Sets the Instructions contract reference to a new value
     * @param _new New address of the Instructions contract
     */
-    function setInstructionsContractRef(address _new) public onlyOwner {
+    function setInstructionsContractRef(address _new) public onlyOwner whenPaused {
         address old = address(instructionsContractRef);
         instructionsContractRef = Instructions(_new);
         emit ModifyInstructionsContractAddress(msg.sender, old, _new);
@@ -220,7 +222,7 @@ contract Proxy is Ownable {
     * @dev Sets the InstructionsProvider contract reference to a new value
     * @param _new New address of the InstructionsProvider contract
     */
-    function setInstructionsProviderContractRef(address _new) public onlyOwner {
+    function setInstructionsProviderContractRef(address _new) public onlyOwner whenPaused {
         address old = instructionsProviderContractRef;
         instructionsProviderContractRef = _new;
         emit ModifyInstructionsProviderContractAddress(msg.sender, old, _new);
@@ -230,7 +232,7 @@ contract Proxy is Ownable {
     * @dev Sets the Deals contract reference to a new value
     * @param _new New address of the Deals contract
     */
-    function setDealsContractRef(address _new) public onlyOwner {
+    function setDealsContractRef(address _new) public onlyOwner whenPaused {
         address old = address(dealsContractRef);
         dealsContractRef = Deals(_new);
         emit ModifyDealsContractAddress(msg.sender, old, _new);
@@ -240,7 +242,7 @@ contract Proxy is Ownable {
     * @dev Sets the Interpreter contract reference to a new value
     * @param _new New address of the Interpreter contract
     */
-    function setInterpreterContractRef(address _new) public onlyOwner {
+    function setInterpreterContractRef(address _new) public onlyOwner whenPaused {
         address old = interpreterContractRef;
         interpreterContractRef = _new;
         emit ModifyInterpreterContractAddress(msg.sender, old, _new);
@@ -252,7 +254,7 @@ contract Proxy is Ownable {
     * @dev Sets the account creation fees to a new value
     * @param _new New value for the account creation fees in USD
     */
-    function setAccountCreationFees(uint _new) public onlyOwner {
+    function setAccountCreationFees(uint _new) public onlyOwner whenPaused {
         uint old = accountCreationFees;
         accountCreationFees = _new;
         emit ModifyAccountCreationFees(msg.sender, old, _new);
@@ -262,7 +264,7 @@ contract Proxy is Ownable {
     * @dev Sets the rule creation fees to a new value
     * @param _new New value for the rule creation fees in USD
     */
-    function setRuleCreationFees(uint _new) public onlyOwner {
+    function setRuleCreationFees(uint _new) public onlyOwner whenPaused {
         uint old = ruleCreationFees;
         ruleCreationFees = _new;
         emit ModifyRuleCreationFees(msg.sender, old, _new);
@@ -272,7 +274,7 @@ contract Proxy is Ownable {
     * @dev Sets the allow all addresses fees to a new value
     * @param _new New value for the allow all addresses fees in USD
     */
-    function setAllowAllAddressesFees(uint _new) public onlyOwner {
+    function setAllowAllAddressesFees(uint _new) public onlyOwner whenPaused {
         uint old = allowAllAddressesFees;
         allowAllAddressesFees = _new;
         emit ModifyAllowAllAccountsFees(msg.sender, old, _new);
@@ -282,7 +284,7 @@ contract Proxy is Ownable {
     * @dev Sets the transaction minimal value to a new value
     * @param _new New value for the transaction minimal value in USD
     */
-    function setTransactionMinimalValue(uint _new) public onlyOwner {
+    function setTransactionMinimalValue(uint _new) public onlyOwner whenPaused {
         uint old = transactionMinimalValue;
         transactionMinimalValue = _new;
         emit ModifyTransactionMinimalValue(msg.sender, old, _new);
@@ -292,7 +294,7 @@ contract Proxy is Ownable {
     * @dev Sets the transaction fees to a new value
     * @param _new New value for the transaction fees in USD
     */
-    function setTransactionFees(uint _new) public onlyOwner {
+    function setTransactionFees(uint _new) public onlyOwner whenPaused {
         uint old = transactionFees;
         transactionFees = _new;
         emit ModifyTransactionFees(msg.sender, old, _new);
@@ -302,15 +304,13 @@ contract Proxy is Ownable {
     * @dev Sets the WEI to USD conversion rate to a new value
     * @param _new New value for the USD to WEI conversion rate in USD
     */
-    function setUSD2WEIConversionRate(uint _new) public onlyOwner {
+    function setUSD2WEIConversionRate(uint _new) public onlyOwner whenPaused {
         uint old = USD2WEIConversionRate;
         USD2WEIConversionRate = _new;
         emit ModifyUSD2WEIConversionRate(msg.sender, old, _new);
     }
 
     /* PUBLIC INTERFACE */
-
-    event Log(uint);
 
     /**
     * @dev Creates a deal and returns its id
@@ -323,7 +323,10 @@ contract Proxy is Ownable {
         address[] memory _accounts, 
         CommonStructs.Article[][] memory _rulesList
     ) 
-    external payable returns (uint) {
+    external 
+    payable 
+    whenNotPaused
+    returns (uint) {
         // Compute creation fees in ETH
         uint creationFeesInETH = computeDealCreationFeesInETH(_accounts.length, _rulesList.length);
 
@@ -358,18 +361,18 @@ contract Proxy is Ownable {
         return dealId;
     }
 
-    event Log(uint,uint);
     /**
     * @dev Execute a deal's rule
     * @param _dealId : Id of the deal to execute
     * @param _ruleId : Id of the rule to execute
     */
-    function executeRule(uint _dealId, uint _ruleId) external payable {
+    function executeRule(uint _dealId, uint _ruleId) external payable whenNotPaused {
         // Amount sent by the user should be higher or equal to the minimal transaction value
         uint msgValueInUSD = convertWEI2USD(msg.value);
         require( msgValueInUSD >= transactionMinimalValue, "Transaction minimal value not reached");
 
-        // Call Interpreter.interpretRule() and include in the call the msg.value - execution fees
+        // Upgrability: Low level call to InstructionsProvider
+        // Includes in the call (msg.value - execution fees)
         uint executionFees = (msg.value / 100) * transactionFees;
         (bool success, ) = interpreterContractRef.call{value: (msg.value - executionFees)}(
             abi.encodeWithSignature(
@@ -380,6 +383,7 @@ contract Proxy is Ownable {
             )
         );
 
+        // Did the low level call succeed?
         require(success,"Proxy: Unable to execute rule");
 
         // Emit a PayTransactionFees
@@ -390,6 +394,8 @@ contract Proxy is Ownable {
     * @dev Retrieves caller escrow balance.
     */
     function depositsOf() public returns (uint) {
+
+        // Upgrability: Low level call to InstructionsProvider
         (bool success, bytes memory _result) = instructionsProviderContractRef.call(
             abi.encodeWithSignature(
                 "depositsOf(address)",
@@ -405,16 +411,21 @@ contract Proxy is Ownable {
     /**
     * @dev Withdraw all deposit from escrow for msg.sender
     */
-    function withdraw() external {
+    function withdraw() external whenNotPaused {
         (bool success,) = instructionsProviderContractRef.call(
             abi.encodeWithSignature(
                 "withdraw(address)",
                 msg.sender
             )
         );
+        // Did the low level call succeed?
         require(success,"Proxy: Unable to withdraw!");
     }
 
+    /**
+    * @dev Get the internal balance of the contract
+    * @return The internal balance of the contract in Wei
+    */
     function getBalance() external view onlyOwner returns(uint) {
         return address(this).balance;
     }
@@ -463,6 +474,27 @@ contract Proxy is Ownable {
     */
     function stringsEqual(string memory _s1, string memory _s2) public pure returns(bool) {
         return keccak256(bytes(_s1)) == keccak256(bytes(_s2));
+    }
+
+    /* OpenZeppelin.Pausable */
+
+    /**
+    * @dev Access control inherited from OpenZeppelin Ownable contract
+    * Pausing the contract makes the createDeal function not callable
+    * Getters are still callable
+    * Only owner can call
+    */
+    function pause() public onlyOwner() whenNotPaused() {
+        _pause();
+    }
+
+    /**
+    * @dev Access control inherited from OpenZeppelin Ownable contract
+    * Unpausing the contract makes the createDeal function callable
+    * Only Owner can call
+    */
+    function unpause() public onlyOwner() whenPaused() {
+        _unpause();
     }
 
     /* OVERRIDE & BLOCK UNUSED INHERITED FUNCTIONS */
