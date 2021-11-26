@@ -150,13 +150,11 @@ contract InstructionsProvider is Ownable {
         return (_address1 == _address2);
     }
 
-    event Oye(address, uint);
     /**
      * @dev Escrow: Deposit msg.value to the _to address
      * @param _to The address to which we deposit ETH
      */
     function _transfer(address _to) public payable onlyInterpreter {
-        emit Oye(_to, msg.value);
         escrowInstance.deposit{value:msg.value}(_to);
     }
 
