@@ -6,7 +6,13 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/escrow/Escrow.sol";
 
 import "./CommonStructs.sol";
-import "./Interpreter.sol";
+
+/**
+ * @title Instructions Provider contract
+ * @notice This contract is responsible for storing the 
+ * implementations of the instructions supported used in 
+ * the Interpreter.InterpretArticle low level calls
+ */
 
 contract InstructionsProvider is Ownable {
     
@@ -16,7 +22,7 @@ contract InstructionsProvider is Ownable {
     address private proxyInstanceRef;
 
     /// @dev Interpreter contract reference
-    Interpreter private interpreterContractRef;
+    address private interpreterContractRef;
 
     /// @dev OpenZeppelin Escrow contract reference
     Escrow public escrowInstance;
@@ -50,7 +56,7 @@ contract InstructionsProvider is Ownable {
 
     /// @dev Assess that the caller is the Interpreter contract instance 
     modifier onlyInterpreter() {
-        require(msg.sender==address(interpreterContractRef), "InstructionsProvider: Caller is not the Interpreter");
+        require(msg.sender==interpreterContractRef, "InstructionsProvider: Caller is not the Interpreter");
         _;
     }
 
@@ -65,7 +71,7 @@ contract InstructionsProvider is Ownable {
     * @param _from Address for which we check the balance
     */
     modifier hasBalance(address _from) {
-        require(depositsOf(_from) > 0, "Not enough balance");
+        require(depositsOf(_from) > 0, "InstructionsProvider : Not enough balance");
         _;
     }
 
@@ -91,8 +97,8 @@ contract InstructionsProvider is Ownable {
     * @param _new Address of the Interpreter contract
     */
     function setInterpreterContractRef(address _new) public onlyOwner {
-        address old = address(interpreterContractRef);
-        interpreterContractRef = Interpreter(_new);
+        address old = interpreterContractRef;
+        interpreterContractRef = _new;
         emit SetInterpreterContractRef(msg.sender, old, _new);
     }
     
