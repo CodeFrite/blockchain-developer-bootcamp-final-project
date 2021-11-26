@@ -1,4 +1,10 @@
 const path = require("path");
+const HDWalletProvider = require("@truffle/hdwallet-provider");
+
+require("dotenv").config();
+
+const infuraKey = process.env.INFURA_API_KEY || "";
+const mnemonic = process.env.mnemonic || "";
 
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
@@ -7,6 +13,18 @@ module.exports = {
   networks: {
     develop: {
       port: 8545
+    },
+    rinkeby: {
+      provider: () =>
+        new HDWalletProvider({
+          mnemonic: {
+            phrase: mnemonic,
+          },
+          providerOrUrl: `https://rinkeby.infura.io/v3/${infuraKey}`,
+          addressIndex: 0,
+          numberOfAddresses: 50,
+        }),
+      network_id: 4, // Rinkeby's id
     }
   },
   compilers: {
