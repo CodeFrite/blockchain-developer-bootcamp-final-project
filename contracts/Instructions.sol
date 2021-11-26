@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 /* INTERNAL DEPENDENCIES */
 import "./CommonStructs.sol";
-import "./InstructionsProvider.sol";
 
 /**
  * @title Instructions contract
