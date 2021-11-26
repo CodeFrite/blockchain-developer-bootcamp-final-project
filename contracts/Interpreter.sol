@@ -83,9 +83,9 @@ contract Interpreter is Ownable {
 
     /* PUBLIC INTERFACE */
 
-     /**
+    /**
     * @dev Sets the Proxy contract reference. Emits a SetInterpreterInstance event
-    * @param _new Address of the Interpreter contract
+    * @param _new Address of the Proxy contract
     */
     function setProxyContractAddress(address _new) public onlyOwner {
         address old = proxyContractAddress;
@@ -93,18 +93,30 @@ contract Interpreter is Ownable {
         emit SetProxyContractAddress(msg.sender, old, _new);
     }
 
+    /**
+    * @dev Sets the Instructions contract reference. Emits a SetInstructionsInstance event
+    * @param _new Address of the Instructions contract
+    */
     function setInstructionsInstance(address _new) public onlyOwner {
         address old = address(instructionsInstance);
         instructionsInstance = Instructions(_new);
         emit SetInstructionsInstance(msg.sender, old, _new);
     }
     
+    /**
+    * @dev Sets the InstructionsProvider contract reference. Emits a SetInstructionsProviderInstance event
+    * @param _new Address of the InstructionsProvider contract
+    */
     function setInstructionsProviderInstance(address _new) public onlyOwner {
         address old = instructionsProviderInstance;
         instructionsProviderInstance = _new;
         emit SetInstructionsProviderInstance(msg.sender, old, _new);
     }
 
+    /**
+    * @dev Sets the Deals contract reference. Emits a SetDealsInstance event
+    * @param _new Address of the Deals contract
+    */
     function setDealsInstance(address _new) public onlyOwner {
         address old = address(dealsInstance);
         dealsInstance = Deals(_new);
@@ -152,7 +164,7 @@ contract Interpreter is Ownable {
         // CASE ADDRESS_ADDRESS_R_BOOL: pass the Article.paramAddress field
         bool success=false;
         if (instructionType == CommonStructs.InstructionTypes.ADDRESS_ADDRESS_R_BOOL) {
-            // Deletagate Call to InstructionsProvider
+            // Upgrability: Low level call to InstructionsProvider
             bool _success;
             bytes memory _result;
             (_success, _result) = instructionsProviderInstance.call(
@@ -166,7 +178,7 @@ contract Interpreter is Ownable {
 
         // CASE ADDRESS_PAYABLE: pass the Article.paramAddress
         } else if (instructionType == CommonStructs.InstructionTypes.ADDRESS_PAYABLE) {
-            // Deletagate Call to InstructionsProvider
+            // Upgrability: Low level call to InstructionsProvider
             bool _success;
             bytes memory _result;
             
