@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 /* INTERNAL DEPENDENCIES */
 import "./CommonStructs.sol";
 import "./Instructions.sol";
-import "./InstructionsProvider.sol";
 import "./Deals.sol";
 
 /**
@@ -26,7 +25,7 @@ contract Interpreter is Ownable {
     Instructions private instructionsInstance;
 
     /// @dev InstructionsProvider contract reference
-    InstructionsProvider private instructionsProviderInstance;
+    address private instructionsProviderInstance;
 
     /// @dev Deals contract reference
     Deals private dealsInstance;
@@ -101,8 +100,8 @@ contract Interpreter is Ownable {
     }
     
     function setInstructionsProviderInstance(address _new) public onlyOwner {
-        address old = address(instructionsProviderInstance);
-        instructionsProviderInstance = InstructionsProvider(_new);
+        address old = instructionsProviderInstance;
+        instructionsProviderInstance = _new;
         emit SetInstructionsProviderInstance(msg.sender, old, _new);
     }
 
@@ -156,7 +155,7 @@ contract Interpreter is Ownable {
             // Deletagate Call to InstructionsProvider
             bool _success;
             bytes memory _result;
-            (_success, _result) = address(instructionsProviderInstance).call(
+            (_success, _result) = instructionsProviderInstance.call(
                 abi.encodeWithSignature(
                     instructionSignature,
                     article.paramAddress,
@@ -171,7 +170,7 @@ contract Interpreter is Ownable {
             bool _success;
             bytes memory _result;
             
-            (_success, _result) = address(instructionsProviderInstance).call{value:msg.value}(
+            (_success, _result) = instructionsProviderInstance.call{value:msg.value}(
                 abi.encodeWithSignature(
                     instructionSignature,
                     article.paramAddress
