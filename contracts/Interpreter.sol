@@ -139,7 +139,7 @@ contract Interpreter is Ownable {
     * @param _ruleId Id of the rule to be executed
     * @param _articleId Id of the article to be executed
     */
-    function interpretArticle(address _from, uint _dealId, uint _ruleId, uint _articleId) internal returns (bool) {
+    function interpretArticle(address _from, uint _dealId, uint _ruleId, uint _articleId) private returns (bool) {
         // Get Article
         CommonStructs.Article memory article = dealsInstance.getArticle(_dealId, _ruleId, _articleId);
 
