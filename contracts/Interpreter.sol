@@ -142,7 +142,6 @@ contract Interpreter is Ownable {
         }
     }
 
-    event PACH(string, string, address, uint);
     /**
     * @dev Interprets a rule
     * @param _from Address of the user who initiated the call
@@ -193,7 +192,6 @@ contract Interpreter is Ownable {
         
         // Emit an event to inform the front-end that a particular article in the rule successed or not
         emit InterpretArticle(_from, _dealId, _ruleId, _articleId);
-        emit PACH(article.instructionName, instructionSignature, article.paramAddress, msg.value);
         return success;
     }
 
