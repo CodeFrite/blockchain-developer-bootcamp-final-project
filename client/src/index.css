@@ -1,8 +1,6 @@
 body {
   margin: 0;
   font-family: "Roboto Condensed"!important;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   background-image: url("./assets/memphis-mini.png");
 }
 
@@ -12,12 +10,31 @@ code {
 }
 
 h2 {
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 span.var {
-  color:darkred;
-  font-weight: bold;
+  color:black;
+  background: rgba(255, 255, 0, 0.25);
+}
+
+span.var:hover {
+  text-decoration: red wavy underline;
+  background: rgba(255, 255, 0, 0.75);
+}
+
+span.signed-false {
+  color:black;
+  font-size: 3em;
+}
+
+span.signed-false:hover {
+  color:greenyellow;
+}
+
+span.signed-true {
+  color:greenyellow;
+  font-size: 3em;
 }
 
 #header-container {
@@ -25,6 +42,24 @@ span.var {
 }
 
 #main-container {
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  background: white;
+  padding:50px;
+  border:1px black solid;
+}
+
+#sign-container {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  background: white;
+  padding:50px;
+  border:1px black solid;
+}
+
+.header-link {
+  text-decoration: none;
+  font-size: 1.2em;
+  padding-left: 15px;
+  padding-right: 15px;
 }

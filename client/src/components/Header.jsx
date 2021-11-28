@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Container, Navbar, Nav, Button, Form, Spinner } from 'react-bootstrap';
+import { Container, Navbar, Nav, Button, Spinner } from 'react-bootstrap';
+import {Link} from 'react-router-dom';
 
 class Header extends Component {
   constructor(props) {
@@ -7,6 +8,31 @@ class Header extends Component {
     this.state = {  }
   }
   render() { 
+    // Helper rendering function for nav links
+    const renderNavLinks = () => {
+      if (this.props.metamask.connected){
+        if (this.props.isOwnerAccount){
+          return (
+            <>
+              <Link className="header-link" to="/CreateDeal">Let's Make A Deal</Link>
+              |
+              <Link className="header-link" to="/ExecuteDeal">Execute A Deal</Link>
+              |
+              <Link className="header-link" to="/">Admin Dashboard</Link>
+            </>
+          )
+        } else {
+          return (
+            <>
+              <Link className="header-link" to="/">Let's Make A Deal</Link>
+              |
+              <Link className="header-link" to="/">Execute a rule</Link>
+            </>
+          )
+        }
+      }
+    }
+
     // Helper rendering functions for connect wallet button
     const renderConnectMetaMaskButton = () => {
       if (!this.props.metamask.installed)
@@ -28,17 +54,17 @@ class Header extends Component {
     // Main render
     return (
       <Navbar variant="light" bg="light" expand="lg">
+        
         <Container className="container-fluid">
-
-          <Navbar.Brand>
+          
+          <Navbar.Brand href="/">
             MAD          
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav>
-              <Form className="d-flex">
-                {renderConnectMetaMaskButton()}
-              </Form>          
+              {renderNavLinks()}
+              {renderConnectMetaMaskButton()}
             </Nav>
           </Navbar.Collapse>
 

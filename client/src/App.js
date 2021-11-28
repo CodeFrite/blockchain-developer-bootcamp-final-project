@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Header from "./components/Header";
 import Home from "./components/Home";
 import CreateDeal from "./components/CreateDeal";
+import ExecuteDeal from "./components/ExecuteDeal";
 import CustomModal from "./components/CustomModal";
 
 // IMPORT CSS
@@ -23,8 +24,10 @@ class App extends Component {
 
   state = {
     contract: null,
+    contractOwner: null,
     accounts: null,
-    profile: null,
+    selectedAccount: null,
+    isOwnerAccount:false,
     metamask: {
       showModal: false,
       installed: false,
@@ -32,7 +35,8 @@ class App extends Component {
       connected: false
     },
     ethereum: null,
-    web3:null
+    web3:null,
+    priceFeedRef:null
   };
 
   
@@ -106,25 +110,12 @@ class App extends Component {
 
   // TODO: Give gas estimate const amountOfGas = await instance.sendTokens.estimateGas(4, myAccount); (https://www.trufflesuite.com/docs/truffle/getting-started/interacting-with-your-contracts)
 
-  transferOwner = async () => {
-    const { accounts, contract } = this.state;
-    const addr = "0x16A37fc3C810161827F580E3a0B997973E304E1a";
+  /* Public Interface to Proxy */
 
-    // Stores a given value, 5 by default.
-    contract.methods.transferOwner(addr).send({ from: accounts[0] })
-      .then((result) => {
-        alert("OYEOYEOYE");
-      })
-      .catch((error) => {
-        alert("KOKOKO");
-      });
-  };
-
-  getOwner = async () => {
+  getContractOwner = async () => {
     const { contract } = this.state;
-    // Get the value from the contract to prove it worked.
-    const response = await contract.methods.getOwner().call();
-    return response;
+    const _contractOwner = await contract.methods.owner().call();
+    this.setState({contractOwner:_contractOwner});
   }
 
   connectMetaMask = async () => {
@@ -147,20 +138,21 @@ class App extends Component {
       this.setState({ web3: new Web3(this.state.ethereum) });
 
       // Create contract objects
-      
       const networkId = await this.state.web3.eth.net.getId();
       const deployedNetwork = Proxy.networks[networkId];
       this.setState({ contract: new this.state.web3.eth.Contract(Proxy.abi, deployedNetwork && deployedNetwork.address) });
       console.log("Contract instance created ...");
 
-      // Call contract
-      
-      console.log("Calling Proxy: Get rule creation fees ...");
-      await this.transferOwner();
-      const _newValue =  await this.getOwner();
-      this.setState({ storageValue: _newValue });
-      console.log("... Contract call returned value ",  _newValue);
-      
+      // Check if user is owner
+      this.setState({selectedAccount:this.state.web3.currentProvider.selectedAddress});
+
+      // Load data
+      await this.getContractOwner();
+
+      // Is user logged with contract owner account?
+      this.setState({isOwnerAccount: (this.state.selectedAccount.toUpperCase() === this.state.contractOwner.toUpperCase())});
+      console.log("Selected account:",this.state.selectedAccount.toUpperCase());
+      console.log("Contract owner:",this.state.contractOwner.toUpperCase());
     } catch (error) {
       console.error(error);
     }
@@ -175,19 +167,27 @@ class App extends Component {
         connecting: false, 
         connected:false 
       },
+      web3: null,
       accounts: [],
-      web3: null
+      selectedAccount:null,
+      priceFeedRef:null,
+      contract:null,
+      contractOwner:null,
+      isOwnerAccount:null
     });
     console.log("Disconnected from MetaMask");
   }
   
 
   render() {
+
     return (
       <Container>
         
         <Router>
-          <Header profile={this.state.profile} metamask={this.state.metamask} handleConnectMetaMask={this.connectMetaMask} handleDisconnectMetaMask={this.disconnectMetaMask}/>
+          <Container id="header-container">
+            <Header isOwnerAccount={this.state.isOwnerAccount} metamask={this.state.metamask} handleConnectMetaMask={this.connectMetaMask} handleDisconnectMetaMask={this.disconnectMetaMask}/>
+          </Container>
           
           {/* Modal MetaMask */}
           <CustomModal show={this.state.metamask.showModal} handleClose={() => {
@@ -196,7 +196,8 @@ class App extends Component {
           
           <Routes>
             <Route exact path='/' element={<Home/>}></Route>
-            <Route path='/CreateDeal' element={<CreateDeal/>}></Route>
+            <Route path='/CreateDeal' element={<CreateDeal contract={this.state.contract} selectedAccount={this.state.selectedAccount}/>}></Route>
+            <Route path='/ExecuteDeal' element={<ExecuteDeal contract={this.state.contract} selectedAccount={this.state.selectedAccount}/>}></Route>
           </Routes>
         </Router>
       </Container>
