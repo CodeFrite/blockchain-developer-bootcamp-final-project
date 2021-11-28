@@ -35,6 +35,7 @@ module.exports = async function(deployer) {
   await proxy.setInstructionsProviderContractRef(instructionsProvider.address);
   await proxy.setDealsContractRef(deals.address);
   await proxy.setInterpreterContractRef(interpreter.address);
+  await proxy.setPriceFeedRefAggregatorAddress("0x8A753747A1Fa494EC906cE90E9f37563A8AF630e");
   await proxy.unpause();
 
   // Load instructions
@@ -42,5 +43,4 @@ module.exports = async function(deployer) {
   await instructions.addInstruction("TRANSFER", "2", "_transfer(address)");
 
   // Set ChainLink ETH/USD price feed aggregator address
-  await proxy.setPriceFeedRefAggregatorAddress("0x8A753747A1Fa494EC906cE90E9f37563A8AF630e");
 };
