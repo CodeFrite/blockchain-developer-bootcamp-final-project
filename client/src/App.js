@@ -16,6 +16,7 @@ import "./App.css";
 
 /* IMPORT CONTRACTS */
 import Proxy from "./contracts/Proxy.json";
+import Deals from "./contracts/Deals.json";
 
 // GLOBALS
 var {ethereum} = window;
@@ -23,7 +24,10 @@ var {ethereum} = window;
 class App extends Component {
 
   state = {
-    contract: null,
+    contracts: {
+      proxy:null,
+      deals:null
+    },
     contractOwner: null,
     accounts: null,
     selectedAccount: null,
@@ -113,7 +117,7 @@ class App extends Component {
   /* Public Interface to Proxy */
 
   getContractOwner = async () => {
-    const { contract } = this.state;
+    const contract= this.state.contracts.proxy;
     const _contractOwner = await contract.methods.owner().call();
     this.setState({contractOwner:_contractOwner});
   }
@@ -139,9 +143,15 @@ class App extends Component {
 
       // Create contract objects
       const networkId = await this.state.web3.eth.net.getId();
-      const deployedNetwork = Proxy.networks[networkId];
-      this.setState({ contract: new this.state.web3.eth.Contract(Proxy.abi, deployedNetwork && deployedNetwork.address) });
-      console.log("Contract instance created ...");
+      const deployedNetworkProxy = Proxy.networks[networkId];
+      const deployedNetworkDeals = Deals.networks[networkId];
+      this.setState({ 
+        contracts:{
+          proxy: new this.state.web3.eth.Contract(Proxy.abi, deployedNetworkProxy && deployedNetworkProxy.address),
+          deals: new this.state.web3.eth.Contract(Deals.abi, deployedNetworkDeals && deployedNetworkDeals.address)
+        } 
+      });
+      console.log("Contracts instances created ...");
 
       // Check if user is owner
       this.setState({selectedAccount:this.state.web3.currentProvider.selectedAddress});
@@ -196,8 +206,8 @@ class App extends Component {
           
           <Routes>
             <Route exact path='/' element={<Home/>}></Route>
-            <Route path='/CreateDeal' element={<CreateDeal contract={this.state.contract} selectedAccount={this.state.selectedAccount}/>}></Route>
-            <Route path='/ExecuteDeal' element={<ExecuteDeal contract={this.state.contract} selectedAccount={this.state.selectedAccount}/>}></Route>
+            <Route path='/CreateDeal' element={<CreateDeal contract={this.state.contracts.proxy} selectedAccount={this.state.selectedAccount}/>}></Route>
+            <Route path='/ExecuteDeal' element={<ExecuteDeal contracts={this.state.contracts} selectedAccount={this.state.selectedAccount}/>}></Route>
           </Routes>
         </Router>
       </Container>

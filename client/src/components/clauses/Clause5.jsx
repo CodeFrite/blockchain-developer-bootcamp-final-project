@@ -10,9 +10,9 @@ class Clause5 extends Component {
           articles:[
             {
               instructionName:"IF-ADDR",
-              paramString:"CHAIRMAN",
+              paramString:"CEO",
               paramUInt:0,
-              paramAddress:"0x194262d7D3959416033d1623e16800bD56E0Fb3b"
+              paramAddress:"0x07972803660E7d087fDf27F25343D618fA21A354"
             },
             {
               instructionName:"TRANSFER",
@@ -65,7 +65,7 @@ class Clause5 extends Component {
       this.setState({signed});
       this.props.signHandler(5,signed);
       
-      let rules = [this.state.rules[0].articles.map((article)=>[article.instructionName,article.paramString, article.paramUInt, article.paramAddress])];
+      let rules = this.state.rules.map((rule) => rule.articles.map((article)=>[article.instructionName,article.paramString, article.paramUInt, article.paramAddress]));
       this.props.rulesHandler(rules);
     }
   }
