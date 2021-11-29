@@ -1,5 +1,12 @@
 # Architecture
 
+Before diving into the discussion behind the artchitectural choices made, let's first review the general architecture of the DApp
+
+## Diagram
+
+![image](https://user-images.githubusercontent.com/34804976/143937729-0d148bd1-3043-41b7-8305-93792cb5b622.png)
+
+
 ## Problematic
 
 The main feature of this project is to allow users to define funds routing rules by selecting simple instructions like IF-ADDR or TRANSFER. The instructions set had to be upgradable to permit new behaviors and new use cases of the DApp.
@@ -8,9 +15,8 @@ In addition, I wanted the solution to observe the following constraints:
 
 1. Upgrading the instructions set should never lead to the loss of the client data stored and should not require any client data migration
 2. Adding new instructions to the contract should not automatically lead to the need for contract(s) redeployment
-3. Prices and fees should be displayed to the client in USD
-
-=> Use of a Chainlink Oracle for the ETH/USD rate conversion
+3. In emergency situations, we should be able to stop the deals creation and execution
+4. Prices and fees should be displayed to the client in USD
 
 This first restriction led to the use of the Proxy Design pattern and the use of low-level inter-contract calls
 
