@@ -4,7 +4,7 @@ Before diving into the discussion behind the artchitectural choices made, let's 
 
 ## Diagram
 
-![image](https://user-images.githubusercontent.com/34804976/143938205-d827017e-26a9-4b65-b5f8-b099797e3370.png)
+![image](https://user-images.githubusercontent.com/34804976/143938279-7c6020e3-20cd-4e81-9cf9-515eb08d7966.png)
 
 ## Problematic
 
