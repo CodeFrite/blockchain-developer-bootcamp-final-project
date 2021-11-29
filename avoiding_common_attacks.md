@@ -25,3 +25,17 @@ function withdraw() external whenNotPaused returns(bool) {
   return success;
 }
 ```
+## SWC-119 - Shadowing State Variables [link](https://swcregistry.io/docs/SWC-119)
+
+In order to avoid shadowing state variable, I always prepend my functions parameters and (when needed) my local variables with an underscore:
+
+```
+contract Deals is Ownable {
+...
+  uint dealId = 0;
+...
+  function getAccountsCount(uint _dealId) public view returns(uint) {
+    return accountsCount[_dealId];
+  }
+...
+```
