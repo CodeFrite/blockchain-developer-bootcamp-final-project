@@ -8,7 +8,7 @@ Before diving into the discussion behind the artchitectural choices made, let's 
 
 ## Problematic
 
-The main feature of this project is to allow users to define conditional routes for funds by selecting simple instructions like IF-ADDR or TRANSFER. The instructions set had to be upgradable to permit new behaviors and new use cases of the DApp.
+The main feature of this project is to allow users to define conditional routes for funds by selecting simple instructions like `IF-ADDR` or `TRANSFER`. The instructions set had to be upgradable to permit new behaviors and new use cases of the DApp.
 
 In addition, I wanted the solution to observe the following constraints:
 
@@ -29,7 +29,7 @@ TODO: Explain minor & major updated
 
 ### Chainlink Oracle [link](https://docs.chain.link/docs/get-the-latest-price/)
 
-In order to display the prices to the user in USD, I am fetching the current ETH/USD conversion rate from a Chainlink Oracle using the following piece of code located in the Proxy.sol contract:
+In order to display the prices to the user in USD, I am fetching the current ETH/USD conversion rate from a Chainlink Oracle using the following piece of code located in the `Proxy` contract:
 
 ```
 ...
