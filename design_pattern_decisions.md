@@ -29,7 +29,7 @@ TODO: Explain minor & major updated
 
 ### Chainlink Oracle [link](https://docs.chain.link/docs/get-the-latest-price/)
 
-In order to display the prices to the user in USD, I am fetching the current ETH/USD conversion rate from a Chainlink Oracle using the following piece of code located in the `Proxy` contract:
+In order to display the prices to the user in USD, I am fetching the current ETH/USD conversion rate from a Chainlink Oracle using the following piece of code located in the `Proxy` contract. This process is manual and must be triggered by the owner as frequently as needed. It could have been easily automated by calling the aggregator periodically from a back-end but for simplicity sake (deployment of the front-end, ...) I made the choice to make it manual.
 
 ```
 ...
