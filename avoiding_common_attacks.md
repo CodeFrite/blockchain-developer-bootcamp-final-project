@@ -1,7 +1,5 @@
 # Avoiding common attacks
 
-Smart contract Weakness Classification (SWC) can be found in [SWC registry](https://swcregistry.io/) 
-
 ## SWC-101 - Integer Overflow and Underflow [link](https://swcregistry.io/docs/SWC-101)
 
 All the contracts are compiled with solidity compiler version '0.8.9'. No need to take special measures like using safemath.
