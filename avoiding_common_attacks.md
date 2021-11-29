@@ -38,4 +38,5 @@ contract Deals is Ownable {
     return accountsCount[_dealId];
   }
 ...
+}
 ```
