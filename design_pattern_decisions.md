@@ -48,10 +48,6 @@ function saveLatestQuotation() public onlyOwner {
 For upgradibility sake, the address can be set dynamically if it happens to change:
 
 ```
-/**
-* @dev Set the address to the Chainlink ETH/USD price feed aggregator
-* @param _new New address to the Chainlink ETH/USD price feed aggregator
-*/
 function setPriceFeedRefAggregatorAddress(address _new) public onlyOwner {
   address old = address(priceFeedRef);
   priceFeedRef = AggregatorV3Interface(_new);
