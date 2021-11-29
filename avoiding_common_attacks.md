@@ -7,11 +7,14 @@ Smart contract Weakness Classification (SWC) can be found in [SWC registry](http
 All the contracts are compiled with solidity compiler version '0.8.9'. No need to take special measures like using safemath.
 [link](https://docs.soliditylang.org/en/v0.8.9/080-breaking-changes.html?highlight=underflow)
 
-## SWC-111 Use of Deprecated Solidity Functions
+## SWC-111 Use of Deprecated Solidity Functions[link](https://swcregistry.io/docs/SWC-111)
 
 In my code, I use revert instead of throw.
 
 ```
+/**
+* @dev Block OpenZeppelin Ownable.renounceOwnership
+*/ 
 function renounceOwnership() public pure override {
   revert('Contract cannot be revoked');
 }
