@@ -156,7 +156,7 @@ class App extends Component {
 
       // Check if user is owner 
       
-      //this.setState({selectedAccount:this.state.web3.currentProvider.selectedAddress}); // Retruns selectedAddress in lower case (https://github.com/MetaMask/metamask-extension/issues/12348)
+      //this.setState({selectedAccount:this.state.web3.currentProvider.selectedAddress}); // Returns selectedAddress in lower case (https://github.com/MetaMask/metamask-extension/issues/12348)
       this.setState({selectedAccount:accounts[0]});
 
       // Load data
@@ -166,6 +166,15 @@ class App extends Component {
       this.setState({isOwnerAccount: (this.state.selectedAccount.toUpperCase() === this.state.contractOwner.toUpperCase())});
       console.log("Selected account:",this.state.selectedAccount.toUpperCase());
       console.log("Contract owner:",this.state.contractOwner.toUpperCase());
+
+      // Set event Listeners
+      window.ethereum.on('accountsChanged', async (accounts) => {
+        let accs = await this.state.web3.eth.getAccounts();
+        //this.setState({selectedAccount:accounts[0]}) // Returns accounts in lower case (https://github.com/MetaMask/metamask-extension/issues/12348)
+        this.setState({selectedAccount:accs[0]})
+      });
+      
+
     } catch (error) {
       console.error(error);
     }
