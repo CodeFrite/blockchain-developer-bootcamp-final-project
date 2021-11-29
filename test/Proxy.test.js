@@ -31,12 +31,17 @@ contract("Proxy", async (accounts) => {
        1 USD = (10**18)/4400 WEI
   */
 
-  const dealAccounts = [ACCOUNTANT,CEO,CHAIRMAN];
+  const dealAccounts = [CEO,CHAIRMAN,ACCOUNTANT];
   const ruleList = 
     [
       [
         ["IF-ADDR", "CHAIRMAN", 0, CHAIRMAN],
-        ["TRANSFER", "ACCOUNTANT", 0, ACCOUNTANT]
+        ["TRANSFER", "ACCOUNTANT", 100, ACCOUNTANT]
+      ],
+      [
+        ["IF-ADDR", "CEO", 0, CEO],
+        ["TRANSFER", "CHAIRMAN", 75, CHAIRMAN],
+        ["TRANSFER", "ACCOUNTANT", 25, ACCOUNTANT]
       ]
     ];
 
@@ -98,11 +103,6 @@ contract("Proxy", async (accounts) => {
       it("... when the contract is unpaused, it should emit a `Unpaused` event", async () => {
         let tx = await instanceProxy.unpause({from:CEO});
         expectEvent(tx, "Unpaused");
-      });
-
-      it.skip("... createDeal should then be callable by the Proxy", async () => {
-        let tx = await instanceProxy.createDeal(dealAccounts, ruleList, {from:PROXY});
-        expectEvent(tx,"CreateDeal");
       });
 
     });
@@ -377,7 +377,6 @@ contract("Proxy", async (accounts) => {
 
       it("... the CHAIRMAN account should pay 1 ETH + gas fees", async () => {
         let newCallerBalance = await web3.eth.getBalance(CHAIRMAN);
-        
         assert(newCallerBalance < (oldCallerBalance-1),"newBalance < oldBalance - 1  ETH");
       });
   
@@ -387,11 +386,35 @@ contract("Proxy", async (accounts) => {
 
       it("... balance shoud increase by 1ETH - fees", async () => {
         let oldAccountBalance = await web3.eth.getBalance(ACCOUNTANT);
-        let tx = await debug(instanceProxy.withdraw({from:ACCOUNTANT}));
-        console.log(tx);
+        let tx = await instanceProxy.withdraw({from:ACCOUNTANT});
         let newAccountBalance = await web3.eth.getBalance(ACCOUNTANT);
-        console.log(newAccountBalance,oldAccountBalance);
         //assert((newAccountBalance-oldAccountBalance)>.8,"ERROR");
+      });
+
+    });
+
+    describe("Execute Rule 1: Split payment OF 1ETH from CEO to CHAIRMAN 75% & ACCOUNTANT 25%", () => {
+
+      let tx;
+      let oldAccountantBalance;
+
+      it("... the CHAIRMAN balance should increase by ~.75 ETH", async () => {
+        let oldChairmanBalance = await web3.eth.getBalance(CHAIRMAN);
+        oldAccountantBalance = await web3.eth.getBalance(ACCOUNTANT);
+
+        tx = await instanceProxy.executeRule(0, 1, {from:CEO, value: 10**18});
+        expectEvent(tx, "PayTransactionFees");
+        let decodedLog = web3.eth.abi.decodeLog([{type: 'address',name: '_from'},{type: 'uint256',name: '_deposits'}], tx.receipt.rawLogs[0].data, tx.receipt.rawLogs[0].topics[0]);
+        
+        await instanceProxy.withdraw({from:CHAIRMAN});
+        let newChairmanBalance = await web3.eth.getBalance(CHAIRMAN);
+        assert(((newChairmanBalance-oldChairmanBalance)/10**18)>.74,"SPLIT not computed correctly");
+      });
+
+      it("... the ACCOUNTANT balance should increase by ~.25 ETH", async () => {
+        await instanceProxy.withdraw({from:ACCOUNTANT});
+        let newAccountantBalance = await web3.eth.getBalance(ACCOUNTANT);
+        assert(((newAccountantBalance-oldAccountantBalance)/10**18)>.24,"SPLIT not computed correctly");
       });
 
     });

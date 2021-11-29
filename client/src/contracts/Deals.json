@@ -18225,15 +18225,40 @@
           ],
           "name": "OwnershipTransferred",
           "type": "event"
+        },
+        "0x3f1217b02323e5dc4e83e1bf861d3a5c04873f7e972587684ce1dfcbbb329fa1": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_old",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_new",
+              "type": "address"
+            }
+          ],
+          "name": "SetProxyContractAddress",
+          "type": "event"
         }
       },
       "links": {},
-      "address": "0x974AF8134E248b3ace3ACfb5fC31212564C3be48",
-      "transactionHash": "0xf5b16ffa62348680b9fb216f534ea03f1d3ff2ba370fa55bb3b84faea2302e23"
+      "address": "0xdf3CA39198202A364dFE6D5213a97c0B1Da59BA3",
+      "transactionHash": "0x17133a1c68a827e1de1bcff9b3b1e4dd2a9abd8eb594975725149e8efbaed878"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-11-28T10:47:33.031Z",
+  "updatedAt": "2021-11-28T21:39:31.763Z",
   "networkType": "ethereum",
   "devdoc": {
     "events": {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Button, Row, Col } from 'react-bootstrap';
+import { Table, Form, Button, Row, Col } from 'react-bootstrap';
 
 class Clause5 extends Component {
   constructor(props) {
@@ -7,20 +7,7 @@ class Clause5 extends Component {
     this.state = { 
       rules:[
         {
-          articles:[
-            {
-              instructionName:"IF-ADDR",
-              paramString:"CEO",
-              paramUInt:0,
-              paramAddress:"0x07972803660E7d087fDf27F25343D618fA21A354"
-            },
-            {
-              instructionName:"TRANSFER",
-              paramString:"ACCOUNTANT",
-              paramUInt:0,
-              paramAddress:"0x0db723d5863a9b33ad83aa349b27f8136b6d5360"
-            }
-          ]
+          articles:[]
         },
         {
           articles:[
@@ -45,6 +32,14 @@ class Clause5 extends Component {
           ]
         }
       ],
+      newArticles: [
+        {
+          instructionName: null,
+          paramString: null,
+          paramUInt: null,
+          paramAddress: null
+        }
+      ],
       signed:false
     }
   }
@@ -54,9 +49,18 @@ class Clause5 extends Component {
     const article = this.state.rules[ruleIdx].articles[articleIdx];
     if (article.instructionName === "IF-ADDR")
       text = "If the sender is " + article.paramString;
-    else if(article.instructionName === "TRANSFER")
+    else if(article.instructionName === "TRANSFER-ALL")
       text = "I transfer the total amount to " + article.paramString;
+    else if(article.instructionName === "TRANSFER-SOME")
+      text = "I transfer " + article.paramUInt + "% of the total amount to " + article.paramString;
     return text;
+  }
+
+  translateInstructionName = (name) => {
+    let rule1 = ["TRANSFER-ALL","TRANSFER-SOME"];
+    if (rule1.indexOf(name) !== -1)
+      return "TRANSFER";
+    return name;
   }
 
   sign = () => {
@@ -65,9 +69,68 @@ class Clause5 extends Component {
       this.setState({signed});
       this.props.signHandler(5,signed);
       
-      let rules = this.state.rules.map((rule) => rule.articles.map((article)=>[article.instructionName,article.paramString, article.paramUInt, article.paramAddress]));
+      let rules = this.state.rules.map((rule) => rule.articles.map((article)=>[this.translateInstructionName(article.instructionName),article.paramString, article.paramUInt, article.paramAddress]));
       this.props.rulesHandler(rules);
     }
+  }
+
+  handleSelectInstructionName = (idx, e) => {
+    let newArticles = this.state.newArticles;
+
+    newArticles[idx] = {
+      instructionName: e.target.value,
+      paramString: null,
+      paramUInt: (e.target.value==="TRANSFER-ALL") ? 100 : 0,
+      paramAddress: null
+    }
+    this.setState({newArticles});
+    console.log("handleSelectInstructionName")
+  }
+
+  handleSelectParamString = (idx, e) => {
+    let newArticles = this.state.newArticles;
+    newArticles[idx].paramString = e.target.value;    
+    this.setState({newArticles});
+    console.log("handleSelectParamString")
+  }
+
+  handleSelectParamUInt = (idx, e) => {
+    let newArticles = this.state.newArticles;
+    newArticles[idx].paramUInt = e.target.value;    
+    this.setState({newArticles});
+    console.log("handleSelectParamUINT")
+  }
+
+  handleSelectFullAddress = (idx,e) => {
+    // Find the corresponding address
+    let account = this.props.accounts.filter((account) => account.alias===e.target.value);
+    console.log(account);
+    let newArticles = this.state.newArticles;
+    newArticles[idx].paramString = e.target.value;
+    newArticles[idx].paramAddress = account[0].address;
+    this.setState({newArticles});
+    console.log("handleSelectFullAddress")
+  }
+
+  addArticle = (ruleId) => {
+    let rules = [...this.state.rules];
+    let newArticle = this.state.newArticles[ruleId];
+    let article = {
+      instructionName: newArticle.instructionName,
+      paramString: newArticle.paramString,
+      paramUInt: newArticle.paramUInt,
+      paramAddress: newArticle.paramAddress,
+    }
+    rules[0].articles.push(article);
+    this.setState({rules});
+  }
+
+  deleteArticle = (ruleId, key) => {
+    let rules = this.state.rules.map((rule, ruleIdx) => ({articles: rule.articles.filter((article,articleIdx) => !(ruleIdx===ruleId && articleIdx===key))}));
+    console.log(this.state.rules);
+    this.setState({rules});
+    console.log(this.state.rules);
+    console.log("Clause5> Delete article ", key+1);
   }
 
   render() { 
@@ -100,13 +163,13 @@ class Clause5 extends Component {
                 this.state.rules[0].articles.map((article, articleIdx) => {
 
                   return(
-                    <tr key={articleIdx}>
-                      <td>{articleIdx+1}</td>
-                      <td>{article.instructionName}</td>
-                      <td>{this.renderArticle(0,articleIdx)}</td>
-                      <td>
+                    <tr>
+                      <td  key={"0-articleId" + articleIdx}>{articleIdx+1}</td>
+                      <td key={"0-articleName-" + articleIdx}>{article.instructionName}</td>
+                      <td key={"0-articleText-" + articleIdx}>{this.renderArticle(0,articleIdx)}</td>
+                      <td key={"0-articleDelete-" + articleIdx}>
                         {!this.state.signed
-                          ? <Button variant="outline-danger" size="sm" onClick={() => this.deleteRule(articleIdx)}>&#10006;</Button>
+                          ? <Button variant="outline-danger" size="sm" onClick={() => this.deleteArticle(0,articleIdx)}>&#10006;</Button>
                           : '-'
                         }
                       </td>
@@ -117,9 +180,56 @@ class Clause5 extends Component {
               {!this.state.signed &&
                 <tr>
                   <td>{this.state.rules[0].articles.length+1}</td>
-                  <td><input placeholder="Alias, example: Accountant" maxLength="25" size="25" onChange={(e) => this.setState({newRule:{...this.state.newAccount,alias:e.target.value}})}/></td>
-                  <td><input placeholder="Address, example: 0x07972803660e7d087fdf27f25343d618fa21a354" maxLength="42" size="42" onChange={(e) => this.setState({newAccount:{...this.state.newAccount,address:e.target.value}})}/></td>
-                  <td><Button variant="outline-success" size="sm" onClick={() => this.addAccount()}>&#10004;</Button></td>
+                  <td>
+                    <Form.Select aria-label="Default select example" onChange={(e) => this.handleSelectInstructionName(0,e)}>
+                      <option>Select an instruction</option>
+                      <option>IF-ADDR</option>
+                      <option>TRANSFER-ALL</option>
+                      <option>TRANSFER-SOME</option>
+                    </Form.Select>
+                  </td>
+                  <td>
+                    {this.state.newArticles[0].instructionName==="IF-ADDR" &&
+                      <Row>
+                        <Col>If the sender is</Col>
+                        <Col>
+                          <Form.Select aria-label="Default select example" onChange={(e)=>this.handleSelectFullAddress(0,e)}>
+                            <option>Select an address</option>
+                            {this.props.accounts.map((account, accountId) => <option title={account.address}>{account.alias}</option>)}
+                          </Form.Select>
+                        </Col>
+                      </Row>
+                    }
+                    {this.state.newArticles[0].instructionName==="TRANSFER-ALL" &&
+                      <Row>
+                        <Col>I transfer the total amount to</Col>
+                        <Col>
+                          <Form.Select aria-label="Default select example" onChange={(e)=>this.handleSelectFullAddress(0,e)}>
+                            <option>Select an address</option>
+                            {this.props.accounts.map((account, accountId) => <option title={account.address}>{account.alias}</option>)}
+                          </Form.Select>
+                        </Col>
+                      </Row>
+                    }
+                    {this.state.newArticles[0].instructionName==="TRANSFER-SOME" &&
+                      <Row>
+                        <Col lg="2">
+                          I transfer
+                        </Col>
+                        <Col lg="4">
+                          <input placeholder="75" size="3" maxLength="3" onChange={(e) => this.handleSelectParamUInt(0,e)}/>
+                          % to
+                        </Col>
+                        <Col lg="6">
+                          <Form.Select aria-label="Default select example" onChange={(e)=>this.handleSelectFullAddress(0,e)}>
+                          <option>Select an address</option>
+                            {this.props.accounts.map((account, accountId) => <option title={account.address}>{account.alias}</option>)}
+                          </Form.Select>
+                        </Col>
+                      </Row>
+                    }
+                  </td>
+                  <td><Button variant="outline-success" size="sm" onClick={() => this.addArticle(0)}>&#10004;</Button></td>
                 </tr>
               }
             </tbody>

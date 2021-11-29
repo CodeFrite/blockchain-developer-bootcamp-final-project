@@ -12,7 +12,9 @@ module.exports = {
   contracts_build_directory: path.join(__dirname, "client/src/contracts"),
   networks: {
     develop: {
-      port: 8545
+      host: "127.0.0.1",
+      port: 7545,
+      network_id:5777
     },
     rinkeby: {
       provider: () =>
@@ -22,7 +24,7 @@ module.exports = {
           },
           providerOrUrl: `https://rinkeby.infura.io/v3/${infuraKey}`,
           addressIndex: 0,
-          numberOfAddresses: 50,
+          numberOfAddresses: 5,
         }),
       network_id: 4, // Rinkeby's id
     }
@@ -41,9 +43,6 @@ module.exports = {
     }
   },
   mocha: {
-    reporter: "eth-gas-reporter",
-    reporterOptions: {
-      currency : "USD"
-    }
+    reporter: "eth-gas-reporter"
   }
 };

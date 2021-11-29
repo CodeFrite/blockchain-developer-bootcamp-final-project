@@ -24,9 +24,9 @@ class Header extends Component {
         } else {
           return (
             <>
-              <Link className="header-link" to="/">Let's Make A Deal</Link>
+              <Link className="header-link" to="/CreateDeal">Let's Make A Deal</Link>
               |
-              <Link className="header-link" to="/">Execute a rule</Link>
+              <Link className="header-link" to="/ExecuteDeal">Execute a rule</Link>
             </>
           )
         }

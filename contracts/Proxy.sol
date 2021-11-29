@@ -430,15 +430,14 @@ contract Proxy is Ownable, Pausable {
     /**
     * @dev Withdraw all deposit from escrow for msg.sender
     */
-    function withdraw() external whenNotPaused {
+    function withdraw() external whenNotPaused returns(bool) {
         (bool success,) = instructionsProviderContractRef.call(
             abi.encodeWithSignature(
                 "withdraw(address)",
                 msg.sender
             )
         );
-        // Did the low level call succeed?
-        require(success,"Proxy: Unable to withdraw!");
+        return success;
     }
 
     /**

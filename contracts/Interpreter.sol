@@ -29,6 +29,9 @@ contract Interpreter is Ownable {
 
     /// @dev Deals contract reference
     Deals private dealsInstance;
+
+    /// @dev Track the msg.value already used by the rule being currently executed
+    uint private msgValueUsed;
     
     /* EVENTS */
 
@@ -130,6 +133,9 @@ contract Interpreter is Ownable {
     * @param _ruleId Id of the rule to be executed
     */
     function interpretRule(address _from, uint _dealId, uint _ruleId) external payable onlyProxy() {
+        // Init the msg value used to 0
+        msgValueUsed = 0;
+        
         // Get all articles in rule
         uint articlesCount = dealsInstance.getArticlesCount(_dealId, _ruleId);
         
@@ -181,7 +187,12 @@ contract Interpreter is Ownable {
             bool _success;
             bytes memory _result;
             
-            (_success, _result) = instructionsProviderInstance.call{value:msg.value}(
+            // Increment current msg.value % usage
+            msgValueUsed += article.paramUInt;
+            // Revert if used value > 100% of msg.value
+            if (msgValueUsed>100)
+                revert("Interpreter: Rule is spending more msg.value than received!");
+            (_success, _result) = instructionsProviderInstance.call{value:(msg.value*article.paramUInt)/100}(
                 abi.encodeWithSignature(
                     instructionSignature,
                     article.paramAddress

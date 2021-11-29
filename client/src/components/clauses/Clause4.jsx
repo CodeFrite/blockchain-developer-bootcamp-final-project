@@ -23,6 +23,7 @@ class Clause4 extends Component {
 
   deleteAccount = (key) => {
     let accounts = this.state.accounts.filter((account, idx) => key!==idx);
+    
     this.setState({accounts});
     console.log("Clause4> Delete account ", key+1);
   }
@@ -32,9 +33,7 @@ class Clause4 extends Component {
       let signed = !this.state.signed;
       this.setState({signed});
       this.props.signHandler(4,signed);
-      
-      let accounts = [this.props.selectedAccount, ...this.state.accounts.map((acc)=>acc.address)];
-      this.props.accountsHandler(accounts);
+      this.props.accountsHandler([{address:this.props.selectedAccount, alias:'owner'}, ...this.state.accounts]);
     }
   }
 

@@ -15,8 +15,8 @@ class CreateDeal extends Component {
   constructor(props) {
     super(props);
     this.state = { 
-      accounts:[0],
-      rules: [0],
+      accounts:[],
+      rules: [],
       clauseSignatures:[0,0,0,0,0,0],
       signed:false,
       creating:false,
@@ -39,10 +39,9 @@ class CreateDeal extends Component {
   createDeal = async () => {
     // Change state
     this.setState({creating:true});
-    
     const { contract } = this.props;
     try{
-      const tx = await contract.methods.createDeal(this.state.accounts, this.state.rules).send({from:"0x07972803660E7d087fDf27F25343D618fA21A354",value:10**18});
+      const tx = await contract.methods.createDeal(this.state.accounts.map((account)=>account.address), this.state.rules).send({from:this.props.selectedAccount,value:10**18});
       this.setState({created:true});
       // Update state with tx info
       this.setState({
@@ -128,7 +127,8 @@ class CreateDeal extends Component {
           <br/>
           <Clause5 
             editable={!this.state.creating && !this.state.created}
-            contract={this.props.contract} 
+            contract={this.props.contract}
+            accounts={this.state.accounts}
             rulesHandler={this.rulesHandler} 
             signHandler={this.signHandler}
           />
