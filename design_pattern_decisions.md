@@ -4,12 +4,11 @@ Before diving into the discussion behind the artchitectural choices made, let's 
 
 ## Diagram
 
-![image](https://user-images.githubusercontent.com/34804976/143937729-0d148bd1-3043-41b7-8305-93792cb5b622.png)
-
+![image](https://user-images.githubusercontent.com/34804976/143938205-d827017e-26a9-4b65-b5f8-b099797e3370.png)
 
 ## Problematic
 
-The main feature of this project is to allow users to define funds routing rules by selecting simple instructions like IF-ADDR or TRANSFER. The instructions set had to be upgradable to permit new behaviors and new use cases of the DApp.
+The main feature of this project is to allow users to define conditional routes for funds by selecting simple instructions like IF-ADDR or TRANSFER. The instructions set had to be upgradable to permit new behaviors and new use cases of the DApp.
 
 In addition, I wanted the solution to observe the following constraints:
 
