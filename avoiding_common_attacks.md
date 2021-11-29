@@ -7,6 +7,22 @@ Smart contract Weakness Classification (SWC) can be found in [SWC registry](http
 All the contracts are compiled with solidity compiler version '0.8.9'. No need to take special measures like using safemath.
 [link](https://docs.soliditylang.org/en/v0.8.9/080-breaking-changes.html?highlight=underflow)
 
+## SWC-104 - Unchecked Call Return Value [link](https://swcregistry.io/docs/SWC-104)
+
+I make an extensive use of low level calls. Whenever I do, I make sure to check the result of the call.
+
+```
+function depositsOf() public returns (uint) {
+  // Upgrability: Low level call to InstructionsProvider
+  (bool success, bytes memory _result) = instructionsProviderContractRef.call(
+    abi.encodeWithSignature(
+    "depositsOf(address)",
+    msg.sender)
+  );
+  require(success,"Proxy: Unable to get the deposit of caller!");
+}
+```
+
 ## SWC-111 Use of Deprecated Solidity Functions[link](https://swcregistry.io/docs/SWC-111)
 
 In my code, I use revert instead of throw.
