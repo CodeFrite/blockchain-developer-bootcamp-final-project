@@ -131,15 +131,16 @@ class App extends Component {
       console.log("Connected to MetaMask!");
       this.setState({metamask: {...this.state.metamask, connecting:false, connected:true}})
 
-      // Query accounts
-      console.log("Querying MetaMask accounts ...");
-      const accounts = await ethereum.request({ method: 'eth_accounts' });
-      this.setState({accounts});
-      console.log("... accounts: ", accounts);
-
       // Create web3 object
       console.log("Creating web3 object ...");
       this.setState({ web3: new Web3(this.state.ethereum) });
+
+      // Query accounts
+      console.log("Querying MetaMask accounts ...");
+      //const accounts = await ethereum.request({ method: 'eth_accounts' }); // Returns accounts all in lower case (https://github.com/MetaMask/metamask-extension/issues/12348)
+      const accounts = await this.state.web3.eth.getAccounts();
+      this.setState({accounts});
+      console.log("... accounts: ", accounts);
 
       // Create contract objects
       const networkId = await this.state.web3.eth.net.getId();
@@ -153,8 +154,10 @@ class App extends Component {
       });
       console.log("Contracts instances created ...");
 
-      // Check if user is owner
-      this.setState({selectedAccount:this.state.web3.currentProvider.selectedAddress});
+      // Check if user is owner 
+      
+      //this.setState({selectedAccount:this.state.web3.currentProvider.selectedAddress}); // Retruns selectedAddress in lower case (https://github.com/MetaMask/metamask-extension/issues/12348)
+      this.setState({selectedAccount:accounts[0]});
 
       // Load data
       await this.getContractOwner();
@@ -207,7 +210,7 @@ class App extends Component {
           <Routes>
             <Route exact path='/' element={<Home/>}></Route>
             <Route path='/CreateDeal' element={<CreateDeal contract={this.state.contracts.proxy} selectedAccount={this.state.selectedAccount}/>}></Route>
-            <Route path='/ExecuteDeal' element={<ExecuteDeal contracts={this.state.contracts} selectedAccount={this.state.selectedAccount}/>}></Route>
+            <Route path='/ExecuteDeal' element={<ExecuteDeal web3={this.state.web3} contracts={this.state.contracts} selectedAccount={this.state.selectedAccount}/>}></Route>
           </Routes>
         </Router>
       </Container>
