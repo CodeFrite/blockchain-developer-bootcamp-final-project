@@ -69,11 +69,6 @@ uint public lastQuotationValue;
 /// @dev Last quotation timestamp fetched from Chainlink
 uint public lastQuotationTimestamp;
 ...
-/**
-* @dev Return the last quotation from Chainlink
-* @return Last quotation from Chainlink in WEI per USD
-* along with the query timestamp
-*/
 function getLatestQuotation() public view returns(uint, uint) {
   return (lastQuotationValue, lastQuotationTimestamp);
 }
@@ -82,20 +77,10 @@ function getLatestQuotation() public view returns(uint, uint) {
 It is then used in helper functions for converting amounts from ETH to USD or the other way around:
 
 ```
-/**
-* @dev Converts an amount in WEI to USD
-* @param _amountInWEI Amount in WEI
-* @return Converted amount in USD
-*/
 function convertWEI2USD(uint _amountInWEI) public view returns(uint) {
   return _amountInWEI / lastQuotationValue;
 }
 
-/**
-* @dev Converts an amount in USD to WEI
-* @param _amountInUSD Amount in USD
-* @return Converted amount in WEI
-*/
 function convertUSD2WEI(uint _amountInUSD) public view returns(uint) {
   return _amountInUSD * lastQuotationValue;
 }
