@@ -108,8 +108,6 @@ class App extends Component {
 
   // TODO: Change transferowner . Add control: https://web3js.readthedocs.io/en/v1.5.2/web3-utils.html#checkaddresschecksum
 
-  // TODO: Convert ether units: https://web3js.readthedocs.io/en/v1.5.2/web3-utils.html#fromwei
-
   // TODO: Add Transaction Event handler : look here .on('event', callback) https://web3js.readthedocs.io/en/v1.5.2/callbacks-promises-events.html
 
   // TODO: Give gas estimate const amountOfGas = await instance.sendTokens.estimateGas(4, myAccount); (https://www.trufflesuite.com/docs/truffle/getting-started/interacting-with-your-contracts)

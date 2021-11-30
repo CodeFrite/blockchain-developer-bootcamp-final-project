@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.0;
+pragma solidity 0.8.9;
 
 /* EXTERNAL DEPENDENCIES */
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -455,14 +455,7 @@ contract Proxy is Ownable, Pausable {
      */
     function saveLatestQuotation() public onlyOwner {
         // Query last ETH/USD price from ChainLink
-        (
-            //uint80 roundID, 
-            ,
-            int price,
-            ,
-            uint timestamp,
-            
-        ) = priceFeedRef.latestRoundData();
+        (, int price, , uint timestamp, ) = priceFeedRef.latestRoundData();
         
         // Save latest quotation (rounID, price & timestamp)
         lastQuotationValue = (10**18)*(10**8)/uint(price);
@@ -470,6 +463,11 @@ contract Proxy is Ownable, Pausable {
         emit QueryLastQuotationFromChainlink(msg.sender, lastQuotationValue, timestamp);
     }
 
+    /**
+    * @dev Return the last quotation from Chainlink
+    * @return Last quotation from Chainlink in WEI per USD
+    * along with the query timestamp
+    */
     function getLatestQuotation() public view returns(uint, uint) {
         return (lastQuotationValue, lastQuotationTimestamp);
     }
