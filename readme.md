@@ -1,7 +1,25 @@
 # blockchain-developer-bootcamp-final-project
-Let's Make A Deal (MAD) : Point and click platform allowing everyone to create versatile deals on the Ethereum blockchain
+Let's Make A Deal (MAD) : Point and click platform allowing everyone to create versatile routing rules for payments on the Ethereum blockchain
  
-## Problematic
+## Idea
+
+The idea of this project is to allow anyone with no prior experience in coding, to use the power of the blockchain to process incoming funds he receives from the outside according to very simple rules and be sure that the resulting behavior will never change in the future.
+
+But what are these rules? A rule is a succession of atomic instructions that are interpreted one after the other by the DApp. This results in the incoming funds being automatically routed to different accounts depending on certain conditions. In other words, by selecting the correct rules, a user can "program" how an incoming payment will be processes.
+
+## Use Cases
+
+Let's consider a few examples.
+
+### Split incomes between associates
+
+Let's say that you want to work with an associate on a commercial project. You know before hand that you are gonna receive all your incomes from a particular address. As associates, your desire is to simply split the incomes in 2 equal parts, 50% each.
+
+The classical solution would be to open an bank account on both of your names, and hope that you partner is honest. Even when working with someone reliable, everytime a payment is received, you will still need to split it manually.
+
+Another method would be to create a smart contract that will split any incoming payment
+
+A few use cases that I can
 
 - Work with someone and share the benefits
 - Pay salaries
@@ -11,7 +29,7 @@ Let's Make A Deal (MAD) : Point and click platform allowing everyone to create v
  
 ## WorkFlow
 
-
+Once connected to [MAD](), the user
 
 
 ## Features & User Stories
