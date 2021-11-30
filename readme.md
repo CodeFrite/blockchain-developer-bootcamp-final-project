@@ -1,17 +1,53 @@
 # blockchain-developer-bootcamp-final-project
-Let's Make A Deal (MAD) : Point and click platform allowing everyone to create versatile deals on the Ethereum blockchain
+Let's Make A Deal (MAD) : Point and click platform allowing everyone to create versatile routing rules for payments on the Ethereum blockchain
  
 ## Problematic
 
-- Work with someone and share the benefits
-- Pay salaries
-- Save money until a date is met
-- Save money until an amount is reached
-- ...
- 
+Let's say that you want to work with an associate on a commercial project. You know before hand that you are gonna receive all your incomes from a particular address. As associates, your desire is to simply split the incomes in 2 equal parts, 50% each.
+
+The classical solution would be to open a bank account on both of your names, and hope that you partner is honest. Even when working with someone reliable, everytime a payment is received, you will still need to split it manually.
+
+Another method would be to create a smart contract that will split any incoming payment. Apart from the fact that you'll need to code it yourserlf or hire someone to create it for you, what happens if the deal that you have with your colleague need to be changed ? For example, a new partner associate comes on board and need to share 15% of the generated incomes, a partner leaves the deal, ... You would probably need to develop & deploy a new contract on the Blockchain.
+
+This is where MAD comes to the rescue.
+
+## Idea
+
+The idea of this project is to allow anyone with no prior experience in coding, to use the power of the blockchain to process incoming funds he receives from the outside according to very simple rules and be sure that the resulting behavior will never change in the future.
+
+But what are these rules? A rule is a succession of atomic instructions that are interpreted one after the other by the DApp. This results in the incoming funds being automatically routed to different accounts depending on certain conditions. In other words, by selecting the correct rules, a user can "program" how an incoming payment will be processes.
+
+## Use Cases
+
+Now let's consider a few examples and how they could be solved on MAD.
+
+### &#128256; Split incomes between associates
+
+One of the simplest use case ever would be to split any incoming payment in half between 2 associates. On MAD you can do that in less than 30 seconds by adding the associates accounts ...
+
+![image](https://user-images.githubusercontent.com/34804976/144054962-65a4b1bb-e67e-46a0-8dc4-6318f0c7dacc.png)
+
+... and using the `TRANSFER-SOME` instruction:
+
+![image](https://user-images.githubusercontent.com/34804976/144055222-7891afb1-cfc0-4fb1-af39-7613155b4245.png)
+
+### &#128256; Pay salaries & bonuses
+
+A second use case would be to redirect the payments depending on the msg.sender. Considering the following accounts ...
+
+![image](https://user-images.githubusercontent.com/34804976/144056915-aafea5c3-c8c8-4341-8df1-962192cdb9fd.png)
+
+... we could then create a first rule that will pay salaries when the accountant sends funds to the DApp:
+
+![image](https://user-images.githubusercontent.com/34804976/144057214-35a2325c-b592-4e1e-bf71-3eabf1b91206.png)
+
+... and bonuses when the CEO makes a payment, all of this by using the `IF-ADDR` instruction:
+
+![image](https://user-images.githubusercontent.com/34804976/144057427-8468723e-cb95-4362-92c6-2f0f30a93484.png)
+
 ## WorkFlow
 
-
+Once connected to [MAD](), the user
 
 
 ## Features & User Stories
