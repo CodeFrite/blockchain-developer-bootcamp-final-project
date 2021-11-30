@@ -41,7 +41,7 @@ A second use case would be to redirect the payments depending on the msg.sender.
 
 ![image](https://user-images.githubusercontent.com/34804976/144057214-35a2325c-b592-4e1e-bf71-3eabf1b91206.png)
 
-... and bonuses when the CEO makes a payment:
+... and bonuses when the CEO makes a payment, all of this by using the `IF-ADDR` instruction:
 
 ![image](https://user-images.githubusercontent.com/34804976/144057427-8468723e-cb95-4362-92c6-2f0f30a93484.png)
 
