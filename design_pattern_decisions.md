@@ -1,12 +1,13 @@
 # Architecture
 
-Before diving into the discussion behind the artchitectural choices made, let's first review the general architecture of the DApp
+Before diving into the discussion behind the artchitectural choices made, let's first give general overview of the DApp building blocks. 
+_(In order to understand this part, the user is advised to first read the readme file and watch the videos)._
 
 ## Diagram
 
 ![image](https://user-images.githubusercontent.com/34804976/143939305-390dfd75-3cd0-4d4f-bc4b-3e17b7c9c00b.png)
 
-### High level architecture
+### High level overview
 
 On the diagram, I used 4 colors to highlight contracts depending on their main concern:
 
@@ -22,7 +23,7 @@ In the diagram, I have used 3 differents types of arrows to show the nature of t
 
 Please note that all contracts import the `CommonStructs` library and inherit from the `Ownable` contract (would have been to messy to add all these arrows in the diagram).
 
-The reason why I am using `imports` vs `references` will become clearer further in the text.
+The reason why I am using 3 different types of dependencies will become clearer further in the text.
 
 Let's now briefly describe what each contract is used for.
 
@@ -57,22 +58,26 @@ The `CommonStructs` library is reponsible for making available to the contracts 
 
 ## Problematic
 
+Now that we have a basic understanding of the architecture, let's dive deeper in the code and justify the architectural choices.
+
+### &#127919; Constraints
 The main feature of this project is to allow users to define conditional routes for funds by selecting simple instructions like `IF-ADDR` or `TRANSFER`. The instructions set had to be upgradable to permit new behaviors and new use cases of the DApp.
 
 In addition, I wanted the solution to observe the following constraints:
 
-1. Upgrading the instructions set should never lead to the loss of the client data stored and should not require any client data migration
-2. Adding new instructions to the contract should not automatically lead to the need for contract(s) redeployment
-3. In emergency situations, we should be able to stop the deals creation and execution
-4. Prices and fees should be displayed to the client in USD
+1. Upgrading the instructions set should never lead to the loss of the client data stored and should not require any client data migration => Loosely coupled contracts
+2. Adding new instructions to the contract should not automatically lead to the need for contract(s) redeployment => Low level calls
+3. The end user shouldn't have a direct access to any of the functions which changes the contract state => Use of the Proxy pattern
+4. In emergency situations, we should be able to stop the deals creation and execution => Pausable design pattern
+5. Prices and fees should be displayed to the client in USD => 
 
-This first restriction led to the use of the Proxy Design pattern and the use of low-level inter-contract calls
-
-TODO: Explain minor & major upgrades
+Each constraint led me to an architectural choice mentioned below.
 
 ## Design pattern decisions
 
 ### Inter-Contract Execution
+
+
 
 ### Inheritance and Interfaces
 
