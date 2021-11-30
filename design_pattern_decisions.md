@@ -20,22 +20,40 @@ In the diagram, I have used 3 differents types of arrows to show the nature of t
 - `references` to a contract are represented with a dashed arrow with a white head
 - `inheritance` is represented by a solid arrow with a white head
 
-All contracts import the `CommonStructs` library and inherit the `Ownable` contract.
+Please note that all contracts import the `CommonStructs` library and inherit from the `Ownable` contract (would have been to messy to add all these arrows in the diagram).
 
-### Proxy.sol
+The reason why I am using `imports` vs `references` will become clearer further in the text.
 
-The `Proxy` contract is the main entry point to the DApp for the end user. It is responsible for :
+Let's now briefly describe what each contract is used for.
+
+### &#129534; Proxy.sol
+
+The `Proxy` contract is the main entry point to the DApp for the end user. It is responsible for:
 - routing the different incoming calls from the user, dispatching them to the correct contract and retrieving the resulting data to the caller
 - keeping track of the contracts addresses as they change after contract upgrades
 - storaging the values of public pricing variables
 
-### Deals.sol
+### &#129534; Deals.sol
 
-The `Deals` contract is reponsible for storing the user's data. Apart from the Escrow contract that holds the current deposit balance of the users, all the other data written to the Dapp and specific to a particular client are stored in the `Deal` contract
+The `Deals` contract is reponsible for storing the user's data. Apart from the Escrow contract that holds the current deposit balance of the users, all the other data written to the Dapp and specific to a particular client are stored in the `Deal` contract.
 
-### Instructions.sol
+### &#129534; Instructions.sol
 
-The ``
+The `Instructions` contract is reponsible for storing the supported instructions `signature` along with their instruction `type`. This is necessary to dynamically determine how to call an instruction/function implementation in the InstructionsProvider contract via a low level call.
+
+### &#129534; InstructionsProvider.sol
+
+The `InstructionsProvider` contract is reponsible for:
+- storing the supported instructions implementation
+- interacting with the OpenZeppelin `Escrow` contract and allowing deposits and withdrawal operations
+
+### &#129534; Interpreter.sol
+
+The `Interpreter` contract is responsible for interpreting the instructions present the deal designed by the end user through the DApp. This is where user data are injected into supported instruction to produce the dynamic behavior of the DApp.
+
+### &#129534; CommonStructs.sol
+
+The `CommonStructs` library is reponsible for making available to the contracts an enum and a struct used all over the DApp.
 
 ## Problematic
 
