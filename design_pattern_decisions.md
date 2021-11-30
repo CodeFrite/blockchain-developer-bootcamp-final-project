@@ -8,17 +8,34 @@ Before diving into the discussion behind the artchitectural choices made, let's 
 
 ### High level architecture
 
-On the diagram, I used 3 colors to contract depending on thei main function
+On the diagram, I used 4 colors to highlight contracts depending on their main concern:
 
-1. In &#129001;`green`, we have the `Proxy` which is, as its name suggests, the main entry point to the DApp from the end user perspective. It is responsible for the incoming calls orchestration, keeping track of the contracts addresses as the change after contract updates. It also holds into its storage the values of pricing variables.
+1. In &#129001;`green`, we have the `Proxy` which is, as its name suggests, the main entry point to the DApp from the end user perspective.
 2. In &#128997;`red`, we have the contracts that hold client data. In order for the DApp to continue working, those contracts should never be changed.
-3. In &#128998;`blue`, we have the contracts that manipulate data. These can be updated.
+3. In &#128998;`blue`, we have the contracts that manipulate data. These can be upgraded
+4. In &#129000;`yellow`, we have the OpenZeppelin dependencies
 
+In the diagram, I have used 3 differents types of arrows to show the nature of the dependencies between contracts (more on than below in the text):
+- `imports` are represented by solid arrow with a black head
+- `references` to a contract are represented with a dashed arrow with a white head
+- `inheritance` is represented by a solid arrow with a white head
 
+All contracts import the `CommonStructs` library and inherit the `Ownable` contract.
 
-### Proxy
+### Proxy.sol
 
-The proxy is the main entry point to the DApp. It is responsible to route the different incoming calls from the user, dispatch them to the correct contract
+The `Proxy` contract is the main entry point to the DApp for the end user. It is responsible for :
+- routing the different incoming calls from the user, dispatching them to the correct contract and retrieving the resulting data to the caller
+- keeping track of the contracts addresses as they change after contract upgrades
+- storaging the values of public pricing variables
+
+### Deals.sol
+
+The `Deals` contract is reponsible for storing the user's data. Apart from the Escrow contract that holds the current deposit balance of the users, all the other data written to the Dapp and specific to a particular client are stored in the `Deal` contract
+
+### Instructions.sol
+
+The ``
 
 ## Problematic
 
@@ -33,7 +50,7 @@ In addition, I wanted the solution to observe the following constraints:
 
 This first restriction led to the use of the Proxy Design pattern and the use of low-level inter-contract calls
 
-TODO: Explain minor & major updated
+TODO: Explain minor & major upgrades
 
 ## Design pattern decisions
 
