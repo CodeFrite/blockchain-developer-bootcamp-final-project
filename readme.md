@@ -49,36 +49,182 @@ A second use case would be to redirect the payments depending on the msg.sender.
 
 Once connected to [MAD](), the user
 
+## Installation
 
-## Features & User Stories
+In order to run the code locally, clone this repo. Open a terminal and navigate to the root folder, then run the following commands:
 
-### 👔 Contract Owner
+```
+> npm install
+> truffle compile
+> truffle migrate
+> truffle exec scripts/linkContracts.js
+> truffle exec scripts/loadInstructions.js
+```
 
-📁 `F-CO-00: Contract Owner: Contracts Migration` [[Link: Sequence Diagram]](https://sequencediagram.org/index.html#initialData=C4S2BsFMAIDEFoDCB5eAGATALmog9gHbABOAhgMbDTIDuBkxOAsiAOZmiEBQXARnsGB4AtgAdSxUORDiiAZy7jJIabODs8AV1HQAxODYALdcUgBPaACpL0ACrFNAM0dQuFIcWp0GXSAQAmihJSMqREGtp6BqzG7JB+VpYAQuB45ADWiIakIATWQcqqYVQAosCGDJCawr4BPLT0xPDwAHxlFabVOP6QoqlmDAB0PX14ZgAUtpCkwnIANNCk-v6mcnIAlG6UIABupMAw7ZXVXA0MzW3lx8Ldvf1DI-3jAArEeABWkJTzi8urG6dvE1WkdOjdoI8xg87mNxgBBTT+MA-JYrSBrTZnYGXDpVcGQgbEYYwiYASQIO3RHhRf3RAKxF1BeNuo0JxNZ8IAIsgaWiMVweu5dvtDlcwVx1kA)
-+ CONTEXT: *As a contract owner, When I migrate the contracts on the blockchain, Then I should be the owner of ...*
-    + 📝 US-00: *... the contract "Deals"*
-    + 📝 US-01: *... the contract "Instructions"*
-    + 📝 US-02: *... the contract "InstructionsProvider"*
-    + 📝 US-03: *... the contract "Interpreter"*
-    + 📝 US-04: *... the contract "Proxy"*
+In order to install & serve the front-end, navigate to the `client` folder and run the following command:
 
-📁 `F-CO-00: Contract Owner: Pause contracts` [[Link: Sequence Diagram]](https://sequencediagram.org/index.html#initialData=C4S2BsFMAIDEFoDCB5eAGATALmog9gHbABOAhgMbDTIDuBkxOAsiAOZmiEBQXARnsGB4AtgAdSxUORDiiAZy7jJIabODs8AV1HQAxODYALdcUgBPaACpL0ACrFNAM0dQuFIcWp0GXSAQAmihJSMqREGtp6BqzG7JB+VpYAQuB45ADWiIakIATWQcqqYVQAosCGDJCawr4BPLT0xPDwAHxlFabVOP6QoqlmDAB0PX14ZgAUtpCkwnIANNCk-v6mcnIAlG6UIABupMAw7ZXVXA0MzW3lx8Ldvf1DI-3jAArEeABWkJTzi8urG6dvE1WkdOjdoI8xg87mNxgBBTT+MA-JYrSBrTZnYGXDpVcGQgbEYYwiYASQIO3RHhRf3RAKxF1BeNuo0JxNZ8IAIsgaWiMVweu5dvtDlcwVx1kA)
-+ CONTEXT: *As a contract owner, When I pause the DApp, Then ...*
-    + 📝 US-00: *... the contract "Deals" 's function noted pausable shouldn't be callable*
-    + 📝 US-01: *... the contract "Instructions"*
-    + 📝 US-02: *... the contract "InstructionsProvider"*
-    + 📝 US-03: *... the contract "Interpreter"*
-    + 📝 US-04: *... the contract "Proxy"*
+```
+> npm install
+> npm run start
+```
+
+## Testing
+
+In order to run the contracts test, navigate to the project folder and run the command:
+
+```
+truffle test
+```
+
+It should produce the following output:
+
+```
+> truffle test --network develop
+Using network 'develop'.
 
 
-### 👪 Unregistered User
+Compiling your contracts...
+===========================
+> Compiling ./contracts/CommonStructs.sol
+> Compiling ./contracts/Deals.sol
+> Compiling ./contracts/Instructions.sol
+> Compiling ./contracts/InstructionsProvider.sol
+> Compiling ./contracts/Interpreter.sol
+> Compiling ./contracts/Proxy.sol
+> Artifacts written to /tmp/test--9464-T3rUCZZeAa7q
+> Compiled successfully using:
+   - solc: 0.8.9+commit.e5eed63a.Emscripten.clang
 
-📁 `F-UU-00: Unregistered User: General Layout`
-+ CONTEXT: *As an unregistered user, When I navigate to the Home Page (/), ...*
-    + 📝 US-00: *... Then I should always see the header on top (10%) and the page content below (90%) [front-end|mvp]*
-    + 📝 US-01: *... And I scroll the page content, Then the header should remain fixed, always on top and visible [front-end|mvp]*
-    + 📝 US-02: *... And I am not connected to a wallet (no web3 injected), Then I should see in the header the button 'Connect Wallet' [front-end|mvp]*
-    + 📝 US-03: *... And I am connected to a wallet (no web3 injected), Then I should see in the content the buttons 'Register a Team' and 'Become an investor' [front-end|mvp]*
+
+  Contract: CommonStructs
+    Variables
+      enum InstructionTypes
+        ✓ should define `VOID`
+        ✓ should define `ADDRESS_ADDRESS_R_BOOL`
+        ✓ should define `ADDRESS_PAYABLE`
+      struct Article
+        ✓ should have a `instructionName` of type `string`
+        ✓ should have a `paramStr` of type `string`
+        ✓ should have a `paramUInt` of type `uint`
+        ✓ should have a `paramAddress` of type `address`
+
+  Contract: Deals
+    Set Proxy contract address:
+      ✓ ... should only be callable by owner, otherwise revert (23180 gas)
+      ✓ ... should return a SetProxyContractAddress event (46664 gas)
+    Access Control: 
+      OpenZeppelin Ownable
+        ✓ ... should revert on renounceOwnership even from owner
+    Use Cases
+      Create a deal
+        ✓ ... only Proxy should be able to call createDeal, otherwise revert (48093 gas)
+        ✓ ... should emit `CreateDeal` event (556762 gas)
+      Get the deal
+        ✓ ... rules count should match
+        ✓ ... articles counts should match
+        ✓ ... accounts should match
+        ✓ ... rules should match
+
+  Contract: Instructions
+    Variables
+      mapping instructionsSignature
+        ✓ should have the signature `mapping(string => string)`
+      mapping instructionsType
+        ✓ should have the signature `mapping(string => string)`
+    Use cases
+      ✓ Add instruction should emit AddInstruction with the correct values (52713 gas)
+      ✓ Get instruction should match input data
+      ✓ Only owner should be able to call addInstruction (25313 gas)
+      ✓ Ownable: should revert on renounceOwnership even from owner
+
+  Contract: InstructionsProvider
+    setInterpreterContractRef
+      ✓ ... only owner should be able to call, otherwise revert (23137 gas)
+      ✓ ... should emit a SetInterpreterContractRef (46621 gas)
+    setEscrowContractRef
+      ✓ ... only owner should be able to call, otherwise revert (22875 gas)
+      ✓ ... should emit a SetInterpreterContractRef (31599 gas)
+    Test supported instructions
+      `IF-ADDR` instruction
+        ✓ ... only Interpreter should be able to call, otherwise revert
+        ✓ ... should return true when addresses are equal
+        ✓ ... should return false when addresses are not equal
+
+  Contract: Interpreter
+    Initialisation
+      ✓ ... instantiate contracts (5895165 gas)
+      ✓ ... link contracts (233125 gas)
+      ✓ ... create deal (342918 gas)
+    Access Control
+      interpretRule
+        ✓ ... only Proxy has access, otherwise revert (23682 gas)
+    Use Cases
+      A-Interpret a whole Rule
+        Rule 0 - FROM CEO: IF-ADDR(CHAIRMAN)=false =/> TRANSFER(ACCOUNTANT)=false
+          ✓ ... should return 1 event InterpretArticle with the correct event parameters (62767 gas)
+        Rule 0 - FROM CHAIRMAN: IF-ADDR(CHAIRMAN)=true => TRANSFER(ACCOUNTANT)=true
+          ✓ ... should return 2 events InterpretArticle with the correct event parameters (106427 gas)
+
+  Contract: Proxy
+    Access Control: 
+      OpenZeppelin Ownable
+        ✓ ... only owner can pause the contract (22549 gas)
+        ✓ ... only owner can unpause the contract (22505 gas)
+        ✓ ... should revert on renounceOwnership even from owner
+      OpenZeppelin Pausable
+        ✓ ... when the contract is paused, it should emit a `Paused` event (31357 gas)
+        ✓ ... createDeal should not be callable by anyone (47858 gas)
+        ✓ ... executeRule should not be callable by anyone (23180 gas)
+        ✓ ... when the contract is unpaused, it should emit a `Unpaused` event (31307 gas)
+    Setters & Getters
+      instructionsContractRef :
+        ✓ ... setInstructionsContractRef should return a ModifyInstructionsContractAddress (47626 gas)
+        ✓ ... instructionsContractRef shoud return the correct address
+      dealsContractRef :
+        ✓ ... setDealsContractRef should return a ModifyDealsContractAddress (47581 gas)
+        ✓ ... interpreterContractRef should return the correct address
+      interpreterContractRef :
+        ✓ ... setInterpreterContractRef should return a ModifyInterpreterContractAddress (47582 gas)
+        ✓ ... interpreterContractRef should return the correct address
+      accountCreationFees :
+        ✓ ... setAccountCreationFees should return a ModifyAccountCreationFees (46318 gas)
+        ✓ ... accountCreationFees should return the correct value
+      ruleCreationFees :
+        ✓ ... setRuleCreationFees should return a ModifyRuleCreationFees (46340 gas)
+        ✓ ... ruleCreationFees should return the correct address
+      allowAllAddressesFees :
+        ✓ ... setAllowAllAddressesFees should return a ModifyAllowAllAccountsFees (46317 gas)
+        ✓ ... interpreterContractRef should return the correct address
+      transactionMinimalValue :
+        ✓ ... setTransactionMinimalValue should return a ModifyTransactionMinimalValue (46362 gas)
+        ✓ ... interpreterContractRef should return the correct address
+      transactionFees :
+        ✓ ... setTransactionFees should return a ModifyTransactionFees (46383 gas)
+        ✓ ... interpreterContractRef should return the correct address
+    Use cases
+      Create a deal with msg.value < deal creation fees
+        ✓ ... should revert with message `Insufficient value to cover the deal creation fees` (51190 gas)
+      Create a deal with msg.value >= deal creation fees, let's say 1 ETH
+        ✓ ... should emit a PayDealCreationFees event (730884 gas)
+        ✓ ... the contract balance should receive 100$ worth of ETH
+        ✓ ... the excess amount payed (1ETH-100$-gas already used) should be reimbursed to the caller
+        ✓ ... a ReimburseExcessValue event should be emitted with the excess value and caller address mentionned
+      Execute rule with msg.value < transaction minimal value
+        ✓ ... should revert with message `Transaction minimal value not reached` (25046 gas)
+      Execute rule with msg.value >= transaction minimal value
+        ✓ ... should emit a PayTransactionFees event (206435 gas)
+        ✓ ... the contract balance should receive 1% of value worth of ETH
+        ✓ ... the ACCOUNTANT escrow account should receive a deposit of 1ETH - fees on his Escrow account (31925 gas)
+        ✓ ... the CHAIRMAN account should pay 1 ETH + gas fees
+      Withdraw deposits from escrow account
+        ✓ ... balance shoud increase by 1ETH - fees (37526 gas)
+      Execute Rule 1: Split payment OF 1ETH from CEO to CHAIRMAN 75% & ACCOUNTANT 25%
+        ✓ ... the CHAIRMAN balance should increase by ~.75 ETH (268942 gas)
+        ✓ ... the ACCOUNTANT balance should increase by ~.25 ETH (37526 gas)
+
+  71 passing (42s)
+
+```
 
 ## Technologies
  
@@ -87,6 +233,7 @@ Once connected to [MAD](), the user
 - React / Bootstrap (Front-End)
 - web3.js (Blockchain connection)
 
+
 ## Disclaimer
 
-- I changed the subject of my project. Please find [here](https://github.com/CodeFrite/consensys-bootcamp-initial-idea) the initial idea I was working on.
+- I changed the subject of my project. Please find [here](https://github.com/CodeFrite/consensys-bootcamp-initial-idea) the initial idea I was working on
