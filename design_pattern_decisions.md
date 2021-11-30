@@ -6,6 +6,20 @@ Before diving into the discussion behind the artchitectural choices made, let's 
 
 ![image](https://user-images.githubusercontent.com/34804976/143939305-390dfd75-3cd0-4d4f-bc4b-3e17b7c9c00b.png)
 
+### High level architecture
+
+On the diagram, I used 3 colors to contract depending on thei main function
+
+1. In &#129001;`green`, we have the `Proxy` which is, as its name suggests, the main entry point to the DApp from the end user perspective. It is responsible for the incoming calls orchestration, keeping track of the contracts addresses as the change after contract updates. It also holds into its storage the values of pricing variables.
+2. In &#128997;`red`, we have the contracts that hold client data. In order for the DApp to continue working, those contracts should never be changed.
+3. In &#128998;`blue`, we have the contracts that manipulate data. These can be updated.
+
+
+
+### Proxy
+
+The proxy is the main entry point to the DApp. It is responsible to route the different incoming calls from the user, dispatch them to the correct contract
+
 ## Problematic
 
 The main feature of this project is to allow users to define conditional routes for funds by selecting simple instructions like `IF-ADDR` or `TRANSFER`. The instructions set had to be upgradable to permit new behaviors and new use cases of the DApp.
