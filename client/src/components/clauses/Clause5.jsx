@@ -8,28 +8,6 @@ class Clause5 extends Component {
       rules:[
         {
           articles:[]
-        },
-        {
-          articles:[
-            {
-              instructionName:"IF-ADDR",
-              paramString:"ACCOUNTANT",
-              paramUInt:0,
-              paramAddress:"0x194262d7D3959416033d1623e16800bD56E0Fb3b"
-            },
-            {
-              instructionName:"TRANSFER",
-              paramString:"CEO",
-              paramUInt:75,
-              paramAddress:"0x0db723d5863a9b33ad83aa349b27f8136b6d5360"
-            },
-            {
-              instructionName:"TRANSFER",
-              paramString:"CHAIRMAN",
-              paramUInt:25,
-              paramAddress:"0x0db723d5863a9b33ad83aa349b27f8136b6d5360"
-            }
-          ]
         }
       ],
       newArticles: [
@@ -42,18 +20,6 @@ class Clause5 extends Component {
       ],
       signed:false
     }
-  }
-
-  renderArticle = (ruleIdx, articleIdx) => {
-    let text="";
-    const article = this.state.rules[ruleIdx].articles[articleIdx];
-    if (article.instructionName === "IF-ADDR")
-      text = "If the sender is " + article.paramString;
-    else if(article.instructionName === "TRANSFER-ALL")
-      text = "I transfer the total amount to " + article.paramString;
-    else if(article.instructionName === "TRANSFER-SOME")
-      text = "I transfer " + article.paramUInt + "% of the total amount to " + article.paramString;
-    return text;
   }
 
   translateInstructionName = (name) => {
@@ -112,6 +78,18 @@ class Clause5 extends Component {
     console.log("handleSelectFullAddress")
   }
 
+  renderArticle = (ruleIdx, articleIdx) => {
+    let text="";
+    const article = this.state.rules[ruleIdx].articles[articleIdx];
+    if (article.instructionName === "IF-ADDR")
+      text = "If the sender is " + article.paramString;
+    else if(article.instructionName === "TRANSFER-ALL")
+      text = "I transfer the total amount to " + article.paramString;
+    else if(article.instructionName === "TRANSFER-SOME")
+      text = "I transfer " + article.paramUInt + "% of the total amount to " + article.paramString;
+    return text;
+  }
+
   addArticle = (ruleId) => {
     let rules = [...this.state.rules];
     let newArticle = this.state.newArticles[ruleId];
@@ -121,127 +99,174 @@ class Clause5 extends Component {
       paramUInt: newArticle.paramUInt,
       paramAddress: newArticle.paramAddress,
     }
-    rules[0].articles.push(article);
+    rules[ruleId].articles.push(article);
     this.setState({rules});
   }
 
   deleteArticle = (ruleId, key) => {
     let rules = this.state.rules.map((rule, ruleIdx) => ({articles: rule.articles.filter((article,articleIdx) => !(ruleIdx===ruleId && articleIdx===key))}));
-    console.log(this.state.rules);
     this.setState({rules});
-    console.log(this.state.rules);
     console.log("Clause5> Delete article ", key+1);
+  }
+
+  addRule = () => {
+    let newArticle = {
+      instructionName: null,
+      paramString: null,
+      paramUInt: null,
+      paramAddress: null
+    };
+    let newArticles = [...this.state.newArticles, newArticle];
+    this.setState({newArticles})
+    let rule = {
+      articles:[]
+    };
+    let rules = [...this.state.rules, rule];
+    this.setState({rules});
+    console.log("Clause5> Add rule");
+  }
+
+  deleteRule = (ruleId) => {
+    let rules = this.state.rules.filter((rule, ruleIdx) => ruleIdx!==ruleId);
+    this.setState({rules});
+    console.log("Clause5> Delete rule ", ruleId);
   }
 
   render() { 
     return ( 
-      <Row>
-        <Col xs={11}>
-          <br/>
-          <h2>Clause 5 : Rules</h2>
-          {/* Loop over rules*/}
-          <br/>
-          <h3>Rule 1</h3>
-          <br/>
-          <Table bordered hover size="sm">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Type</th>
-                <th>Story</th>
-                <th>Delete</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>0</td>
-                <td>Entry point</td>
-                <td>When an incoming payment is received by the rule 0</td>
-                <td>-</td>
-              </tr>
-              {
-                this.state.rules[0].articles.map((article, articleIdx) => {
+      <>
+        <Row>
+          <Col xs={11}>
+            <h2>Clause 5 : Rules</h2>
+          </Col>
+          <Col xs={1}>
+            {this.state.signed
+              ? <span className="signed-true" onClick={this.sign}>&#x2714;</span>
+              : <span className="signed-false" onClick={this.sign}>&#x2714;</span>
+            }
+          </Col>
+        </Row>
+        {/* Loop over rules */}
+        {
+          this.state.rules.map((rule, ruleIdx) => {
+            return (
+              <Row>
+                <Col xs={11}>
+                  <br/>
+                  <h3>Rule {ruleIdx}</h3>
+                  <br/>
+                  <Table bordered hover size="sm">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Type</th>
+                        <th>Story</th>
+                        <th>Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>0</td>
+                        <td>Entry point</td>
+                        <td>When an incoming payment is received by the rule {ruleIdx}</td>
+                        <td>-</td>
+                      </tr>
+                      {/* Loop over articles */}
+                      {
+                        this.state.rules[ruleIdx].articles.map((article, articleIdx) => {
 
-                  return(
-                    <tr>
-                      <td  key={"0-articleId" + articleIdx}>{articleIdx+1}</td>
-                      <td key={"0-articleName-" + articleIdx}>{article.instructionName}</td>
-                      <td key={"0-articleText-" + articleIdx}>{this.renderArticle(0,articleIdx)}</td>
-                      <td key={"0-articleDelete-" + articleIdx}>
-                        {!this.state.signed
-                          ? <Button variant="outline-danger" size="sm" onClick={() => this.deleteArticle(0,articleIdx)}>&#10006;</Button>
-                          : '-'
-                        }
-                      </td>
-                    </tr>
-                  )
-                })
-              }
-              {!this.state.signed &&
-                <tr>
-                  <td>{this.state.rules[0].articles.length+1}</td>
-                  <td>
-                    <Form.Select aria-label="Default select example" onChange={(e) => this.handleSelectInstructionName(0,e)}>
-                      <option>Select an instruction</option>
-                      <option>IF-ADDR</option>
-                      <option>TRANSFER-ALL</option>
-                      <option>TRANSFER-SOME</option>
-                    </Form.Select>
-                  </td>
-                  <td>
-                    {this.state.newArticles[0].instructionName==="IF-ADDR" &&
-                      <Row>
-                        <Col>If the sender is</Col>
-                        <Col>
-                          <Form.Select aria-label="Default select example" onChange={(e)=>this.handleSelectFullAddress(0,e)}>
-                            <option>Select an address</option>
-                            {this.props.accounts.map((account, accountId) => <option title={account.address}>{account.alias}</option>)}
-                          </Form.Select>
-                        </Col>
-                      </Row>
-                    }
-                    {this.state.newArticles[0].instructionName==="TRANSFER-ALL" &&
-                      <Row>
-                        <Col>I transfer the total amount to</Col>
-                        <Col>
-                          <Form.Select aria-label="Default select example" onChange={(e)=>this.handleSelectFullAddress(0,e)}>
-                            <option>Select an address</option>
-                            {this.props.accounts.map((account, accountId) => <option title={account.address}>{account.alias}</option>)}
-                          </Form.Select>
-                        </Col>
-                      </Row>
-                    }
-                    {this.state.newArticles[0].instructionName==="TRANSFER-SOME" &&
-                      <Row>
-                        <Col lg="2">
-                          I transfer
-                        </Col>
-                        <Col lg="4">
-                          <input placeholder="75" size="3" maxLength="3" onChange={(e) => this.handleSelectParamUInt(0,e)}/>
-                          % to
-                        </Col>
-                        <Col lg="6">
-                          <Form.Select aria-label="Default select example" onChange={(e)=>this.handleSelectFullAddress(0,e)}>
-                          <option>Select an address</option>
-                            {this.props.accounts.map((account, accountId) => <option title={account.address}>{account.alias}</option>)}
-                          </Form.Select>
-                        </Col>
-                      </Row>
-                    }
-                  </td>
-                  <td><Button variant="outline-success" size="sm" onClick={() => this.addArticle(0)}>&#10004;</Button></td>
-                </tr>
-              }
-            </tbody>
-          </Table>
-        </Col>
-        <Col xs={1}>
-          {this.state.signed
-            ? <span className="signed-true" onClick={this.sign}>&#x2714;</span>
-            : <span className="signed-false" onClick={this.sign}>&#x2714;</span>
+                          return(
+                            <tr>
+                              <td key={"ruleId-" + {ruleIdx} + "-articleId" + articleIdx}>{articleIdx+1}</td>
+                              <td key={"ruleId-" + {ruleIdx} + "-articleName-" + articleIdx}>{article.instructionName}</td>
+                              <td key={"ruleId-" + {ruleIdx} + "-articleText-" + articleIdx}>{this.renderArticle(ruleIdx,articleIdx)}</td>
+                              <td key={"ruleId-" + {ruleIdx} + "-articleDelete-" + articleIdx}>
+                                {!this.state.signed
+                                  ? <Button variant="outline-danger" size="sm" onClick={() => this.deleteArticle(ruleIdx,articleIdx)}>&#10006;</Button>
+                                  : '-'
+                                }
+                              </td>
+                            </tr>
+                          )
+                        })
+                      }
+                      {!this.state.signed &&
+                        <tr>
+                          <td>{this.state.rules[ruleIdx].articles.length+1}</td>
+                          <td>
+                            <Form.Select aria-label="Default select example" onChange={(e) => this.handleSelectInstructionName(ruleIdx,e)}>
+                              <option>Select an instruction</option>
+                              <option>IF-ADDR</option>
+                              <option>TRANSFER-ALL</option>
+                              <option>TRANSFER-SOME</option>
+                            </Form.Select>
+                          </td>
+                          <td>
+                            {this.state.newArticles[ruleIdx].instructionName==="IF-ADDR" &&
+                              <Row>
+                                <Col>If the sender is</Col>
+                                <Col>
+                                  <Form.Select aria-label="Default select example" onChange={(e)=>this.handleSelectFullAddress(ruleIdx,e)}>
+                                    <option>Select an address</option>
+                                    {this.props.accounts.map((account, accountId) => <option title={account.address}>{account.alias}</option>)}
+                                  </Form.Select>
+                                </Col>
+                              </Row>
+                            }
+                            {this.state.newArticles[ruleIdx].instructionName==="TRANSFER-ALL" &&
+                              <Row>
+                                <Col>I transfer the total amount to</Col>
+                                <Col>
+                                  <Form.Select aria-label="Default select example" onChange={(e)=>this.handleSelectFullAddress(ruleIdx,e)}>
+                                    <option>Select an address</option>
+                                    {this.props.accounts.map((account, accountId) => <option title={account.address}>{account.alias}</option>)}
+                                  </Form.Select>
+                                </Col>
+                              </Row>
+                            }
+                            {this.state.newArticles[ruleIdx].instructionName==="TRANSFER-SOME" &&
+                              <Row>
+                                <Col lg="2">
+                                  I transfer
+                                </Col>
+                                <Col lg="4">
+                                  <input placeholder="75" size="3" maxLength="3" onChange={(e) => this.handleSelectParamUInt(ruleIdx,e)}/>
+                                  % to
+                                </Col>
+                                <Col lg="6">
+                                  <Form.Select aria-label="Default select example" onChange={(e)=>this.handleSelectFullAddress(ruleIdx,e)}>
+                                  <option>Select an address</option>
+                                    {this.props.accounts.map((account, accountId) => <option title={account.address}>{account.alias}</option>)}
+                                  </Form.Select>
+                                </Col>
+                              </Row>
+                            }
+                          </td>
+                          <td><Button variant="outline-success" size="sm" onClick={() => this.addArticle(ruleIdx)}>&#10004;</Button></td>
+                        </tr>
+                      }
+                    </tbody>
+                  </Table>
+                </Col>
+                <Col xs={1}>
+                  {/* Add a delete Rule button for rules > 0 */}
+                  {ruleIdx>0 && !this.state.signed &&
+                    <>
+                    <br/>
+                    <Button variant="outline-danger" size="m" onClick={() => this.deleteRule(ruleIdx)}>&#10006;</Button>
+                    </>
+                  }
+                </Col>
+              </Row>
+            )
+          })
+        }
+        <Row>
+          {!this.state.signed &&
+            <p onClick={this.addRule} className="button">+ Add a new Rule ...</p>
           }
-        </Col>
-      </Row>
+        </Row>
+      </>
     );
   }
 }
