@@ -63,3 +63,8 @@ span.signed-true {
   padding-left: 15px;
   padding-right: 15px;
 }
+
+p.button:hover {
+  cursor: pointer;
+  background: greenyellow;
+}
