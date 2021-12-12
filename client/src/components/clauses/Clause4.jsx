@@ -6,8 +6,8 @@ class Clause4 extends Component {
     super(props);
     this.state = {
       newAccount: {
-        address:'',
-        alias:''
+        address:"",
+        alias:""
       },
       accounts:[],
       signed:false
@@ -15,10 +15,20 @@ class Clause4 extends Component {
   }
 
   addAccount = () => {
+    // Validate input data
+    let alias = this.state.newAccount.alias.trim();
+    let address = this.state.newAccount.address.trim();
+    if (alias==="" || address==="")
+      return;
     // Push the new account onto the state.accounts
     this.setState({accounts:[...this.state.accounts, this.state.newAccount]})
     console.log("Clause4> Add account ", this.state.newAccount.alias, this.state.newAccount.address);
-    this.setState({newAccount:{address:'',alias:''}});
+    // Reset the input fields
+    let newAccount = {
+      alias:"",
+      address:""
+    };
+    this.setState({newAccount});
   }
 
   deleteAccount = (key) => {
@@ -82,8 +92,8 @@ class Clause4 extends Component {
               {!this.state.signed &&
                 <tr>
                   <td>{this.state.accounts.length+1}</td>
-                  <td><input placeholder="Alias, example: Accountant" maxLength="25" size="25" onChange={(e) => this.setState({newAccount:{...this.state.newAccount,alias:e.target.value}})}/></td>
-                  <td><input placeholder="Address, example: 0x07972803660e7d087fdf27f25343d618fa21a354" maxLength="42" size="42" onChange={(e) => this.setState({newAccount:{...this.state.newAccount,address:e.target.value}})}/></td>
+                  <td><input placeholder="Alias, example: Accountant" maxLength="25" size="25" value={this.state.newAccount.alias} onChange={(e) => this.setState({newAccount:{...this.state.newAccount,alias:e.target.value}})}/></td>
+                  <td><input placeholder="Address, example: 0x07972803660e7d087fdf27f25343d618fa21a354" maxLength="42" size="42" value={this.state.newAccount.address} onChange={(e) => this.setState({newAccount:{...this.state.newAccount,address:e.target.value}})}/></td>
                   <td><Button variant="outline-success" size="sm" onClick={() => this.addAccount()}>&#10004;</Button></td>
                 </tr>
               }
