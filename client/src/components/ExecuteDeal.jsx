@@ -145,15 +145,23 @@ class ExecuteDeal extends Component {
                         rule.map((article, key) => 
                           <tr key={key}>
                             <td><span className="var">{key+1}</span></td>
-                            <td><span className="var">{article[0]}</span></td>
                             {article[0]==="IF-ADDR" &&
-                              <td>If the sender is <span className="var" title={article[3]}>{article[1]}{article[3]===this.props.selectedAccount && '=YOU'}</span></td>
+                              <>
+                                <td><span className="var">{article[0]}</span></td>
+                                <td>If the sender is <span className="var" title={article[3]}>{article[1]}{article[3]===this.props.selectedAccount && '=YOU'}</span></td>
+                              </>
                             }
                             {article[0]==="TRANSFER" && article[2]==="100" &&
-                              <td>I transfer the total amount to <span className="var" title={article[3]}>{article[1]}{article[3]===this.props.selectedAccount && '=YOU'}</span></td>
+                              <>
+                                <td><span className="var">TRANSFER-ALL</span></td>
+                                <td>I transfer the total amount to <span className="var" title={article[3]}>{article[1]}{article[3]===this.props.selectedAccount && '=YOU'}</span></td>
+                              </>
                             }
                             {article[0]==="TRANSFER" && article[2]!=="100" &&
-                              <td>I transfer <span className="var">{article[2]}</span>% to <span className="var" title={article[3]}>{article[1]}{article[3]===this.props.selectedAccount && '=YOU'}</span></td>
+                              <>
+                                <td><span className="var">TRANSFER-SOME</span></td>
+                                <td>I transfer <span className="var">{article[2]}</span>% to <span className="var" title={article[3]}>{article[1]}{article[3]===this.props.selectedAccount && '=YOU'}</span></td>
+                              </>
                             }
                             <td>-</td>
                           </tr>
