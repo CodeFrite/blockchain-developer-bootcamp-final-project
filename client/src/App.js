@@ -170,6 +170,9 @@ class App extends Component {
         let accs = await this.state.web3.eth.getAccounts();
         //this.setState({selectedAccount:accounts[0]}) // Returns accounts in lower case (https://github.com/MetaMask/metamask-extension/issues/12348)
         this.setState({selectedAccount:accs[0]})
+        // Check if the account is the owner
+        this.setState({isOwnerAccount: (this.state.selectedAccount.toUpperCase() === this.state.contractOwner.toUpperCase())});
+        console.log("Selected account:",this.state.selectedAccount.toUpperCase());
       });
       
 
