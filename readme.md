@@ -55,7 +55,7 @@ Once connected to [MAD](), the user
 
 As recommended in the [Metamask docs](https://docs.metamask.io/guide/defining-your-icon.html), I added an icon for my DApp. It is used by Metamask to show to which application the user account is currently linked:
 
-![image](https://user-images.githubusercontent.com/34804976/145705984-b08c2129-5125-432d-a24e-0dae6f789d55.png)
+![image](https://user-images.githubusercontent.com/34804976/145849775-5f81808b-fe0f-4be0-aebd-076cfd43bc00.png)
 
 Credits: The image used comes from [here](https://www.flaticon.com/premium-icon/scientist_1039065?term=mad&related_id=1039065) and is free of use for personal and commercial purpose _with attribution_: *<div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>*
 
