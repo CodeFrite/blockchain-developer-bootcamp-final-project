@@ -1,22 +1,25 @@
+// EXTERNAL IMPORTS
 import Web3 from "web3";
 import React, { Component } from "react";
 import { Container } from "react-bootstrap";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-// import components
+// IMPORT COMPONENTS
 import Header from "./components/Header";
 import Home from "./components/Home";
 import CreateDeal from "./components/CreateDeal";
 import ExecuteDeal from "./components/ExecuteDeal";
+import AdminDashboard from "./components/AdminDashboard";
 import CustomModal from "./components/CustomModal";
 
 // IMPORT CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./App.css";
 
-/* IMPORT CONTRACTS */
+// IMPORT CONTRACTS
 import Proxy from "./contracts/Proxy.json";
 import Deals from "./contracts/Deals.json";
+import InstructionsProvider from "./contracts/InstructionsProvider.json";
 
 // GLOBALS
 var {ethereum} = window;
@@ -97,20 +100,7 @@ class App extends Component {
       });
     });
 
-    // TODO: Add some listener to check wether the user change account and ask relog/connection
   };
-
-  // TODO: Catch errors in contract calls
-  // example: 
-  /* 
-  MetaMask - RPC Error: [ethjs-query] while formatting outputs from RPC '{"value":{"code":-32603,"data":{"message":"VM Exception while processing transaction: revert SimpleStorage: only the owner can call transferOwner","code":-32000,"data":{"0x637335867d1dfcae81bde285f33eb663003610c57b60ac86401876093344a962":{"error":"revert","program_counter":371,"return":"0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000003453696d706c6553746f726167653a206f6e6c7920746865206f776e65722063616e2063616c6c207472616e736665724f776e6572000000000000000000000000","reason":"SimpleStorage: only the owner can call transferOwner"},"stack":"RuntimeError: VM Exception while processing transaction: revert SimpleStorage: only the owner can call transferOwner\n    at Function.RuntimeError.fromResults (/tmp/.mount_ganach1kwE0k/resources/static/node/node_modules/ganache-core/lib/utils/runtimeerror.js:94:13)\n    at BlockchainDouble.processBlock (/tmp/.mount_ganach1kwE0k/resources/static/node/node_modules/ganache-core/lib/blockchain_double.js:627:24)\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (internal/process/task_queues.js:93:5)","name":"RuntimeError"}}}}'
-  */
-
-  // TODO: Change transferowner . Add control: https://web3js.readthedocs.io/en/v1.5.2/web3-utils.html#checkaddresschecksum
-
-  // TODO: Add Transaction Event handler : look here .on('event', callback) https://web3js.readthedocs.io/en/v1.5.2/callbacks-promises-events.html
-
-  // TODO: Give gas estimate const amountOfGas = await instance.sendTokens.estimateGas(4, myAccount); (https://www.trufflesuite.com/docs/truffle/getting-started/interacting-with-your-contracts)
 
   /* Public Interface to Proxy */
 
@@ -144,10 +134,12 @@ class App extends Component {
       const networkId = await this.state.web3.eth.net.getId();
       const deployedNetworkProxy = Proxy.networks[networkId];
       const deployedNetworkDeals = Deals.networks[networkId];
+      const deployedNetworkInstructionsProvider = InstructionsProvider.networks[networkId];
       this.setState({ 
         contracts:{
           proxy: new this.state.web3.eth.Contract(Proxy.abi, deployedNetworkProxy && deployedNetworkProxy.address),
-          deals: new this.state.web3.eth.Contract(Deals.abi, deployedNetworkDeals && deployedNetworkDeals.address)
+          deals: new this.state.web3.eth.Contract(Deals.abi, deployedNetworkDeals && deployedNetworkDeals.address),
+          instructionsProvider: new this.state.web3.eth.Contract(InstructionsProvider.abi, deployedNetworkInstructionsProvider && deployedNetworkInstructionsProvider.address)
         } 
       });
       console.log("Contracts instances created ...");
@@ -175,7 +167,6 @@ class App extends Component {
         console.log("Selected account:",this.state.selectedAccount.toUpperCase());
       });
       
-
     } catch (error) {
       console.error(error);
     }
@@ -198,6 +189,7 @@ class App extends Component {
       contractOwner:null,
       isOwnerAccount:null
     });
+
     console.log("Disconnected from MetaMask");
   }
   
@@ -221,6 +213,7 @@ class App extends Component {
             <Route exact path='/' element={<Home/>}></Route>
             <Route path='/CreateDeal' element={<CreateDeal contract={this.state.contracts.proxy} selectedAccount={this.state.selectedAccount}/>}></Route>
             <Route path='/ExecuteDeal' element={<ExecuteDeal web3={this.state.web3} contracts={this.state.contracts} selectedAccount={this.state.selectedAccount}/>}></Route>
+            <Route path='/AdminDashboard' element={<AdminDashboard web3={this.state.web3} selectedAccount={this.state.selectedAccount}/>}></Route>
           </Routes>
         </Router>
       </Container>
