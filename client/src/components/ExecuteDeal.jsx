@@ -1,6 +1,6 @@
-import Button from '@restart/ui/esm/Button';
 import React, { Component } from 'react';
-import { Container, Form, InputGroup, Table, Row, Col } from 'react-bootstrap';
+import { Container, Table, Row, Col, Button } from 'react-bootstrap';
+import ETHAmountSelector from './ETHAmountSelector';
 
 // import clauses
 
@@ -8,10 +8,16 @@ class ExecuteDeal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dealId:null,
+      dealId:0,
       accounts:[],
       rules:[],
-      balance:0
+      balance:0,
+      dealNotFound:false,
+      msgValue:0,
+      modal: {
+        show:false,
+        params:{ruleId:null}
+      }
     }
   }
 
@@ -49,132 +55,142 @@ class ExecuteDeal extends Component {
     }
     console.log("+ Rules: ", rules);
 
+    // Deal found?
+    if (rules.length===0)
+      this.setState({dealNotFound:true});
+    else
+    this.setState({dealNotFound:false});
     this.setState({rules});
 
   }
 
-  executeRule = async (ruleId) => {
+  executeRule = async (ruleId, value) => {
     const contract = this.props.contracts.proxy;
-    let tx = await contract.methods.executeRule(this.state.dealId, ruleId).send({from:this.props.selectedAccount,value:10**18});
+    let tx = await contract.methods.executeRule(this.state.dealId, ruleId).send({from:this.props.selectedAccount,value: value});
     console.log(tx);
-    /*let decodedLog = this.props.web3.eth.abi.decodeLog([{type: 'address',name: '_from'},{type: 'uint256',name: '_deposits'}], tx.events[1].raw.data, tx.events[1].raw.topics[0]);*/
-    //console.log(decodedLog);
 
-    let receipt = await this.props.web3.eth.getTransactionReceipt(tx.transactionHash);
-    const decodedFirstLog = this.props.web3.eth.abi.decodeLog(
-      [
-        {
-          "name": "_from",
-          "type": "address"
-        },
-        {
-          "name": "_deposits",
-          "type": "uint256"
-        }
-      ],
-      receipt.logs[0].data,
-      receipt.logs[0].topics
-    );
-    console.log(decodedFirstLog)
+    // Update Escrow balance
+    await this.checkBalance();
+  }
+
+  checkBalance = async () => {
+    const contract = this.props.contracts.instructionsProvider;
+    let balance = await contract.methods.getBalance().call({from:this.props.selectedAccount});
+    this.setState({balance});
+    console.log("ExecuteDeal> Escrow balance: ", balance/10**18, "ETH");
   }
 
   withdraw = async () => {
     const contract = this.props.contracts.proxy;
     let tx = await contract.methods.withdraw().send({from:this.props.selectedAccount});
     console.log(tx);
+    await this.checkBalance();
   }
 
-  checkBalance = async () => {
-    const contract = this.props.contracts.proxy;
-    let tx = await contract.methods.depositsOf().call({from:this.props.selectedAccount});
-    console.log(tx);
+  // ETH Amount dialog
+  showModal = (ruleId) => {
+    this.setState({modal:{show: true, params:{ruleId}}});
+  }
+
+  hideModal = () => {
+    this.setState({showModal: false});
+    this.setState({modal:{...this.state.modal, show: false}});
+  }
+
+  handleValidate = (value) => {
+    this.hideModal();
+    this.executeRule(this.state.modal.params.ruleId, value);
   }
 
   render() { 
     return (
-      <>
-        <Container id="main-container">
-          <h1>Let's Execute A Deal</h1>
-          <br/>
-          <Row>
-            <Col lg="10">
-              <Form.Group
-                as={Col}
-                md="6"
-                controlId="validationFormik101"
-                className="position-relative"
-              >
-                <InputGroup>
-                  <InputGroup.Text>Deal Id</InputGroup.Text>
-                  <Form.Control type="number" onChange={(e) => this.setState({dealId:e.target.value})} />
-                  <Form.Control.Feedback type="invalid">
-                    Please choose a username.
-                  </Form.Control.Feedback>
-                  <Button variant="primary" onClick={this.getDeal}>Search Deal</Button>
-                </InputGroup>
-              </Form.Group>
-            </Col>
-            <Col lg="2">
-              <Button variant="primary" onClick={this.withdraw}>Withdraw</Button>
-            </Col>
-          </Row>
-
-          {this.state.rules.length!==0 &&
+      <Container id="main-container">
+        <h1>Let's Execute A Rule</h1>
+        <br/>
+        <Row>
+          <Col className="border-dashed-black padding-5" lg="4">
+            Deal Id: <input size="3" type="number" min="0" value={this.state.dealId} onChange={(e) => this.setState({dealId:e.target.value})} />&nbsp;
+            <Button variant="primary" size="sm" onClick={this.getDeal} >Search</Button>
+          </Col>
+          <Col lg="4"></Col>
+          <Col className="border-dashed-black padding-5" lg="4">
+          {this.state.balance>0 && 
             <>
-              {this.state.rules.map((rule,ruleId) =>
-                <>
-                  <br/>
-                  <h4>Rule {ruleId}</h4>
-                  <Table bordered hover size="sm" key={ruleId}>
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Type</th>
-                        <th>Story</th>
-                        <th><Button variant="primary" onClick={() => this.executeRule(ruleId)}>Execute</Button></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>0</td>
-                        <td>Entry point</td>
-                        <td>When an incoming payment is received by the rule 0</td>
-                        <td>-</td>
-                      </tr>
-                      {
-                        rule.map((article, key) => 
-                          <tr key={key}>
-                            <td><span className="var">{key+1}</span></td>
-                            {article[0]==="IF-ADDR" &&
-                              <>
-                                <td><span className="var">{article[0]}</span></td>
-                                <td>If the sender is <span className="var" title={article[3]}>{article[1]}{article[3]===this.props.selectedAccount && '=YOU'}</span></td>
-                              </>
-                            }
-                            {article[0]==="TRANSFER" && article[2]==="100" &&
-                              <>
-                                <td><span className="var">TRANSFER-ALL</span></td>
-                                <td>I transfer the total amount to <span className="var" title={article[3]}>{article[1]}{article[3]===this.props.selectedAccount && '=YOU'}</span></td>
-                              </>
-                            }
-                            {article[0]==="TRANSFER" && article[2]!=="100" &&
-                              <>
-                                <td><span className="var">TRANSFER-SOME</span></td>
-                                <td>I transfer <span className="var">{article[2]}</span>% to <span className="var" title={article[3]}>{article[1]}{article[3]===this.props.selectedAccount && '=YOU'}</span></td>
-                              </>
-                            }
-                            <td>-</td>
-                          </tr>
-                        )
-                      }
-                    </tbody>
-                  </Table>
-                </>
-              )}
+              DApp balance: {this.state.balance/10**18} ETH <Button variant="primary" size="sm" onClick={this.withdraw}>Withdraw</Button>
             </>
           }
-        </Container>
-      </>
+          {this.state.balance<=0 && 
+            <>
+              DApp balance: {this.state.balance/10**18} ETH <Button variant="primary" size="sm" onClick={this.withdraw} disabled>Withdraw</Button>
+            </>
+          }
+          </Col>
+        </Row>
+
+        {this.state.rules.length!==0 &&
+          <>
+            {this.state.rules.map((rule,ruleId) =>
+              <>
+                <br/><br/>
+                <h4>Rule {ruleId}</h4>
+                <br/>
+                <Table bordered hover size="sm" key={ruleId}>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Type</th>
+                      <th>Story</th>
+                      <th><Button size="sm" onClick={() => this.showModal(ruleId)}>&#9654;</Button></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>0</td>
+                      <td>Entry point</td>
+                      <td>When an incoming payment is received by the rule 0</td>
+                      <td>-</td>
+                    </tr>
+                    {
+                      rule.map((article, key) => 
+                        <tr key={key}>
+                          <td><span className="var">{key+1}</span></td>
+                          {article[0]==="IF-ADDR" &&
+                            <>
+                              <td><span className="var">{article[0]}</span></td>
+                              <td>If the sender is <span className="var" title={article[3]}>{article[1]}{article[3]===this.props.selectedAccount && '=YOU'}</span></td>
+                            </>
+                          }
+                          {article[0]==="TRANSFER" && article[2]==="100" &&
+                            <>
+                              <td><span className="var">TRANSFER-ALL</span></td>
+                              <td>I transfer the total amount to <span className="var" title={article[3]}>{article[1]}{article[3]===this.props.selectedAccount && '=YOU'}</span></td>
+                            </>
+                          }
+                          {article[0]==="TRANSFER" && article[2]!=="100" &&
+                            <>
+                              <td><span className="var">TRANSFER-SOME</span></td>
+                              <td>I transfer <span className="var">{article[2]}</span>% to <span className="var" title={article[3]}>{article[1]}{article[3]===this.props.selectedAccount && '=YOU'}</span></td>
+                            </>
+                          }
+                          <td>-</td>
+                        </tr>
+                      )
+                    }
+                  </tbody>
+                </Table>
+              </>
+            )}
+          </>
+        }
+        {this.state.dealNotFound &&
+          <>
+            <br/><br/>
+            <h3><i>... no deal found for this id</i></h3>
+          </>
+        }
+        {/* ETHAmountSelector */}
+        <ETHAmountSelector show={this.state.modal.show} onHide={this.hideModal} handleValidate={this.handleValidate} params={this.state.modal.params}/>
+      </Container>
     );
   }
 }
