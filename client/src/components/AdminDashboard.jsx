@@ -80,6 +80,11 @@ class AdminDashboard extends Component {
     console.log("AdminDashboard> lastUpdate: ", lastUpdate);
   }
 
+  updateLastQuotation = async () => {
+    const tx = await this.state.contracts.proxy.methods.saveLatestQuotation().send({from:this.props.selectedAccount});
+    await this.getLastQuotation();
+  }
+
   // Additional account fees
   getAdditionalAccountFees = async () => {
     const accountCreationFees = await this.state.contracts.proxy.methods.accountCreationFees().call();
@@ -269,7 +274,7 @@ class AdminDashboard extends Component {
                   <br/>
                   + @{this.state.txtVars.lastUpdate}
                   <hr/>
-                  <Button variant="primary" size="sm">Update</Button>
+                  <Button variant="primary" size="sm" onClick={this.updateLastQuotation}>Update</Button>
                 </Card.Text>
               </Card.Body>
             </Card>
@@ -332,6 +337,47 @@ class AdminDashboard extends Component {
                 </Card.Text>
               </Card.Body>
             </Card>
+          </Col>
+        </Row>
+        <br/><br/>
+        <h2>Upgrability</h2>
+        <Row>
+          <Col xs={6}>
+            <svg id="svg-upgrade" height="600" width="100%">
+              <defs>
+                <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5"
+                    markerWidth="6" markerHeight="6"
+                    orient="auto-start-reverse">
+                  <path className="arrow" d="M 0 0 L 10 5 L 0 10 z" />
+                </marker>
+              </defs>
+
+              {/* New InstructionsProvider.sol */}
+              <image className="smart-contract" href={imgSmartContract} x="300" y="100" width="50" height="50" />
+              <text x="230" y="285">InstructionsProvider.sol</text>
+
+              {/* InstructionsProvider.sol */}
+              <image className="smart-contract" href={imgSmartContract} x="300" y="300" width="50" height="50" />
+              <text x="230" y="285">InstructionsProvider.sol</text>
+
+              {/* Interpreter.sol */}
+              <image className="smart-contract" href={imgSmartContract} x="100" y="300" width="50" height="50" />
+              <text x="60"  y="375">Interpreter.sol</text>
+              <line className="arrow" x1="170" y1="310" x2="280" y2="310" markerEnd="url(#arrow)" strokeDasharray="2 2"/>
+              <line className="arrow" x1="280" y1="340" x2="170" y2="340" markerEnd="url(#arrow)" strokeDasharray="2 2"/>
+              
+              {/* Escrow.sol */}
+              <image className="smart-contract" href={imgSmartContract} x="500" y="300" width="50" height="50" />
+              <text x="480" y="375">Escrow.sol</text>
+              <line className="arrow" x1="370" y1="310" x2="480" y2="310" markerEnd="url(#arrow)"/>
+              <line className="arrow" x1="480" y1="340" x2="370" y2="340" markerEnd="url(#arrow)" strokeDasharray="2 2"/>
+              
+              {/* Proxy.sol */}
+              <image className="smart-contract" href={imgSmartContract} x="300" y="500" width="50" height="50" onMouseEnter={()=>  console.log(10) }/>
+              <text x="290" y="580">Proxy.sol</text>
+              <line className="arrow" x1="325" y1="480" x2="325" y2="375" markerEnd="url(#arrow)" strokeDasharray="2 2"/>
+              
+            </svg>
           </Col>
         </Row>
       </Container>
