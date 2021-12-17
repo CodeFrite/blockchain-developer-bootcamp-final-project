@@ -321,7 +321,7 @@ contract Proxy is Ownable, Pausable {
 
     /**
     * @dev Sets the transaction fees to a new value
-    * @param _new New value for the transaction fees in USD
+    * @param _new New value for the transaction fees in % of msg.value
     */
     function setTransactionFees(uint _new) public onlyOwner whenPaused {
         uint old = transactionFees;
@@ -410,34 +410,16 @@ contract Proxy is Ownable, Pausable {
     }
 
     /**
-    * @dev Retrieves caller escrow balance.
-    */
-    function depositsOf() public returns (uint) {
-
-        // Upgrability: Low level call to InstructionsProvider
-        (bool success, bytes memory _result) = instructionsProviderContractRef.call(
-            abi.encodeWithSignature(
-                "depositsOf(address)",
-                msg.sender
-            )
-        );
-        require(success,"Proxy: Unable to get the deposit of caller!");
-
-        uint result = abi.decode(_result, (uint256));
-        return result;
-    }
-
-    /**
     * @dev Withdraw all deposit from escrow for msg.sender
     */
-    function withdraw() external whenNotPaused returns(bool) {
+    function withdraw() external whenNotPaused {
         (bool success,) = instructionsProviderContractRef.call(
             abi.encodeWithSignature(
                 "withdraw(address)",
                 msg.sender
             )
         );
-        return success;
+        require(success,"Proxy: Unable to get withdraw deposits of caller from Escrow!");
     }
 
     /**
@@ -547,4 +529,5 @@ contract Proxy is Ownable, Pausable {
     function renounceOwnership() public pure override {
         revert('Contract cannot be revoked');
     }
+
 }
