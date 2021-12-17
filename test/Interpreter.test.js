@@ -12,14 +12,14 @@ const {
 const { assertion } = require("@openzeppelin/test-helpers/src/expectRevert");
 
 contract("Interpreter", async (accounts) => {
-  const [CEO, CHAIRMAIN, ACCOUNTANT, PROXY] = accounts;
+  const [CEO, CHAIRMAN, ACCOUNTANT, PROXY] = accounts;
   const emptyAddress = "0x0000000000000000000000000000000000000000";
 
-  const dealAccounts = [ACCOUNTANT,CEO,CHAIRMAIN];
+  const dealAccounts = [ACCOUNTANT,CEO,CHAIRMAN];
   const ruleList = 
     [
       [
-        ["IF-ADDR", "CHAIRMAN", 0, CHAIRMAIN],
+        ["IF-ADDR", "CHAIRMAN", 0, CHAIRMAN],
         ["TRANSFER", "ACCOUNTANT", 0, ACCOUNTANT]
       ]
     ];
@@ -98,9 +98,9 @@ contract("Interpreter", async (accounts) => {
         it("... should return 2 events InterpretArticle with the correct event parameters", async () => {
           dealId = 0;
           ruleId = 0;
-          tx = await instanceInterpreter.interpretRule(CHAIRMAIN, dealId, ruleId,{from: PROXY, value:10000000000000000});
-          expectEvent(tx,"InterpretArticle",{_from: CHAIRMAIN, _dealId: new BN(dealId), _ruleId: new BN(ruleId),_articleId: new BN(0)});
-          expectEvent(tx,"InterpretArticle",{_from: CHAIRMAIN, _dealId: new BN(dealId), _ruleId: new BN(ruleId),_articleId: new BN(1)});
+          tx = await instanceInterpreter.interpretRule(CHAIRMAN, dealId, ruleId,{from: PROXY, value:10000000000000000});
+          expectEvent(tx,"InterpretArticle",{_from: CHAIRMAN, _dealId: new BN(dealId), _ruleId: new BN(ruleId),_articleId: new BN(0)});
+          expectEvent(tx,"InterpretArticle",{_from: CHAIRMAN, _dealId: new BN(dealId), _ruleId: new BN(ruleId),_articleId: new BN(1)});
         });
       });
 

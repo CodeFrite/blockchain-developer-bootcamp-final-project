@@ -352,9 +352,7 @@ contract("Proxy", async (accounts) => {
         oldCallerBalance = await web3.eth.getBalance(CHAIRMAN);
 
         // Get escrow balance for CHAIRMAN
-        tx = await instanceProxy.depositsOf({from:ACCOUNTANT});
-        decodedLog = web3.eth.abi.decodeLog([{type: 'address',name: '_from'},{type: 'uint256',name: '_deposits'}], tx.receipt.rawLogs[0].data, tx.receipt.rawLogs[0].topics[0]);
-        oldAccountantEscrowBalance = decodedLog["_deposits"];
+        oldAccountantEscrowBalance = await instanceInstructionsProvider.getBalance({from:ACCOUNTANT});
 
         tx = await instanceProxy.executeRule(0, 0, {from:CHAIRMAN, value: 10**18});
         expectEvent(tx, "PayTransactionFees");
@@ -368,10 +366,7 @@ contract("Proxy", async (accounts) => {
       });
 
       it("... the ACCOUNTANT escrow account should receive a deposit of 1ETH - fees on his Escrow account", async () => {
-        let tx = await instanceProxy.depositsOf({from:ACCOUNTANT});
-        let decodedLog = web3.eth.abi.decodeLog([{type: 'address',name: '_from'},{type: 'uint256',name: '_deposits'}], tx.receipt.rawLogs[0].data, tx.receipt.rawLogs[0].topics[0]);
-        let newAccountantEscrowBalance = decodedLog["_deposits"];
-        
+        let newAccountantEscrowBalance = await instanceInstructionsProvider.getBalance({from:ACCOUNTANT});
         assert.equal(Number(newAccountantEscrowBalance), Number(oldAccountantEscrowBalance + (100 - transactionFees) * 10**16),"newBalance != oldBalance + ((100 - transactionFees) / 100) * 10**18 ");
       });
 
