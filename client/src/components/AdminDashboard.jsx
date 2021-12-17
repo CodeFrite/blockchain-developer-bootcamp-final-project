@@ -24,7 +24,7 @@ class AdminDashboard extends Component {
           proxy: null
       },
       txtVars: {
-        conversionRate: null,
+        conversionRate: 0,
         lastUpdate: null,
         accountCreationFees: null,
         ruleCreationFees: null,
@@ -270,7 +270,7 @@ class AdminDashboard extends Component {
               <Card.Body>
                 <Card.Title>Last quotation</Card.Title>
                 <Card.Text>
-                  + {this.state.txtVars.conversionRate} USD/ETH
+                  + {(this.state.txtVars.conversionRate).toFixed(2)} USD/ETH
                   <br/>
                   + @{this.state.txtVars.lastUpdate}
                   <hr/>

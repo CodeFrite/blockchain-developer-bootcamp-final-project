@@ -6,9 +6,9 @@ class Clause0 extends Component {
     super(props);
     this.state = { 
       txtVars: {
-        conversionRate:null, 
-        lastUpdate:null, 
-        priceFeedRef:null,
+        conversionRate:0, 
+        lastUpdate:0, 
+        priceFeedRef:0,
       },
       signed: false
     }
@@ -58,7 +58,7 @@ class Clause0 extends Component {
           <h2>Clause 0 : ETH/USD conversion rate</h2>
           <br/>
           <p>In order to protect the client from ETH price fluctuations, all the prices are given in US dollars. The ETH/USD conversion rate is obtained by querying ChainLink Oracle once a day at the address <a href="https://rinkeby.etherscan.io/address/0x8A753747A1Fa494EC906cE90E9f37563A8AF630e#internaltx" target="_blank" rel="noreferrer"><span className="var">{this.state.txtVars.priceFeedRef}</span></a></p>
-          <p>The current conversion rate used across this deal is equal to <span className="var">{this.state.txtVars.conversionRate}</span>$ per ETH. Last price update was made <span className="var">{this.state.txtVars.lastUpdate}</span></p>
+          <p>The current conversion rate used across this deal is equal to <span className="var">{(this.state.txtVars.conversionRate).toFixed(2)}</span>$ per ETH. Last price update was made <span className="var">{this.state.txtVars.lastUpdate}</span></p>
         </Col>
         <Col xs={1}>
           {this.state.signed &&
