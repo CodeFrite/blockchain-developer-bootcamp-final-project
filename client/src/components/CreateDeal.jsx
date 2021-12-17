@@ -41,12 +41,15 @@ class CreateDeal extends Component {
     this.setState({creating:true});
     const { contract } = this.props;
 
-    // Get deal creation fees
-    let dealCreationFees = await contract.methods.computeDealCreationFeesInWEI(this.state.accounts.length, this.state.rules.length).call();
-
+    
     try{
+      // Get deal creation fees
+      let dealCreationFees = await contract.methods.computeDealCreationFeesInWEI(this.state.accounts.length, this.state.rules.length).call();
+
+      // Create the deal
       const tx = await contract.methods.createDeal(this.state.accounts.map((account)=>account.address), this.state.rules).send({from:this.props.selectedAccount,value: dealCreationFees});
       this.setState({created:true});
+      
       // Update state with tx info
       this.setState({
         tx: {
