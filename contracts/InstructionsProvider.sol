@@ -5,6 +5,7 @@ pragma solidity 0.8.9;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/escrow/Escrow.sol";
 
+/* INTERNAL DEPENDENCIES */
 import "./CommonStructs.sol";
 
 /**
@@ -45,13 +46,6 @@ contract InstructionsProvider is Ownable {
     */
     event SetEscrowContractRef(address _from, address _old, address _new);
 
-    /**
-    * @dev Retrieves the escrow balance for the msg.sender
-    * @param _from msg.sender passed by caller
-    * @param _deposits Deposit value for msg.sender
-    */
-    event DepositsOf(address _from, uint _deposits);
-
     /* MODIFIERS */
 
     /// @dev Assess that the caller is the Interpreter contract instance 
@@ -63,15 +57,6 @@ contract InstructionsProvider is Ownable {
     /// @dev Assess that the caller is the Proxy contract instance 
     modifier onlyProxy() {
         require(msg.sender==proxyInstanceRef, "InstructionsProvider: Only Proxy may call");
-        _;
-    }
-
-    /**
-    * @dev OpenZeppelin Escrow: Modifier used to check whether the sender has a balance to withdraw 
-    * @param _from Address for which we check the balance
-    */
-    modifier hasBalance(address _from) {
-        require(depositsOf(_from) > 0, "InstructionsProvider : Not enough balance");
         _;
     }
 
@@ -123,11 +108,11 @@ contract InstructionsProvider is Ownable {
     }
 
     /**
-    * @dev Escrow: Returns the total amount that the msg.sender can withdraw
+    * @dev Escrow: Returns msg.sender balance
+    * @return uint Balance of msg.sender
     */
-    function depositsOf(address _from) public onlyProxy returns (uint) {
-        uint deposits = escrowInstance.depositsOf(_from);
-        emit DepositsOf(_from, deposits);
+    function getBalance() public view returns (uint) {
+        uint deposits = escrowInstance.depositsOf(msg.sender);
         return deposits;
     }
 
@@ -135,7 +120,8 @@ contract InstructionsProvider is Ownable {
     * @dev msg.sender withdraws his total balance
     *      Modifier hasBalance: msg.sender must have enough balance in the escrow
     */
-    function withdraw(address _from) external onlyProxy hasBalance(_from) {
+    function withdraw(address _from) external onlyProxy {
+        require(escrowInstance.depositsOf(_from)>0, "InstructionsProvider : Not enough balance");
         escrowInstance.withdraw(payable(_from));
     }
 
@@ -145,6 +131,7 @@ contract InstructionsProvider is Ownable {
     * @dev Checks if the addresses in parameters are equal
     * @param _address1 First address used in the comparison
     * @param _address2 Second address used in the comparison
+    * @return Returns true if both addresses are equal
     */
     function _ifAddress(address _address1, address _address2) public view onlyInterpreter returns (bool) {
         return (_address1 == _address2);
