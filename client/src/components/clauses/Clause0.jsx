@@ -29,7 +29,7 @@ class Clause0 extends Component {
     
     // Convert USD/WEI to WEI/USD
     const conversionRate = (10**18) / tx[0];
-    const lastUpdate = new Date(tx[1]*1000).toString();
+    const lastUpdate = new Date(tx[1]*1000).toUTCString();
 
     this.setState({txtVars:{ ...this.state.txtVars,conversionRate, lastUpdate}});
     console.log("Clause0> conversionRate: ", conversionRate);
