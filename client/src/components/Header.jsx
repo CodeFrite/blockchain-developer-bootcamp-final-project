@@ -15,18 +15,18 @@ class Header extends Component {
           return (
             <>
               <Link className="header-link" to="/CreateDeal">Let's Make A Deal</Link>
-              |
-              <Link className="header-link" to="/ExecuteDeal">Execute A Deal</Link>
-              |
-              <Link className="header-link" to="/">Admin Dashboard</Link>
+              <div className="vr"/>
+              <Link className="header-link" to="/ExecuteDeal">Let's Execute A Rule</Link>
+              <div className="vr"/>
+              <Link className="header-link" to="/AdminDashboard">Let's Manage the DApp</Link>
             </>
           )
         } else {
           return (
             <>
               <Link className="header-link" to="/CreateDeal">Let's Make A Deal</Link>
-              |
-              <Link className="header-link" to="/ExecuteDeal">Execute a rule</Link>
+              <div className="vr" />
+              <Link className="header-link" to="/ExecuteDeal">Let's Execute a Rule</Link>
             </>
           )
         }
@@ -57,8 +57,8 @@ class Header extends Component {
         
         <Container className="container-fluid">
           
-          <Navbar.Brand href="/">
-            MAD          
+          <Navbar.Brand>
+            <img src="scientist.png" alt="MAD icon" width="35px"></img>
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
