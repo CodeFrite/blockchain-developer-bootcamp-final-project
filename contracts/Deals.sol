@@ -41,18 +41,18 @@ contract Deals is Ownable {
     /* EVENTS */
 
     /**
-    * @dev Event emitted when the Proxy contract address is changed
-    * @param _from Caller address
-    * @param _old Old address of the Proxy contract
-    * @param _new New address of the Proxy contract
-    */
+     * @dev Event emitted when the Proxy contract address is changed
+     * @param _from Caller address
+     * @param _old Old address of the Proxy contract
+     * @param _new New address of the Proxy contract
+     */
     event SetProxyContractAddress(address _from, address _old, address _new);
 
     /** 
-    * @dev Event emitted when a deal is created
-    * @param _from address that initiated the deal creation
-    * @param _dealId Id of the deal created
-    */
+     * @dev Event emitted when a deal is created
+     * @param _from address that initiated the deal creation
+     * @param _dealId Id of the deal created
+     */
     event CreateDeal(address _from, uint _dealId);
 
     /* MODIFIERS */
@@ -66,9 +66,9 @@ contract Deals is Ownable {
     /* PUBLIC INTERFACE */
 
     /**
-    * @dev Sets the Proxy contract reference. Emits a SetInterpreterInstance event
-    * @param _new Address of the Interpreter contract
-    */
+     * @dev Sets the Proxy contract reference. Emits a SetInterpreterInstance event
+     * @param _new Address of the Interpreter contract
+     */
     function setProxyContractAddress(address _new) public onlyOwner {
         address old = proxyContractAddress;
         proxyContractAddress = _new;
@@ -76,61 +76,61 @@ contract Deals is Ownable {
     }
 
     /** 
-    * @dev Returns the number of rules of a deal
-    * @param _dealId Id of the deal
-    * @return Number of rules in the deal
-    */
+     * @dev Returns the number of rules of a deal
+     * @param _dealId Id of the deal
+     * @return Number of rules in the deal
+     */
     function getRulesCount(uint _dealId) public view returns(uint) {
         return rulesCount[_dealId];
     }
 
     /** 
-    * @dev Returns the number of articles of a rule
-    * @param _dealId Id of the deal
-    * @param _ruleId Id of the rule
-    * @return Number of articles in the rule
-    */
+     * @dev Returns the number of articles of a rule
+     * @param _dealId Id of the deal
+     * @param _ruleId Id of the rule
+     * @return Number of articles in the rule
+     */
     function getArticlesCount(uint _dealId, uint _ruleId) public view returns(uint) {
         return articlesCount[_dealId][_ruleId];
     }
 
     /** 
-    * @dev Returns the number of accounts of a deal
-    * @param _dealId Id of the deal
-    * @return Number of accounts in the deal
-    */
+     * @dev Returns the number of accounts of a deal
+     * @param _dealId Id of the deal
+     * @return Number of accounts in the deal
+     */
     function getAccountsCount(uint _dealId) public view returns(uint) {
         return accountsCount[_dealId];
     }
     
     /** 
-    * @dev Returns the address of an account of a deal
-    * @param _dealId Id of the deal
-    * @param _accountId Id of the account
-    * @return Account address
-    */
+     * @dev Returns the address of an account of a deal
+     * @param _dealId Id of the deal
+     * @param _accountId Id of the account
+     * @return Account address
+     */
     function getAccount(uint _dealId, uint _accountId) public view returns(address) {
         return accounts[_dealId][_accountId];
     }
 
     /** 
-    * @dev Returns an article
-    * @param _dealId Id of the deal
-    * @param _ruleId Id of the rule
-    * @param _articleId Id of the article
-    * @return CommonStructs.Article
-    */
+     * @dev Returns an article
+     * @param _dealId Id of the deal
+     * @param _ruleId Id of the rule
+     * @param _articleId Id of the article
+     * @return CommonStructs.Article
+     */
     function getArticle(uint _dealId, uint _ruleId, uint _articleId) public view returns(CommonStructs.Article memory) {
         return deals[_dealId][_ruleId][_articleId];
     }
     
     /**
-    * @dev Creates a deal and returns its id
-    *      Only the Proxy contract can call it
-    * @param _accounts List of the external accounts addresses linked to the deal
-    * @param _rulesList List of the rules linked to the deal (rule = list of Articles)
-    * @return Deal Id
-    */
+     * @dev Creates a deal and returns its id
+     *      Only the Proxy contract can call it
+     * @param _accounts List of the external accounts addresses linked to the deal
+     * @param _rulesList List of the rules linked to the deal (rule = list of Articles)
+     * @return Deal Id
+     */
     function createDeal
     (
         address[] memory _accounts, 
@@ -168,9 +168,9 @@ contract Deals is Ownable {
     /* OVERRIDE & BLOCK UNUSED INHERITED FUNCTIONS */
 
     /**
-    * @dev Block OpenZeppelin Ownable.renounceOwnership
-    * @notice Will always revert
-    */ 
+     * @dev Block OpenZeppelin Ownable.renounceOwnership
+     * @notice Will always revert
+     */ 
     function renounceOwnership() public pure override {
         revert('Contract cannot be revoked');
     }
