@@ -100,7 +100,7 @@ class Clause1 extends Component {
             </tbody>
           </Table>
 
-          <p>At the current conversion rate, <span className="var">{this.state.txtVars.accountCreationFees * this.props.accountsCount + this.state.txtVars.ruleCreationFees * this.props.rulesCount}</span>$ corresponds to <span className="var">{this.state.conversionRate * (this.state.txtVars.accountCreationFees * this.props.accountsCount + this.state.txtVars.ruleCreationFees * this.props.rulesCount)}</span> ETH</p>
+          <p>At the current conversion rate, <span className="var">{this.state.txtVars.accountCreationFees * this.props.accountsCount + this.state.txtVars.ruleCreationFees * this.props.rulesCount}</span>$ corresponds to <span className="var">{(this.state.conversionRate * (this.state.txtVars.accountCreationFees * this.props.accountsCount + this.state.txtVars.ruleCreationFees * this.props.rulesCount)).toFixed(4)}</span> ETH</p>
         </Col>
         <Col xs={1}>
           {this.state.signed &&
