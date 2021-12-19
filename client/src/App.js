@@ -1,8 +1,8 @@
 // EXTERNAL IMPORTS
 import Web3 from "web3";
 import React, { Component } from "react";
-import { Container } from "react-bootstrap";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Container } from "react-bootstrap";
 
 // IMPORT COMPONENTS
 import Header from "./components/Header";
@@ -174,25 +174,27 @@ class App extends Component {
 
   disconnectMetaMask = () => {
     this.setState({
-      metamask: { 
-        showModal: false, 
-        installed:true, 
-        unlocked:true,
-        connecting: false, 
-        connected:false 
+      contracts: {
+        proxy:null,
+        deals:null
       },
-      web3: null,
-      accounts: [],
-      selectedAccount:null,
-      priceFeedRef:null,
-      contract:null,
-      contractOwner:null,
-      isOwnerAccount:null
+      contractOwner: null,
+      accounts: null,
+      selectedAccount: null,
+      isOwnerAccount:false,
+      metamask: {
+        showModal: false,
+        installed: true,
+        unlocked: true,
+        connected: false
+      },
+      web3:null,
+      priceFeedRef:null
     });
-
     console.log("Disconnected from MetaMask");
   }
   
+
 
   render() {
 
@@ -200,9 +202,7 @@ class App extends Component {
       <Container>
         
         <Router>
-          <Container id="header-container">
-            <Header isOwnerAccount={this.state.isOwnerAccount} metamask={this.state.metamask} handleConnectMetaMask={this.connectMetaMask} handleDisconnectMetaMask={this.disconnectMetaMask}/>
-          </Container>
+          <Header logout={this.disconnectMetaMask}  isOwnerAccount={this.state.isOwnerAccount} metamask={this.state.metamask} handleConnectMetaMask={this.connectMetaMask} handleDisconnectMetaMask={this.disconnectMetaMask}/>
           
           {/* Modal MetaMask */}
           <CustomModal show={this.state.metamask.showModal} handleClose={() => {
@@ -210,7 +210,8 @@ class App extends Component {
           }} />
           
           <Routes>
-            <Route exact path='/' element={<Home/>}></Route>
+          <Route exact path='/' element={<Home/>}></Route>
+            <Route exact path='/Home' element={<Home/>}></Route>
             <Route path='/CreateDeal' element={<CreateDeal contract={this.state.contracts.proxy} selectedAccount={this.state.selectedAccount}/>}></Route>
             <Route path='/ExecuteDeal' element={<ExecuteDeal web3={this.state.web3} contracts={this.state.contracts} selectedAccount={this.state.selectedAccount}/>}></Route>
             <Route path='/AdminDashboard' element={<AdminDashboard web3={this.state.web3} selectedAccount={this.state.selectedAccount}/>}></Route>

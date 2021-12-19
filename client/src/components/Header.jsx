@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Container, Navbar, Nav, Button, Spinner } from 'react-bootstrap';
 import {Link} from 'react-router-dom';
+import { Container, Navbar, Nav, Button, Spinner } from 'react-bootstrap';
 
 class Header extends Component {
   constructor(props) {
@@ -44,16 +44,16 @@ class Header extends Component {
           if (this.props.metamask.connecting)
           return <Button variant="primary" disabled><Spinner animation="border" variant="primary" size="sm"/>Connecting MetaMask...</Button>;
           else if (!this.props.metamask.connected)
-            return <Button variant="primary" onClick={this.props.handleConnectMetaMask}>Connect MetaMask</Button>;
+            return <Link className="header-metamask-connect" to="/CreateDeal" onClick={this.props.handleConnectMetaMask}>Connect Metamask</Link>
           else
-            return <Button variant="outline-success" onClick={this.props.handleDisconnectMetaMask}>Disconnect MetaMask</Button>;
+            return <Link className="header-metamask-disconnect" to="/" onClick={this.props.logout}>Disconnect</Link>
           }
         }
     }
 
     // Main render
     return (
-      <Navbar variant="light" bg="light" expand="lg">
+      <Navbar expand="lg">
         
         <Container className="container-fluid">
           
@@ -62,8 +62,10 @@ class Header extends Component {
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav>
+            <Nav className="me-auto">
               {renderNavLinks()}
+            </Nav>
+            <Nav>
               {renderConnectMetaMaskButton()}
             </Nav>
           </Navbar.Collapse>

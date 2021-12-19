@@ -50,6 +50,12 @@ span.signed-true {
   border:1px black solid;
 }
 
+.navbar {
+  background-color: white;
+  border:1px black dashed;
+  margin-top:25px;
+}
+
 #sign-container {
   margin-top: 50px;
   margin-bottom: 50px;
@@ -63,6 +69,36 @@ span.signed-true {
   font-size: 1.5em;
   padding-left: 15px;
   padding-right: 15px;
+}
+
+.header-metamask-connect {
+  color: green;
+  background-color: transparent;
+	border: 1px solid green;
+	border-radius: .25rem;
+  text-decoration: none;
+  padding: .375rem .75rem;
+	transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.header-metamask-connect:hover {
+  color:white;
+  background-color: green;
+}
+
+.header-metamask-disconnect {
+  color: #dc3545;
+  background-color: transparent;
+	border: 1px solid #dc3545;
+	border-radius: .25rem;
+  text-decoration: none;
+  padding: .375rem .75rem;
+	transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.header-metamask-disconnect:hover {
+  color:white;
+  background-color: #dc3545;
 }
 
 p.button:hover {
