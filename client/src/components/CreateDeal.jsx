@@ -93,85 +93,89 @@ class CreateDeal extends Component {
   }
 
   render() { 
+    if (this.props.contract===null || this.props.selectedAccount===null) {
+      return (<Container>Loading data from blockchain ...</Container>);
+    } else {
     return (
-      <>
-        <Container id="main-container">
-          <h1>Let's Make A Deal</h1>
-          <br/>
-          <Clause0 
-            editable={!this.state.creating && !this.state.created}
-            contract={this.props.contract} 
-            signHandler={this.signHandler}
-          />
-          <br/>
-          <Clause1 
-            editable={!this.state.creating && !this.state.created}
-            accountsCount={this.state.accounts.length}
-            rulesCount={this.state.rules.length}
-            contract={this.props.contract} 
-            signHandler={this.signHandler} 
-          />
-          <br/>
-          <Clause2
-            editable={!this.state.creating && !this.state.created}
-            contract={this.props.contract} 
-            signHandler={this.signHandler}
-          />
-          <br/>
-          <Clause3 
-            editable={!this.state.creating && !this.state.created}
-            contract={this.props.contract} 
-            signHandler={this.signHandler}
-          />
-          <br/>
-          <Clause4 
-            editable={!this.state.creating && !this.state.created}
-            contract={this.props.contract} 
-            signHandler={this.signHandler} 
-            accountsHandler={this.accountsHandler} 
-            selectedAccount={this.props.selectedAccount}
-          />
-          <br/>
-          <Clause5 
-            editable={!this.state.creating && !this.state.created}
-            contract={this.props.contract}
-            accounts={this.state.accounts}
-            rulesHandler={this.rulesHandler} 
-            signHandler={this.signHandler}
-          />
-          <Container align="center">
-          {!this.state.created && !this.state.signed && !this.state.creating &&
-            <>
-              <br/>
-              <Button variant="secondary" onClick={this.createDeal} disabled>Let's Make A Deal</Button>
-            </>
-          }
-          {!this.state.created && this.state.signed && !this.state.creating &&
-            <>
-              <br/>
-              <Button variant="primary" onClick={this.createDeal}>
-                Let's Make A Deal
-              </Button>
-            </>
-          }
-          {!this.state.created && this.state.creating &&
-            <>
-              <br/>
-              <Button variant="primary" onClick={this.createDeal} disabled>
-                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true"/>
-                Signing ...
-              </Button>
-            </>
-          }
+        <>
+          <Container id="main-container">
+            <h1>Let's Make A Deal</h1>
+            <br/>
+            <Clause0 
+              editable={!this.state.creating && !this.state.created}
+              contract={this.props.contract} 
+              signHandler={this.signHandler}
+            />
+            <br/>
+            <Clause1 
+              editable={!this.state.creating && !this.state.created}
+              accountsCount={this.state.accounts.length}
+              rulesCount={this.state.rules.length}
+              contract={this.props.contract} 
+              signHandler={this.signHandler} 
+            />
+            <br/>
+            <Clause2
+              editable={!this.state.creating && !this.state.created}
+              contract={this.props.contract} 
+              signHandler={this.signHandler}
+            />
+            <br/>
+            <Clause3 
+              editable={!this.state.creating && !this.state.created}
+              contract={this.props.contract} 
+              signHandler={this.signHandler}
+            />
+            <br/>
+            <Clause4 
+              editable={!this.state.creating && !this.state.created}
+              contract={this.props.contract} 
+              signHandler={this.signHandler} 
+              accountsHandler={this.accountsHandler} 
+              selectedAccount={this.props.selectedAccount}
+            />
+            <br/>
+            <Clause5 
+              editable={!this.state.creating && !this.state.created}
+              contract={this.props.contract}
+              accounts={this.state.accounts}
+              rulesHandler={this.rulesHandler} 
+              signHandler={this.signHandler}
+            />
+            <Container align="center">
+            {!this.state.created && !this.state.signed && !this.state.creating &&
+              <>
+                <br/>
+                <Button variant="secondary" onClick={this.createDeal} disabled>Let's Make A Deal</Button>
+              </>
+            }
+            {!this.state.created && this.state.signed && !this.state.creating &&
+              <>
+                <br/>
+                <Button variant="primary" onClick={this.createDeal}>
+                  Let's Make A Deal
+                </Button>
+              </>
+            }
+            {!this.state.created && this.state.creating &&
+              <>
+                <br/>
+                <Button variant="primary" onClick={this.createDeal} disabled>
+                  <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true"/>
+                  Signing ...
+                </Button>
+              </>
+            }
+            </Container>
           </Container>
-        </Container>
-        {this.state.created &&
-          <Container id="sign-container">
-              <Signature tx={this.state.tx}/>
-          </Container>
-        }
-      </>
-    );
+          {this.state.created &&
+            <Container id="sign-container">
+                <Signature tx={this.state.tx}/>
+            </Container>
+          }
+        </>
+      );
+    }
   }
 }
 
