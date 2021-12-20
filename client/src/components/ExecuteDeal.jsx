@@ -130,7 +130,7 @@ class ExecuteDeal extends Component {
         {this.state.rules.length!==0 &&
           <>
             {this.state.rules.map((rule,ruleId) =>
-              <>
+              <div key={ruleId}>
                 <br/><br/>
                 <h4>Rule {ruleId}</h4>
                 <br/>
@@ -178,7 +178,7 @@ class ExecuteDeal extends Component {
                     }
                   </tbody>
                 </Table>
-              </>
+              </div>
             )}
           </>
         }

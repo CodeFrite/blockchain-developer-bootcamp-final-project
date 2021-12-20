@@ -150,7 +150,7 @@ class Clause5 extends Component {
         {
           this.state.rules.map((rule, ruleIdx) => {
             return (
-              <Row>
+              <Row key="ruleIdx">
                 <Col xs={11}>
                   <br/>
                   <h3>Rule {ruleIdx}</h3>
