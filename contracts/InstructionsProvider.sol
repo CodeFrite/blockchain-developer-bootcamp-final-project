@@ -20,10 +20,10 @@ contract InstructionsProvider is Ownable {
     /* STORAGE */
 
     /// @dev Proxy instance reference
-    address private proxyInstanceRef;
+    address public proxyInstanceRef;
 
     /// @dev Interpreter contract reference
-    address private interpreterContractRef;
+    address public interpreterContractRef;
 
     /// @dev OpenZeppelin Escrow contract reference
     Escrow public escrowInstance;
@@ -63,7 +63,7 @@ contract InstructionsProvider is Ownable {
     /* PUBLIC INTERFACE */
 
     constructor(address _address) {
-    if (_address==address(0))
+        if (_address==address(0))
             escrowInstance = new Escrow();
         else
             escrowInstance = Escrow(_address);

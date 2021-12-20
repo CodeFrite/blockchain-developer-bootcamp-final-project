@@ -19,16 +19,16 @@ contract Interpreter is Ownable {
     /* STORAGE VARIABLES */
 
     /// @dev Proxy contract address
-    address private proxyContractAddress;
+    address public proxyContractAddress;
 
     /// @dev Instructions contract reference
-    Instructions private instructionsInstance;
+    Instructions public instructionsInstance;
 
     /// @dev InstructionsProvider contract reference
-    address private instructionsProviderInstance;
+    address public instructionsProviderInstance;
 
     /// @dev Deals contract reference
-    Deals private dealsInstance;
+    Deals public dealsInstance;
 
     /// @dev Track the msg.value already used by the rule being currently executed
     uint private msgValueUsed;
