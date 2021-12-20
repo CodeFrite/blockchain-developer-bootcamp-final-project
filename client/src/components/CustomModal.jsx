@@ -15,10 +15,10 @@ class CustomModal extends Component {
 
         <Modal show={this.props.show} onHide={this.props.handleClose}>
             <Modal.Header>
-            <Modal.Title>Metal Not Detected</Modal.Title>
+            <Modal.Title>{this.props.title}</Modal.Title>
             <button type="button" className="btn-close" aria-label="Close" onClick={this.props.handleClose}></button>
             </Modal.Header>
-            <Modal.Body>This website relies on MetaMask to interact with the contract. Please install MetaMask.</Modal.Body>
+            <Modal.Body>{this.props.body}</Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={this.props.handleClose}>
                   Close

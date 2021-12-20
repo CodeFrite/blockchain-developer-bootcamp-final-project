@@ -207,7 +207,7 @@ class App extends Component {
           {/* Modal MetaMask */}
           <CustomModal show={this.state.metamask.showModal} handleClose={() => {
             this.setState( {metamask: {...this.state.metamask, showModal: false}});
-          }} />
+          }} title="Metal Not Detected" body="This website relies on MetaMask to interact with the contract. Please install MetaMask."/>
           
           <Routes>
           <Route exact path='/' element={<Home/>}></Route>
