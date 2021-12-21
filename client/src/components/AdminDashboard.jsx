@@ -1,27 +1,44 @@
 // EXTERNAL IMPORTS
 import React, { Component } from 'react';
-import { Container, Row, Col, Card, Button, ButtonGroup, ToggleButton } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, ButtonGroup, ToggleButton, Badge } from 'react-bootstrap';
 
 // IMPORT CONTRACTS
+import CommonStructs from "../contracts/CommonStructs.json";
 import Deals from "../contracts/Deals.json";
 import Instructions from "../contracts/Instructions.json";
 import InstructionsProvider from "../contracts/InstructionsProvider.json";
 import Interpreter from "../contracts/Interpreter.json";
 import Proxy from "../contracts/Proxy.json";
+import Escrow from "../contracts/Escrow.json";
 
 // IMPORT IMAGES
-import imgSmartContract from '../assets/smart-contract_.png';
+import imgSmartContract from '../assets/smart-contract.png';
+import imgSmartContractUpToDate from '../assets/smart-contract_.png';
 
 class AdminDashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
       contracts: {
+          commonStructs: null,
           deals: null,
           instructions: null,
-          instructionsPovider: null,
+          instructionsProvider: null,
           interpreter: null,
-          proxy: null
+          proxy: null,
+          escrow : null
+      },
+      references: {
+        proxyInterpreter: null,
+        proxyInstructionsProvider: null,
+        escrowInstructionsProvider: null,
+        interpreterDeals: null,
+        interpreterInstructions: null,
+        interpreterInstructionsProvider: null,
+        interpreterProxy: null,
+        instructionsProviderInterpreter: null,
+        instructionsProviderProxy: null,
+        instructionsProviderEscrow: null,
       },
       txtVars: {
         conversionRate: 0,
@@ -32,7 +49,10 @@ class AdminDashboard extends Component {
         transactionMinimalValue: null
       },
       DAppState: null,
-      upgradeState: null
+      upToDate: {
+        instructionsProvider: true,
+        interpreter: true
+      }
     }
   }
 
@@ -81,7 +101,7 @@ class AdminDashboard extends Component {
   }
 
   updateLastQuotation = async () => {
-    const tx = await this.state.contracts.proxy.methods.saveLatestQuotation().send({from:this.props.selectedAccount});
+    await this.state.contracts.proxy.methods.saveLatestQuotation().send({from:this.props.selectedAccount});
     await this.getLastQuotation();
   }
 
@@ -170,19 +190,45 @@ class AdminDashboard extends Component {
   }
 
   // Upgradibility
-  upgradeInstructionsProvider = async (newAddress) => {
-    // Transfer Escrow ownership
 
-    // Update ref InstructionsProvider => Proxy
-
-    // Update ref InstructionsProvider => Interpreter
-
-    // Update ref InstructionsProvider => Escrow
+  getContractsReferences = async () => {
     
-    // Update ref Proxy => InstructionsProvider
+    let proxyInterpreter = await this.state.contracts.proxy.methods.interpreterContractRef().call();
+    let proxyInstructionsProvider = await this.state.contracts.proxy.methods.instructionsProviderContractRef().call();
 
-    // Update ref Interpreter => InstructionsProvider
+    let interpreterDeals = await this.state.contracts.interpreter.methods.dealsInstance().call();
+    let interpreterInstructions = await this.state.contracts.interpreter.methods.instructionsInstance().call();
+    let interpreterInstructionsProvider = await this.state.contracts.interpreter.methods.instructionsProviderInstance().call();
+    let interpreterProxy = await this.state.contracts.interpreter.methods.proxyContractAddress().call();
 
+    let instructionsProviderInterpreter = await this.state.contracts.instructionsProvider.methods.interpreterContractRef().call();
+    let instructionsProviderProxy = await this.state.contracts.instructionsProvider.methods.proxyInstanceRef().call();
+
+    // We want to reach the Escrow of the < OLD > instructionsProvider contract but we only have the new ABI
+    // ... no problem since both version will always have the Escrow functions defined
+    // ==> we can use a copy of the new ABI and change its address
+    let copyABI = Object.assign({}, this.state.contracts.instructionsProvider);
+    copyABI._address = proxyInstructionsProvider;
+    // We can now use the copy with the old address to make a call to the escrow
+    let instructionsProviderEscrow = await copyABI.methods.escrowInstance().call(); 
+
+    let escrowInstructionsProvider = await this.state.contracts.escrow.methods.owner().call();
+ 
+    this.setState({
+      references:{
+        proxyInterpreter, 
+        proxyInstructionsProvider,
+        escrowInstructionsProvider,
+        interpreterDeals,
+        interpreterInstructions,
+        interpreterInstructionsProvider,
+        interpreterProxy,
+        instructionsProviderInterpreter,
+        instructionsProviderProxy,
+        instructionsProviderEscrow
+      }
+    });
+    
   }
 
   componentDidMount = async () => {
@@ -191,6 +237,7 @@ class AdminDashboard extends Component {
       
     // Load contracts ABI
     const networkId = await web3.eth.net.getId();
+    const deployedCommonStructs = CommonStructs.networks[networkId];
     const deployedNetworkDeals = Deals.networks[networkId];
     const deployedNetworkInstructions = Instructions.networks[networkId];
     const deployedNetworkInstructionsProvider = InstructionsProvider.networks[networkId];
@@ -200,13 +247,22 @@ class AdminDashboard extends Component {
     // Save contracts ABI to state
     this.setState({ 
       contracts:{
+        commonStructs: new web3.eth.Contract(CommonStructs.abi, deployedCommonStructs && deployedCommonStructs.address),
         deals: new web3.eth.Contract(Deals.abi, deployedNetworkDeals && deployedNetworkDeals.address),
         instructions: new web3.eth.Contract(Instructions.abi, deployedNetworkInstructions && deployedNetworkInstructions.address),
-        instructionsProvider: new web3.eth.Contract(Instructions.abi, deployedNetworkInstructionsProvider && deployedNetworkInstructionsProvider.address),
-        interpreter: new web3.eth.Contract(Instructions.abi, deployedNetworkInterpreter && deployedNetworkInterpreter.address),
-        proxy: new web3.eth.Contract(Proxy.abi, deployedNetworkProxy && deployedNetworkProxy.address)
+        instructionsProvider: new web3.eth.Contract(InstructionsProvider.abi, deployedNetworkInstructionsProvider && deployedNetworkInstructionsProvider.address),
+        interpreter: new web3.eth.Contract(Interpreter.abi, deployedNetworkInterpreter && deployedNetworkInterpreter.address),
+        proxy: new web3.eth.Contract(Proxy.abi, deployedNetworkProxy && deployedNetworkProxy.address),
+        escrow: null
       } 
     });
+
+    // Get Escrow address : the one that proxy->instructionsProvider is pointing to
+    let escrowAddress = await this.state.contracts.instructionsProvider.methods.escrowInstance().call();
+    this.setState({
+      contracts: { ...this.state.contracts, escrow: new web3.eth.Contract(Escrow.abi, escrowAddress) }
+    });
+
     console.log("AdminDashboard> Contracts abi loaded ...");
 
     /* LOAD DATA FROM CONTRACTS */
@@ -226,11 +282,23 @@ class AdminDashboard extends Component {
     // Load transaction fees
     await this.getTransactionFees();
 
-    // Laod transaction minimal value
+    // Load transaction minimal value
     await this.getTransactionMinimalValue();
+
+    // Get contracts references
+    await this.getContractsReferences();
   }
 
+  shortAddress = address => (address===null ? "0x000...00000" : address.substr(0,5) + "..." + address.substr(address.length-5,5));
+
+  saveToClipboard = text => navigator.clipboard.writeText(text);
+
+  highlightSVGElement = id => { document.getElementById("arrow-" + id).className.baseVal = "arrow-highlight" };
+
+  unhighlightSVGElement = id => { document.getElementById("arrow-" + id).className.baseVal = "arrow" };
+
   render() { 
+    
     return (  
       <Container id="main-container">
         <Row>
@@ -273,7 +341,9 @@ class AdminDashboard extends Component {
                   + {(this.state.txtVars.conversionRate).toFixed(2)} USD/ETH
                   <br/>
                   + @{this.state.txtVars.lastUpdate}
-                  <hr/>
+                </Card.Text>
+                <hr/>
+                <Card.Text>
                   <Button variant="primary" size="sm" onClick={this.updateLastQuotation}>Update</Button>
                 </Card.Text>
               </Card.Body>
@@ -286,7 +356,9 @@ class AdminDashboard extends Component {
                 <Card.Title>Current Value</Card.Title>
                 <Card.Text>
                   + {this.state.txtVars.accountCreationFees} USD
-                  <hr/>
+                </Card.Text>
+                <hr/>
+                <Card.Text>
                   <input id="accountCreationFees" size="2" placeholder={this.state.txtVars.accountCreationFees}/>&nbsp;
                   <Button variant="primary" size="sm" onClick={this.updateAdditionalAccountFees}>Update</Button>
                 </Card.Text>
@@ -300,7 +372,9 @@ class AdminDashboard extends Component {
                 <Card.Title>Current Value</Card.Title>
                 <Card.Text>
                   + {this.state.txtVars.ruleCreationFees} USD
-                  <hr/>
+                </Card.Text>
+                <hr/>
+                <Card.Text>  
                   <input id="ruleCreationFees" size="2" placeholder={this.state.txtVars.ruleCreationFees}/>&nbsp;
                   <Button variant="primary" size="sm" onClick={this.updateAdditionalRuleFees}>Update</Button>
                 </Card.Text>
@@ -317,7 +391,9 @@ class AdminDashboard extends Component {
                 <Card.Title>Current Value</Card.Title>
                 <Card.Text>
                   + {this.state.txtVars.transactionFees} %
-                  <hr/>
+                </Card.Text>
+                <hr/>
+                <Card.Text>  
                   <input id="transactionFees" size="2" placeholder={this.state.txtVars.transactionFees}/>&nbsp;
                   <Button variant="primary" size="sm" onClick={this.updateTransactionFees}>Update</Button>
                 </Card.Text>
@@ -331,7 +407,9 @@ class AdminDashboard extends Component {
                 <Card.Title>Current Value</Card.Title>
                 <Card.Text>
                   + {this.state.txtVars.transactionMinimalValue} USD
-                  <hr/>
+                </Card.Text>
+                <hr/>
+                <Card.Text>  
                   <input id="transactionMinimalValue" size="2" placeholder={this.state.txtVars.transactionMinimalValue}/>&nbsp;
                   <Button variant="primary" size="sm" onClick={this.updateTransactionMinimalValue}>Update</Button>
                 </Card.Text>
@@ -340,9 +418,10 @@ class AdminDashboard extends Component {
           </Col>
         </Row>
         <br/><br/>
-        <h2>Upgrability</h2>
+        <h2>Upgradibility</h2>
+        <br/>
         <Row>
-          <Col xs={6}>
+          <Col xs={8}>
             <svg id="svg-upgrade" height="600" width="100%">
               <defs>
                 <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5"
@@ -350,34 +429,266 @@ class AdminDashboard extends Component {
                     orient="auto-start-reverse">
                   <path className="arrow" d="M 0 0 L 10 5 L 0 10 z" />
                 </marker>
+                <marker id="arrow-highlight" viewBox="0 0 10 10" refX="5" refY="5"
+                    markerWidth="6" markerHeight="6"
+                    orient="auto-start-reverse">
+                  <path className="arrow-highlight" d="M 0 0 L 10 5 L 0 10 z" />
+                </marker>
               </defs>
 
-              {/* New InstructionsProvider.sol */}
-              <image className="smart-contract" href={imgSmartContract} x="300" y="100" width="50" height="50" />
-              <text x="230" y="285">InstructionsProvider.sol</text>
-
-              {/* InstructionsProvider.sol */}
-              <image className="smart-contract" href={imgSmartContract} x="300" y="300" width="50" height="50" />
-              <text x="230" y="285">InstructionsProvider.sol</text>
+              {/* Instructions.sol */}
+              <image 
+                href={imgSmartContract} 
+                x="280" y="50" width="50" height="50" 
+                onClick={() => this.saveToClipboard(this.state.contracts.instructions && this.state.contracts.instructions._address)}
+              />
+              <text x="240" y="125">Instructions.sol</text>
+              <text x="250" y="150">{ (this.state.contracts.instructions===null ? "Loading" : this.shortAddress(this.state.contracts.instructions._address)) }</text>
 
               {/* Interpreter.sol */}
-              <image className="smart-contract" href={imgSmartContract} x="100" y="300" width="50" height="50" />
-              <text x="60"  y="375">Interpreter.sol</text>
-              <line className="arrow" x1="170" y1="310" x2="280" y2="310" markerEnd="url(#arrow)" strokeDasharray="2 2"/>
-              <line className="arrow" x1="280" y1="340" x2="170" y2="340" markerEnd="url(#arrow)" strokeDasharray="2 2"/>
+              <image 
+                className={
+                  (this.state.contracts.interpreter && this.state.references.proxyInterpreter === this.state.contracts.interpreter._address 
+                  ? "" 
+                  : "smart-contract-outdated") 
+                } 
+                href={imgSmartContractUpToDate} 
+                x="280" y="250" width="50" height="50"
+                onClick={() => this.saveToClipboard(this.state.contracts.escrow && this.state.contracts.interpreter._address)} 
+              />
+              <text x="260" y="325">Interpreter.sol</text>
+              <text x="260" y="350">{ (this.state.contracts.interpreter===null ? "Loading" : this.shortAddress(this.state.contracts.interpreter._address)) }</text>
+              <line id="arrow-interpreterInstructions" className="arrow" x1="300" y1="245" x2="300" y2="165" markerEnd="url(#arrow)" strokeDasharray="2 2"/>{/* => Instructions */}
+              <line id="arrow-interpreterDeals" className="arrow" x1="260" y1="275" x2="150" y2="275" markerEnd="url(#arrow)" strokeDasharray="2 2"/>{/* => Deals */}
+              <line id="arrow-interpreterInstructionsProvider" className="arrow" x1="340" y1="260" x2="460" y2="260" markerEnd="url(#arrow)" strokeDasharray="2 2"/>{/* => InstructionsProvider */}
+              <line id="arrow-interpreterProxy" className="arrow" x1="330" y1="370" x2="460" y2="470" markerEnd="url(#arrow)" strokeDasharray="2 2"/>{/* => Proxy */}
+
+              {/* Deals.sol */}
+              <image
+                href={imgSmartContract} 
+                x="80" y="250" width="50" height="50" 
+                onClick={() => this.saveToClipboard(this.state.contracts.deals && this.state.contracts.deals._address)}
+              />
+              <text x="60" y="325">Deals.sol</text>
+              <text x="40" y="350">{ (this.state.contracts.deals===null ? "Loading" : this.shortAddress(this.state.contracts.deals._address)) }</text>
               
+              {/* CommonStructs.sol */}
+              <image 
+                href={imgSmartContract} 
+                x="80" y="450" width="50" height="50" 
+                onClick={() => this.saveToClipboard(this.state.contracts.commonStructs && this.state.contracts.commonStructs._address)}
+              />
+              <text x="20" y="525">CommonStructs.sol</text>
+              <text x="40" y="550">{ (this.state.contracts.commonStructs===null ? "Loading" : this.shortAddress(this.state.contracts.commonStructs._address)) }</text>
+
+              {/* InstructionsProvider.sol */}
+              <image 
+                className={
+                  (this.state.contracts.instructionsProvider && this.state.references.proxyInstructionsProvider === this.state.contracts.instructionsProvider._address 
+                  ? "" 
+                  : "smart-contract-outdated") 
+                } 
+                href={imgSmartContractUpToDate} 
+                x="480" y="250" width="50" height="50" 
+                onClick={() => this.saveToClipboard(this.state.contracts.instructionsProvider && this.state.contracts.instructionsProvider._address)}
+              />
+              <text x="400" y="325">InstructionsProvider.sol</text>
+              <text x="450" y="350">{ (this.state.contracts.instructionsProvider===null ? "Loading" : this.shortAddress(this.state.contracts.instructionsProvider._address)) }</text>
+              <line id="arrow-instructionsProviderInterpreter" className="arrow" x1="460" y1="290" x2="340" y2="290" markerEnd="url(#arrow)" strokeDasharray="2 2"/>{/* => Interpreter */}
+              <line id="arrow-instructionsProviderEscrow" className="arrow" x1="550" y1="260" x2="660" y2="260" markerEnd="url(#arrow)"/> {/* => Escrow */}
+              <line id="arrow-instructionsProviderProxy" className="arrow" x1="490" y1="370" x2="490" y2="430" markerEnd="url(#arrow)" strokeDasharray="2 2"/>{/* => Proxy */}
+
               {/* Escrow.sol */}
-              <image className="smart-contract" href={imgSmartContract} x="500" y="300" width="50" height="50" />
-              <text x="480" y="375">Escrow.sol</text>
-              <line className="arrow" x1="370" y1="310" x2="480" y2="310" markerEnd="url(#arrow)"/>
-              <line className="arrow" x1="480" y1="340" x2="370" y2="340" markerEnd="url(#arrow)" strokeDasharray="2 2"/>
+              <image 
+                href={imgSmartContract} 
+                x="680" y="250" width="50" height="50" 
+                onClick={() => this.saveToClipboard(this.state.contracts.escrow && this.state.contracts.escrow._address)}
+              />
+              <text x="660" y="325">Escrow.sol</text>
+              <text x="650" y="350">{ (this.state.contracts.escrow===null ? "Loading" : this.shortAddress(this.state.contracts.escrow._address)) }</text>
+              <line id="arrow-escrowInstructionsProvider" className="arrow" x1="660" y1="290" x2="550" y2="290" markerEnd="url(#arrow)" strokeDasharray="2 2"/>{/* => InstructionsProver */}
               
               {/* Proxy.sol */}
-              <image className="smart-contract" href={imgSmartContract} x="300" y="500" width="50" height="50" onMouseEnter={()=>  console.log(10) }/>
-              <text x="290" y="580">Proxy.sol</text>
-              <line className="arrow" x1="325" y1="480" x2="325" y2="375" markerEnd="url(#arrow)" strokeDasharray="2 2"/>
-              
+              <image 
+                href={imgSmartContract} 
+                x="480" y="450" width="50" height="50"
+                onClick={() => this.saveToClipboard(this.state.contracts.proxy && this.state.contracts.proxy._address)}
+              />
+              <text x="470" y="525">Proxy.sol</text>
+              <text x="450" y="550">{ (this.state.contracts.proxy===null ? "Loading" : this.shortAddress(this.state.contracts.proxy._address)) }</text>
+              <line id="arrow-proxyInstructionsProvider" className="arrow" x1="510" y1="430" x2="510" y2="370" markerEnd="url(#arrow)" strokeDasharray="2 2"/>{/* => InstructionsProvider */}
+              <line id="arrow-proxyInterpreter" className="arrow" x1="460" y1="490" x2="305" y2="370" markerEnd="url(#arrow)" strokeDasharray="2 2"/>{/* => Interpreter */}
+
             </svg>
+          </Col>
+
+          <Col xs={4}>
+            <Card>
+              <Card.Header>Interpreter</Card.Header>
+              <Card.Body>
+                <Card.Text>
+                  <Row className="row-highlight-hover" 
+                  onMouseEnter={() => this.highlightSVGElement("interpreterProxy")} 
+                  onMouseLeave={() => this.unhighlightSVGElement("interpreterProxy")}
+                  onClick={() => this.saveToClipboard(this.state.contracts.proxy && this.state.contracts.proxy._address)}
+                  >
+                    <Col lg="7">&#8614; Proxy: </Col>
+                    <Col lg="5">
+                      {(
+                        this.state.contracts.proxy && this.state.references.interpreterProxy === this.state.contracts.proxy._address 
+                        ? this.shortAddress(this.state.contracts.proxy._address) 
+                        : this.shortAddress(this.state.references.interpreterProxy)
+                      )}
+                    </Col>
+                  </Row>
+                  <Row className="row-highlight-hover" 
+                  onMouseEnter={() => this.highlightSVGElement("interpreterDeals")} 
+                  onMouseLeave={() => this.unhighlightSVGElement("interpreterDeals")}
+                  onClick={() => this.saveToClipboard(this.state.contracts.deals && this.state.contracts.deals._address)}
+                  >
+                    <Col lg="7">&#8614; Deals:</Col>
+                    <Col lg="5">
+                      {(
+                        this.state.contracts.deals && this.state.references.interpreterDeals === this.state.contracts.deals._address 
+                        ? this.shortAddress(this.state.contracts.deals._address)
+                        : this.shortAddress(this.state.references.interpreterDeals)
+                      )}
+                    </Col>
+                  </Row>
+                  <Row className="row-highlight-hover" 
+                  onMouseEnter={() => this.highlightSVGElement("interpreterInstructions")} 
+                  onMouseLeave={() => this.unhighlightSVGElement("interpreterInstructions")}
+                  onClick={() => this.saveToClipboard(this.state.contracts.instructions && this.state.contracts.instructions._address)}
+                  >
+                    <Col lg="7">&#8614; Instructions:</Col>
+                    <Col lg="5">
+                      {(
+                        this.state.contracts.instructions && this.state.references.interpreterInstructions === this.state.contracts.instructions._address 
+                        ? this.shortAddress(this.state.contracts.instructions._address) 
+                        : this.shortAddress(this.state.references.interpreterInstructions)
+                      )}
+                    </Col>
+                  </Row>
+                  <Row className="row-highlight-hover" 
+                  onMouseEnter={() => this.highlightSVGElement("interpreterInstructionsProvider")} 
+                  onMouseLeave={() => this.unhighlightSVGElement("interpreterInstructionsProvider")}
+                  onClick={() => this.saveToClipboard(this.state.contracts.instructionsProvider && this.state.contracts.instructionsProvider._address)}
+                  >
+                    <Col lg="7">&#8614; InstructionsProvider:</Col>
+                    <Col lg="5">  
+                      {(
+                        this.state.contracts.instructionsProvider && this.state.references.interpreterInstructionsProvider === this.state.contracts.instructionsProvider._address 
+                        ? this.shortAddress(this.state.contracts.instructionsProvider._address) 
+                        : this.shortAddress(this.state.references.interpreterInstructionsProvider)
+                      )}
+                    </Col>
+                  </Row>
+                </Card.Text>
+              </Card.Body>
+            </Card>
+            <br/>
+            <Card>
+              <Card.Header>InstructionsProvider</Card.Header>
+              <Card.Body>
+                <Card.Text>
+                  <Row className="row-highlight-hover" 
+                  onMouseEnter={() => this.highlightSVGElement("escrowInstructionsProvider")} 
+                  onMouseLeave={() => this.unhighlightSVGElement("escrowInstructionsProvider")}
+                  onClick={() => this.saveToClipboard(this.state.references.escrowInstructionsProvider)}
+                  >
+                    <Col lg="7">&#8614; Escrow ownership:</Col>
+                    <Col lg="5">
+                      {(
+                        this.state.contracts.instructionsProvider && this.state.references.escrowInstructionsProvider === this.state.contracts.instructionsProvider._address 
+                        ? this.shortAddress(this.state.contracts.instructionsProvider._address)
+                        : this.shortAddress(this.state.references.escrowInstructionsProvider)
+                      )}
+                    </Col>
+                  </Row>
+                </Card.Text>
+                <hr/>
+                <Card.Text>  
+                  <Row className="row-highlight-hover" 
+                  onMouseEnter={() => this.highlightSVGElement("instructionsProviderEscrow")} 
+                  onMouseLeave={() => this.unhighlightSVGElement("instructionsProviderEscrow")}
+                  onClick={() => this.saveToClipboard(this.state.contracts.escrow && this.state.contracts.escrow._address)}
+                  >
+                    <Col lg="7">&#8614; Escrow:</Col>
+                    <Col lg="5">
+                      {(
+                        this.state.contracts.escrow && this.state.references.instructionsProviderEscrow === this.state.contracts.escrow._address 
+                        ? this.shortAddress(this.state.contracts.escrow._address)
+                        : this.shortAddress(this.state.references.instructionsProviderEscrow)
+                      )}
+                    </Col>
+                  </Row>
+                  <Row className="row-highlight-hover" 
+                  onMouseEnter={() => this.highlightSVGElement("instructionsProviderInterpreter")} 
+                  onMouseLeave={() => this.unhighlightSVGElement("instructionsProviderInterpreter")}
+                  onClick={() => this.saveToClipboard(this.state.contracts.interpreter && this.state.contracts.interpreter._address)}
+                  >
+                    <Col lg="7">&#8614; Interpreter:</Col>
+                    <Col lg="5">
+                      {(
+                        this.state.contracts.interpreter && this.state.references.instructionsProviderInterpreter === this.state.contracts.interpreter._address 
+                        ? this.shortAddress(this.state.contracts.interpreter._address) 
+                        : this.shortAddress(this.state.references.instructionsProviderInterpreter)
+                      )}
+                    </Col>
+                  </Row>
+                  <Row className="row-highlight-hover" 
+                  onMouseEnter={() => this.highlightSVGElement("instructionsProviderProxy")} 
+                  onMouseLeave={() => this.unhighlightSVGElement("instructionsProviderProxy")}
+                  onClick={() => this.saveToClipboard(this.state.contracts.proxy && this.state.contracts.proxy._address)}
+                  >
+                    <Col lg="7">&#8614; Proxy:</Col>
+                    <Col lg="5">
+                      {(
+                        this.state.contracts.proxy && this.state.references.instructionsProviderProxy === this.state.contracts.proxy._address 
+                        ? this.shortAddress(this.state.contracts.proxy._address)
+                        : this.shortAddress(this.state.references.instructionsProviderProxy)
+                      )}
+                    </Col>
+                  </Row>
+                </Card.Text>
+              </Card.Body>
+            </Card>
+            <br/>
+            <Card>
+              <Card.Header>Proxy</Card.Header>
+              <Card.Body>
+                <Card.Text>
+                  <Row className="row-highlight-hover" 
+                  onMouseEnter={() => this.highlightSVGElement("proxyInterpreter")} 
+                  onMouseLeave={() => this.unhighlightSVGElement("proxyInterpreter")}
+                  onClick={() => this.saveToClipboard(this.state.contracts.interpreter && this.state.contracts.interpreter._address)}
+                  >
+                    <Col lg="7">&#8614; Interpreter: </Col>
+                    <Col lg="5">
+                      {(
+                        this.state.contracts.interpreter && this.state.references.proxyInterpreter === this.state.contracts.interpreter._address 
+                        ? this.shortAddress(this.state.contracts.interpreter._address) 
+                        : this.shortAddress(this.state.references.proxyInterpreter)
+                      )}
+                    </Col>
+                  </Row>
+                  <Row className="row-highlight-hover" 
+                  onMouseEnter={() => this.highlightSVGElement("proxyInstructionsProvider")} 
+                  onMouseLeave={() => this.unhighlightSVGElement("proxyInstructionsProvider")}
+                  onClick={() => this.saveToClipboard(this.state.contracts.instructionsProvider && this.state.contracts.instructionsProvider._address)}
+                  >
+                    <Col lg="7">&#8614; InstructionsProvider:</Col>
+                    <Col lg="5">
+                      {(
+                        this.state.contracts.instructionsProvider && this.state.references.proxyInstructionsProvider === this.state.contracts.instructionsProvider._address 
+                        ? this.shortAddress(this.state.contracts.instructionsProvider._address) 
+                        : this.shortAddress(this.state.references.proxyInstructionsProvider)
+                      )}
+                    </Col>
+                  </Row>
+                </Card.Text>
+              </Card.Body>
+            </Card>
           </Col>
         </Row>
       </Container>

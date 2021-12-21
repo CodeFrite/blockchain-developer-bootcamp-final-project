@@ -106,16 +106,15 @@ p.button:hover {
   background: greenyellow;
 }
 
-div.card:hover {
-  background: rgba(0, 255, 0, 0.186);
-  transition: all .5s ease-in-out;
+div.card {
+  border-radius: 0px;
 }
 
 .hidden {
   visibility: none;
 }
 
-.smart-contract {
+.smart-contract-outdated {
   filter: grayscale(100%) sepia(100%);
 }
 
@@ -125,9 +124,27 @@ div.card:hover {
   transition: all 0.1s ease-in-out;
 }
 
+.row-highlight-hover:hover {
+  background: yellowgreen!important;
+}
+
 .arrow {
   stroke:black;
   fill:black;
+  stroke-width:2;
+  marker-end: url("#arrow");
+}
+
+.arrow-highlight {
+  stroke:yellowgreen;
+  fill:yellowgreen;
+  stroke-width:2;
+  marker-end: url("#arrow-highlight");
+}
+
+.arrow-outdated {
+  stroke:red;
+  fill:red;
   stroke-width:2;
 }
 
