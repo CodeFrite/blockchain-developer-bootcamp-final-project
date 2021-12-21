@@ -423,12 +423,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x31194397a3C34f4691078C1c3D2E38017671660E",
-      "transactionHash": "0x9a91e821536e04443547cc680b8afb51b5bd7fd74b013176ffcfe23806210022"
+      "address": "0x128c295D337A9fB1A3c0cF3e37fdb381eBc88d5D",
+      "transactionHash": "0xccbd404e699f8104ecfb4c2ebed807f652f25d14414d2a97d64dc045b484d1ab"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-12-19T23:08:12.187Z",
+  "updatedAt": "2021-12-21T16:53:01.317Z",
   "networkType": "ethereum",
   "devdoc": {
     "details": "Struct and enum used accross the contracts",
