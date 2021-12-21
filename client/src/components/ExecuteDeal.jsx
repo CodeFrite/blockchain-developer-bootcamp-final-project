@@ -66,8 +66,10 @@ class ExecuteDeal extends Component {
 
   executeRule = async (ruleId, value) => {
     const contract = this.props.contracts.proxy;
-    let tx = await contract.methods.executeRule(this.state.dealId, ruleId).send({from:this.props.selectedAccount,value: value});
-    console.log(tx);
+    await contract.methods.executeRule(this.state.dealId, ruleId)
+      .send({from:this.props.selectedAccount,value: value})
+      .then(console.log)
+      .catch((e) => alert(e.message));
 
     // Update Escrow balance
     await this.checkBalance();
@@ -82,8 +84,10 @@ class ExecuteDeal extends Component {
 
   withdraw = async () => {
     const contract = this.props.contracts.proxy;
-    let tx = await contract.methods.withdraw().send({from:this.props.selectedAccount});
-    console.log(tx);
+    await contract.methods.withdraw()
+      .send({from:this.props.selectedAccount})
+      .then(console.log)
+      .catch((e) => alert(e.message));
     await this.checkBalance();
   }
 
