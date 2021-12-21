@@ -6,4 +6,8 @@ bin
 client/package-lock.json
 client/yarn.lock
 
-client/src/contracts/*.json
+client/src/contracts/Address.json
+client/src/contracts/AggregatorV3Interface.json
+client/src/contracts/Context.json
+client/src/contracts/Ownable.json
+client/src/contracts/Pausable.json
