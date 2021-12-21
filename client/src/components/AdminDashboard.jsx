@@ -69,8 +69,10 @@ class AdminDashboard extends Component {
     // Call contract only if DApp is paused
     if (this.state.DAppState) {
       console.log("AdminDashboard> Resuming DApp ...");
-      const tx = await this.state.contracts.proxy.methods.unpause().send({from:this.props.selectedAccount});
-      console.log(tx);
+      await this.state.contracts.proxy.methods.unpause()
+        .send({from:this.props.selectedAccount})
+        .then(console.log)
+        .catch((e) => alert(e.message));
       console.log("AdminDashboard> ... DApp Resumed");
     }
     await this.getDAppState();
@@ -80,8 +82,10 @@ class AdminDashboard extends Component {
     // Call contract only if DApp is not paused
     if (!this.state.DAppState) {
       console.log("AdminDashboard> Pausing DAPP ...");
-      const tx = await this.state.contracts.proxy.methods.pause().send({from:this.props.selectedAccount});
-      console.log(tx);
+      await this.state.contracts.proxy.methods.pause()
+        .send({from:this.props.selectedAccount})
+        .then(console.log)
+        .catch((e) => alert(e.message));
       console.log("AdminDashboard> ... DApp Paused");
     }
     await this.getDAppState();
@@ -101,8 +105,12 @@ class AdminDashboard extends Component {
   }
 
   updateLastQuotation = async () => {
-    await this.state.contracts.proxy.methods.saveLatestQuotation().send({from:this.props.selectedAccount});
+    await this.state.contracts.proxy.methods.saveLatestQuotation()
+      .send({from:this.props.selectedAccount})
+      .then(console.log)
+      .catch((e) => alert(e.message));
     await this.getLastQuotation();
+    console.log("AdminDashboard> Quotation updated");
   }
 
   // Additional account fees
@@ -115,6 +123,7 @@ class AdminDashboard extends Component {
   updateAdditionalAccountFees = async () => {
     // Get the value from the input field
     let newValue = document.getElementById("accountCreationFees").value;
+    newValue = (newValue==="" ? 0 : newValue);
     console.log("AdminDashboard> Updating account creation value", newValue, "$ ...");
     // Change the value
     await this.state.contracts.proxy.methods.setAccountCreationFees(newValue)
@@ -123,7 +132,7 @@ class AdminDashboard extends Component {
         await this.getAdditionalAccountFees();
         console.log("AdminDashboard> ... Account creation value updated", newValue, "$");
       })
-      .catch(alert);
+      .catch((e) => alert(e.message));
   }
 
   // Additional rule fees
@@ -136,6 +145,7 @@ class AdminDashboard extends Component {
   updateAdditionalRuleFees = async () => {
     // Get the value from the input field
     let newValue = document.getElementById("ruleCreationFees").value;
+    newValue = (newValue==="" ? 0 : newValue);
     console.log("AdminDashboard> Updating rule creation value", newValue, "$ ...");
     // Change the value
     await this.state.contracts.proxy.methods.setRuleCreationFees(newValue)
@@ -144,7 +154,7 @@ class AdminDashboard extends Component {
         await this.getAdditionalRuleFees();
         console.log("AdminDashboard> ... Rule creation value updated", newValue, "$");
       })
-      .catch(alert);
+      .catch((e) => alert(e.message));
   }
 
   // Transaction fees
@@ -157,6 +167,7 @@ class AdminDashboard extends Component {
   updateTransactionFees = async () => {
     // Get the value from the input field
     let newValue = document.getElementById("transactionFees").value;
+    newValue = (newValue==="" ? 0 : newValue);
     console.log("AdminDashboard> Updating transaction fees", newValue, "$ ...");
     // Change the value
     await this.state.contracts.proxy.methods.setTransactionFees(newValue)
@@ -165,7 +176,7 @@ class AdminDashboard extends Component {
         await this.getTransactionFees();
         console.log("AdminDashboard> ... Transaction fees updated", newValue, "$");
       })
-      .catch(alert);
+      .catch((e) => alert(e.message));
   }
 
   // Transaction minimal value
@@ -178,6 +189,7 @@ class AdminDashboard extends Component {
   updateTransactionMinimalValue = async () => {
     // Get the value from the input field
     let newValue = document.getElementById("transactionMinimalValue").value;
+    newValue = (newValue==="" ? 0 : newValue);
     console.log("AdminDashboard> Updating transaction minimal value", newValue, "$ ...");
     // Change the value
     await this.state.contracts.proxy.methods.setTransactionMinimalValue(newValue)
@@ -186,7 +198,7 @@ class AdminDashboard extends Component {
         await this.getTransactionMinimalValue();
         console.log("AdminDashboard> ... Transaction minimal value updated", newValue, "$");
       })
-      .catch(alert);
+      .catch((e) => alert(e.message));
   }
 
   // Upgradibility
@@ -359,7 +371,7 @@ class AdminDashboard extends Component {
                 </Card.Text>
                 <hr/>
                 <Card.Text>
-                  <input id="accountCreationFees" size="2" placeholder={this.state.txtVars.accountCreationFees}/>&nbsp;
+                  <input type="number" id="accountCreationFees" size="2" placeholder={this.state.txtVars.accountCreationFees}/>&nbsp;
                   <Button variant="primary" size="sm" onClick={this.updateAdditionalAccountFees}>Update</Button>
                 </Card.Text>
               </Card.Body>
@@ -375,7 +387,7 @@ class AdminDashboard extends Component {
                 </Card.Text>
                 <hr/>
                 <Card.Text>  
-                  <input id="ruleCreationFees" size="2" placeholder={this.state.txtVars.ruleCreationFees}/>&nbsp;
+                  <input type="number" id="ruleCreationFees" size="2" placeholder={this.state.txtVars.ruleCreationFees}/>&nbsp;
                   <Button variant="primary" size="sm" onClick={this.updateAdditionalRuleFees}>Update</Button>
                 </Card.Text>
               </Card.Body>
@@ -394,7 +406,7 @@ class AdminDashboard extends Component {
                 </Card.Text>
                 <hr/>
                 <Card.Text>  
-                  <input id="transactionFees" size="2" placeholder={this.state.txtVars.transactionFees}/>&nbsp;
+                  <input type="number" id="transactionFees" size="2" placeholder={this.state.txtVars.transactionFees}/>&nbsp;
                   <Button variant="primary" size="sm" onClick={this.updateTransactionFees}>Update</Button>
                 </Card.Text>
               </Card.Body>
@@ -410,7 +422,7 @@ class AdminDashboard extends Component {
                 </Card.Text>
                 <hr/>
                 <Card.Text>  
-                  <input id="transactionMinimalValue" size="2" placeholder={this.state.txtVars.transactionMinimalValue}/>&nbsp;
+                  <input type="number" min="0" max="100" id="transactionMinimalValue" size="2" placeholder={this.state.txtVars.transactionMinimalValue}/>&nbsp;
                   <Button variant="primary" size="sm" onClick={this.updateTransactionMinimalValue}>Update</Button>
                 </Card.Text>
               </Card.Body>
