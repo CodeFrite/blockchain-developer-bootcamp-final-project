@@ -44833,12 +44833,12 @@
         }
       },
       "links": {},
-      "address": "0xfa4C0e30cE3448D3831F7A8742E38b10f9aBA238",
-      "transactionHash": "0x9432824f369c4e123b697e8ab66b536f50a72866ff304aefe8b86139a3f714f1"
+      "address": "0xd1eF3ddb01F80bE9d75f2147eA723f03043e5146",
+      "transactionHash": "0xc9dcdbe1946da2fd787d4bb829a13b06966ca0bfc6fda62de12b59994ec0fad7"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-12-21T16:53:01.387Z",
+  "updatedAt": "2021-12-21T17:02:31.765Z",
   "networkType": "ethereum",
   "devdoc": {
     "details": "Main DApp entry point. Exposes the public interface and decouple the data and the logic",
