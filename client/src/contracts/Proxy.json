@@ -44428,6 +44428,414 @@
     "version": "0.8.9+commit.e5eed63a.Emscripten.clang"
   },
   "networks": {
+    "4": {
+      "events": {
+        "0x20cb277045b07975ddd69579bb7c5703b15359a94bc8b635d4a17c243c8a65ac": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_old",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_new",
+              "type": "uint256"
+            }
+          ],
+          "name": "ModifyAccountCreationFees",
+          "type": "event"
+        },
+        "0xd1a0f1c3e15bbeb47f950c6fd7572c460678919e9d839966bf073b487365e4bb": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_old",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_new",
+              "type": "uint256"
+            }
+          ],
+          "name": "ModifyAllowAllAccountsFees",
+          "type": "event"
+        },
+        "0xef88ef88851c867cbde2a8d8f43f01b9b75342fb93a2a7034ea0d656dbe13782": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_old",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_new",
+              "type": "address"
+            }
+          ],
+          "name": "ModifyDealsContractAddress",
+          "type": "event"
+        },
+        "0x7a98528f6374afdc782de68dfe485f60c47c83eb22d862896ee7c59a13c6d899": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_old",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_new",
+              "type": "address"
+            }
+          ],
+          "name": "ModifyInstructionsContractAddress",
+          "type": "event"
+        },
+        "0xdb667aada5a9918e51ab4a84bdf8d3e2f29386d98b52ae66cb26eaa442bbf968": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_old",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_new",
+              "type": "address"
+            }
+          ],
+          "name": "ModifyInstructionsProviderContractAddress",
+          "type": "event"
+        },
+        "0x81ed796ae91ccecf245e3cb1b6149b3491e1f0989e603b5d1b388bd68f06b52b": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_old",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_new",
+              "type": "address"
+            }
+          ],
+          "name": "ModifyInterpreterContractAddress",
+          "type": "event"
+        },
+        "0xb9515b0e9bbaa4038b7497d737691b38d19b454e0bcdc0ecc69472117684e192": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_old",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_new",
+              "type": "address"
+            }
+          ],
+          "name": "ModifyPriceFeedRefAggregatorAddress",
+          "type": "event"
+        },
+        "0x95204251d165fe2245c1dceb4c89885d7b8cfdb88aa079c9428ef4e12df3b0ac": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_old",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_new",
+              "type": "uint256"
+            }
+          ],
+          "name": "ModifyRuleCreationFees",
+          "type": "event"
+        },
+        "0x93dcb4d14ff2c7a93d0076d4d9fbf19c189f2de91a9ba7d79bb80115fe7a852d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_old",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_new",
+              "type": "uint256"
+            }
+          ],
+          "name": "ModifyTransactionFees",
+          "type": "event"
+        },
+        "0x9fd5b1fe2d0c3437bd798e95b2f63bd4a3b08887c95a04d22832ccb4aae9fda4": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_old",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_new",
+              "type": "uint256"
+            }
+          ],
+          "name": "ModifyTransactionMinimalValue",
+          "type": "event"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        "0x62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a258": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            }
+          ],
+          "name": "Paused",
+          "type": "event"
+        },
+        "0x1e34314d10c294e150d9078dc4808fbc4e77807ab189f2556837ace799958890": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_dealId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_fees",
+              "type": "uint256"
+            }
+          ],
+          "name": "PayDealCreationFees",
+          "type": "event"
+        },
+        "0xfa46e5ec587216687a4a33c4e605f1483f16833be6465e442d80d7bcbaec2eaf": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_dealId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_ruleId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_fees",
+              "type": "uint256"
+            }
+          ],
+          "name": "PayTransactionFees",
+          "type": "event"
+        },
+        "0x5b351a1cfe437f1ffd3264dd6e306788df85c7a71e50aa62b1b0a42fae257abd": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_timestamp",
+              "type": "uint256"
+            }
+          ],
+          "name": "QueryLastQuotationFromChainlink",
+          "type": "event"
+        },
+        "0x06a8acc0e592ef9d5924c211904629acef99f7d13d3c585219454c7fe93cd4ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_dealId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "ReimburseExcessValue",
+          "type": "event"
+        },
+        "0x5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            }
+          ],
+          "name": "Unpaused",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x9aE0575eFeAD1e67bCf756174740Bb75A5CafA77",
+      "transactionHash": "0x20cb94e1d28bf42a194f242a0d956226cab2c99ec0ff5bdc4680e3fdce9fa1a5"
+    },
     "5777": {
       "events": {
         "0x20cb277045b07975ddd69579bb7c5703b15359a94bc8b635d4a17c243c8a65ac": {
@@ -44838,7 +45246,7 @@
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-12-21T17:02:31.765Z",
+  "updatedAt": "2021-12-21T17:58:34.585Z",
   "networkType": "ethereum",
   "devdoc": {
     "details": "Main DApp entry point. Exposes the public interface and decouple the data and the logic",

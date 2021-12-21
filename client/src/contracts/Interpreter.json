@@ -20827,6 +20827,163 @@
     "version": "0.8.9+commit.e5eed63a.Emscripten.clang"
   },
   "networks": {
+    "4": {
+      "events": {
+        "0x5977102be6bd21fd83afd12f0ecdd364d2d921783685a3724dbde9415eb459fa": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_dealId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_ruleId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_articleId",
+              "type": "uint256"
+            }
+          ],
+          "name": "InterpretArticle",
+          "type": "event"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        "0x917149d640b2daf4230adc393bd7ea28a06eae265d2abbe1da1d90d4361da512": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_old",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_new",
+              "type": "address"
+            }
+          ],
+          "name": "SetDealsInstance",
+          "type": "event"
+        },
+        "0x2ad4ed8ea23910decfecc56b180d0d6937ec03001748e4072cfe0046dd74acb8": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_old",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_new",
+              "type": "address"
+            }
+          ],
+          "name": "SetInstructionsInstance",
+          "type": "event"
+        },
+        "0xb24ef369783b0bfd4bac6b2dbb331819fa6ddbb9906e98dc61c3dc6309452909": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_old",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_new",
+              "type": "address"
+            }
+          ],
+          "name": "SetInstructionsProviderInstance",
+          "type": "event"
+        },
+        "0x3f1217b02323e5dc4e83e1bf861d3a5c04873f7e972587684ce1dfcbbb329fa1": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_old",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_new",
+              "type": "address"
+            }
+          ],
+          "name": "SetProxyContractAddress",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x48b7eC5DA11ae184BF7e679f2b2ef57f630DFf1a",
+      "transactionHash": "0xb5f862d8e11c527ac80e08b4e902a6abf027c53f8ff4e66554694dd61dbc47a3"
+    },
     "5777": {
       "events": {
         "0x5977102be6bd21fd83afd12f0ecdd364d2d921783685a3724dbde9415eb459fa": {
@@ -20986,7 +21143,7 @@
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-12-21T17:02:31.734Z",
+  "updatedAt": "2021-12-21T17:58:34.566Z",
   "networkType": "ethereum",
   "devdoc": {
     "events": {

@@ -420,6 +420,12 @@
     "version": "0.8.9+commit.e5eed63a.Emscripten.clang"
   },
   "networks": {
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0xcDE611E4FB7C1272d962cE998491826AB63A1A6a",
+      "transactionHash": "0xde2bc14dc6fdd72a97dcdacac82eadeec5fe7883fa6f78d5d453256f6af81e92"
+    },
     "5777": {
       "events": {},
       "links": {},
@@ -428,7 +434,7 @@
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-12-21T17:02:31.694Z",
+  "updatedAt": "2021-12-21T17:58:34.539Z",
   "networkType": "ethereum",
   "devdoc": {
     "details": "Struct and enum used accross the contracts",

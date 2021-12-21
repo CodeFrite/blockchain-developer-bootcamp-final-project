@@ -8235,6 +8235,57 @@
     "version": "0.8.9+commit.e5eed63a.Emscripten.clang"
   },
   "networks": {
+    "4": {
+      "events": {
+        "0x092ebd2f16b29c262dab07f199d3837893fe8c38c96b431f64bef497d9317913": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "_instructionName",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "enum CommonStructs.InstructionTypes",
+              "name": "_instructionType",
+              "type": "uint8"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "_instructionSignature",
+              "type": "string"
+            }
+          ],
+          "name": "AddInstruction",
+          "type": "event"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x35a4CcF5bf0f2597F37266d3B72cEb10bEfa3Ed0",
+      "transactionHash": "0xc4daea8da7371bddee27b13a0803070a24db2c76e85eb445c9177467223af0ca"
+    },
     "5777": {
       "events": {
         "0x092ebd2f16b29c262dab07f199d3837893fe8c38c96b431f64bef497d9317913": {
@@ -8288,7 +8339,7 @@
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-12-21T17:02:31.703Z",
+  "updatedAt": "2021-12-21T17:58:34.543Z",
   "networkType": "ethereum",
   "devdoc": {
     "events": {

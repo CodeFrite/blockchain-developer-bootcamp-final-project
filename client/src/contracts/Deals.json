@@ -18116,6 +18116,76 @@
     "version": "0.8.9+commit.e5eed63a.Emscripten.clang"
   },
   "networks": {
+    "4": {
+      "events": {
+        "0xd96bfefed58aa313e5af8a78aaac764b3f12d13339be60e009cc7cb05dd701a6": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_dealId",
+              "type": "uint256"
+            }
+          ],
+          "name": "CreateDeal",
+          "type": "event"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        "0x3f1217b02323e5dc4e83e1bf861d3a5c04873f7e972587684ce1dfcbbb329fa1": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_old",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_new",
+              "type": "address"
+            }
+          ],
+          "name": "SetProxyContractAddress",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xBFAd1601E1131D22BdF2a83ab9a62c745430e604",
+      "transactionHash": "0x58098944258b68ae60ca2d7737e261532bdd8df0940a9b0f5af39de194fbe141"
+    },
     "5777": {
       "events": {
         "0xd96bfefed58aa313e5af8a78aaac764b3f12d13339be60e009cc7cb05dd701a6": {
@@ -18188,7 +18258,7 @@
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-12-21T17:02:31.722Z",
+  "updatedAt": "2021-12-21T17:58:34.557Z",
   "networkType": "ethereum",
   "devdoc": {
     "events": {
