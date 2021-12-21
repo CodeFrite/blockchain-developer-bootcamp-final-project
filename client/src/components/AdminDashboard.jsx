@@ -1,6 +1,6 @@
 // EXTERNAL IMPORTS
 import React, { Component } from 'react';
-import { Container, Row, Col, Card, Button, ButtonGroup, ToggleButton, Badge } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, ButtonGroup, ToggleButton } from 'react-bootstrap';
 
 // IMPORT CONTRACTS
 import CommonStructs from "../contracts/CommonStructs.json";
