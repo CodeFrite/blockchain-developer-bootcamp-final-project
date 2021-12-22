@@ -22,7 +22,7 @@ module.exports = async function(deployer) {
 
   // No argument given in truffle migrate command: undefined => deploy & link all
   if (argv['upgrade']===undefined) {
-    // Deploy contracts
+    // Step 1: Deploy contracts
     await deployer.deploy(CommonStructs);
     await deployer.deploy(Interpreter);
     await deployer.deploy(Instructions);
@@ -30,31 +30,68 @@ module.exports = async function(deployer) {
     await deployer.deploy(Deals);
     await deployer.deploy(Proxy,25, 25, 100, 50, 1, 230000000000000);
   
-    // Get an instance to the deployed contracts
+    // Step 2: Get an instance to the deployed contracts
+    console.log("Getting deployed contracts ABIs")
     const instructions = await Instructions.deployed();
     const instructionsProvider = await InstructionsProvider.deployed();
     const deals = await Deals.deployed();
     const interpreter = await Interpreter.deployed();
     const proxy = await Proxy.deployed();
   
-    // Set links between contracts
+    // Step 3: Pausing DApp
+    console.log("Pausing DApp ...")
+    try {
+      await proxy.pause();
+    } catch {
+      console.log("... DApp already paused");
+    }
+
+    // Step 3: Set links between contracts
+    console.log("Linking", deals.address,"(Deals) =>", proxy.address, "(Proxy)");
     await deals.setProxyContractAddress(proxy.address);
+
+    console.log("Linking", instructionsProvider.address,"(InstructionsProvider) =>", interpreter.address, "(Interpreter)");
     await instructionsProvider.setInterpreterContractRef(interpreter.address);
+    
+    console.log("Linking", instructionsProvider.address,"(InstructionsProvider) =>", proxy.address, "(Proxy)");
     await instructionsProvider.setProxyInstanceRef(proxy.address);
+
+    console.log("Linking", interpreter.address,"(Interpreter) =>", instructions.address, "(Instructions)");
     await interpreter.setInstructionsInstance(instructions.address);
+
+    console.log("Linking", interpreter.address,"(Interpreter) =>", instructionsProvider.address, "(InstructionsProvider)");
     await interpreter.setInstructionsProviderInstance(instructionsProvider.address);
+
+    console.log("Linking", interpreter.address,"(Interpreter) =>", deals.address, "(Deals)");
     await interpreter.setDealsInstance(deals.address);
+
+    console.log("Linking", interpreter.address,"(Interpreter) =>", proxy.address, "(Proxy)");
     await interpreter.setProxyContractAddress(proxy.address);
-    await proxy.pause();
+
+    console.log("Linking", proxy.address,"(Proxy) =>", instructions.address, "(Instructions)");
     await proxy.setInstructionsContractRef(instructions.address);
+
+    console.log("Linking", proxy.address,"(Proxy) =>", instructionsProvider.address, "(InstructionsProvider)");
     await proxy.setInstructionsProviderContractRef(instructionsProvider.address);
+
+    console.log("Linking", proxy.address,"(Proxy) =>", deals.address, "(Deals)");
     await proxy.setDealsContractRef(deals.address);
+
+    console.log("Linking", proxy.address,"(Proxy) =>", interpreter.address, "(Interpreter)");
     await proxy.setInterpreterContractRef(interpreter.address);
+
+    console.log("Linking", proxy.address,"(Proxy) =>", "0x8A753747A1Fa494EC906cE90E9f37563A8AF630e (Price Feed Aggregator)");
     await proxy.setPriceFeedRefAggregatorAddress("0x8A753747A1Fa494EC906cE90E9f37563A8AF630e");
+    
+
+    // Step 4: Unpause DApp
+    console.log("Unpausing DApp ...")
     await proxy.unpause();
   
     // Load instructions
+    console.log("Adding instruction 'IF-ADDR'");
     await instructions.addInstruction("IF-ADDR", "1", "_ifAddress(address,address)");
+    console.log("Adding instruction 'TRANSFER'");
     await instructions.addInstruction("TRANSFER", "2", "_transfer(address)");
 
   // ... upgrade 'minor' = redeploy InstructionsProvider
@@ -166,7 +203,7 @@ module.exports = async function(deployer) {
     console.log("Linking", proxy.address, "(Proxy) =>", new_instructionsProvider.address, "(new InstructionsProvider)");
     await proxy.setInstructionsProviderContractRef(new_instructionsProvider.address);
 
-    // Step 7: Unpause contract
+    // Step 8: Unpause contract
     console.log("... Unpausing DApp")
     await proxy.unpause();
 

@@ -29,11 +29,26 @@ class CreateDeal extends Component {
         dealId:null,
         dealCreationFees:null,
         creationAccount:null
-      }
+      },
+      timer:null,
+      DappIsPaused: null
     }
   }
 
   componentDidMount = async () => {
+    let timer = setTimeout(this.getDappIsPaused,250);
+    this.setState({timer});
+  }
+
+  // DApp state
+  getDappIsPaused = async () => {
+    console.log("GO");
+    if (this.props.contract) {
+      const DappIsPaused = await this.props.contract.methods.paused().call();
+      this.setState({DappIsPaused});
+      clearTimeout(this.state.timer);
+      console.log("STOP");
+    }
   }
 
   createDeal = async () => {
@@ -93,8 +108,12 @@ class CreateDeal extends Component {
   }
 
   render() { 
-    if (this.props.contract===null || this.props.selectedAccount===null) {
-      return (<Container>Loading data from blockchain ...</Container>);
+    if (this.props.contract===null || this.props.selectedAccount===null || this.state.DappIsPaused===null) {
+      return (<Container id="main-container"><h2>Loading data from blockchain ...</h2></Container>);
+    } else if (this.state.DappIsPaused) {
+      return (
+        <Container id="main-container"><h2>MAD is under maintenance, please try later.</h2></Container>
+      )
     } else {
     return (
         <>
