@@ -538,138 +538,160 @@ class AdminDashboard extends Component {
             <Card>
               <Card.Header>Interpreter</Card.Header>
               <Card.Body>
-                <Card.Text>
-                  <Row className="row-highlight-hover" 
+                
+                <Row className="row-highlight-hover" 
                   onMouseEnter={() => this.highlightSVGElement("interpreterProxy")} 
                   onMouseLeave={() => this.unhighlightSVGElement("interpreterProxy")}
                   onClick={() => this.saveToClipboard(this.state.contracts.proxy && this.state.contracts.proxy._address)}
-                  >
-                    <Col lg="7">&#8614; Proxy: </Col>
-                    <Col lg="5">
+                >
+                  <Col lg="7">&#8614; Proxy: </Col>
+                  <Col lg="5">
+                    <Card.Text>
                       {(
                         this.state.contracts.proxy && this.state.references.interpreterProxy === this.state.contracts.proxy._address 
                         ? this.shortAddress(this.state.contracts.proxy._address) 
                         : this.shortAddress(this.state.references.interpreterProxy)
                       )}
-                    </Col>
-                  </Row>
-                  <Row className="row-highlight-hover" 
-                  onMouseEnter={() => this.highlightSVGElement("interpreterDeals")} 
-                  onMouseLeave={() => this.unhighlightSVGElement("interpreterDeals")}
-                  onClick={() => this.saveToClipboard(this.state.contracts.deals && this.state.contracts.deals._address)}
-                  >
-                    <Col lg="7">&#8614; Deals:</Col>
-                    <Col lg="5">
+                    </Card.Text>
+                  </Col>
+                </Row>
+
+                <Row className="row-highlight-hover" 
+                onMouseEnter={() => this.highlightSVGElement("interpreterDeals")} 
+                onMouseLeave={() => this.unhighlightSVGElement("interpreterDeals")}
+                onClick={() => this.saveToClipboard(this.state.contracts.deals && this.state.contracts.deals._address)}
+                >
+                  <Col lg="7">&#8614; Deals:</Col>
+                  <Col lg="5">
+                    <Card.Text>
                       {(
                         this.state.contracts.deals && this.state.references.interpreterDeals === this.state.contracts.deals._address 
                         ? this.shortAddress(this.state.contracts.deals._address)
                         : this.shortAddress(this.state.references.interpreterDeals)
                       )}
-                    </Col>
-                  </Row>
-                  <Row className="row-highlight-hover" 
-                  onMouseEnter={() => this.highlightSVGElement("interpreterInstructions")} 
-                  onMouseLeave={() => this.unhighlightSVGElement("interpreterInstructions")}
-                  onClick={() => this.saveToClipboard(this.state.contracts.instructions && this.state.contracts.instructions._address)}
-                  >
-                    <Col lg="7">&#8614; Instructions:</Col>
-                    <Col lg="5">
+                      </Card.Text>
+                  </Col>
+                </Row>
+
+                <Row className="row-highlight-hover" 
+                onMouseEnter={() => this.highlightSVGElement("interpreterInstructions")} 
+                onMouseLeave={() => this.unhighlightSVGElement("interpreterInstructions")}
+                onClick={() => this.saveToClipboard(this.state.contracts.instructions && this.state.contracts.instructions._address)}
+                >
+                  <Col lg="7">&#8614; Instructions:</Col>
+                  <Col lg="5">
+                    <Card.Text>
                       {(
                         this.state.contracts.instructions && this.state.references.interpreterInstructions === this.state.contracts.instructions._address 
                         ? this.shortAddress(this.state.contracts.instructions._address) 
                         : this.shortAddress(this.state.references.interpreterInstructions)
                       )}
-                    </Col>
-                  </Row>
-                  <Row className="row-highlight-hover" 
-                  onMouseEnter={() => this.highlightSVGElement("interpreterInstructionsProvider")} 
-                  onMouseLeave={() => this.unhighlightSVGElement("interpreterInstructionsProvider")}
-                  onClick={() => this.saveToClipboard(this.state.contracts.instructionsProvider && this.state.contracts.instructionsProvider._address)}
-                  >
-                    <Col lg="7">&#8614; InstructionsProvider:</Col>
-                    <Col lg="5">  
+                    </Card.Text>
+                  </Col>
+                </Row>
+
+                <Row className="row-highlight-hover" 
+                onMouseEnter={() => this.highlightSVGElement("interpreterInstructionsProvider")} 
+                onMouseLeave={() => this.unhighlightSVGElement("interpreterInstructionsProvider")}
+                onClick={() => this.saveToClipboard(this.state.contracts.instructionsProvider && this.state.contracts.instructionsProvider._address)}
+                >
+                  <Col lg="7">&#8614; InstructionsProvider:</Col>
+                  <Col lg="5">  
+                    <Card.Text>
                       {(
                         this.state.contracts.instructionsProvider && this.state.references.interpreterInstructionsProvider === this.state.contracts.instructionsProvider._address 
                         ? this.shortAddress(this.state.contracts.instructionsProvider._address) 
                         : this.shortAddress(this.state.references.interpreterInstructionsProvider)
                       )}
-                    </Col>
-                  </Row>
-                </Card.Text>
+                    </Card.Text>
+                  </Col>
+                </Row>
+                
               </Card.Body>
             </Card>
+            
             <br/>
+
             <Card>
               <Card.Header>InstructionsProvider</Card.Header>
               <Card.Body>
-                <Card.Text>
-                  <Row className="row-highlight-hover" 
+                <Row className="row-highlight-hover" 
                   onMouseEnter={() => this.highlightSVGElement("escrowInstructionsProvider")} 
                   onMouseLeave={() => this.unhighlightSVGElement("escrowInstructionsProvider")}
                   onClick={() => this.saveToClipboard(this.state.references.escrowInstructionsProvider)}
-                  >
-                    <Col lg="7">&#8614; Escrow ownership:</Col>
-                    <Col lg="5">
+                >
+                  <Col lg="7">&#8614; Escrow ownership:</Col>
+                  <Col lg="5">
+                    <Card.Text>
                       {(
                         this.state.contracts.instructionsProvider && this.state.references.escrowInstructionsProvider === this.state.contracts.instructionsProvider._address 
                         ? this.shortAddress(this.state.contracts.instructionsProvider._address)
                         : this.shortAddress(this.state.references.escrowInstructionsProvider)
                       )}
-                    </Col>
-                  </Row>
-                </Card.Text>
+                    </Card.Text>
+                  </Col>
+                </Row>
+                
                 <hr/>
-                <Card.Text>  
-                  <Row className="row-highlight-hover" 
-                  onMouseEnter={() => this.highlightSVGElement("instructionsProviderEscrow")} 
-                  onMouseLeave={() => this.unhighlightSVGElement("instructionsProviderEscrow")}
-                  onClick={() => this.saveToClipboard(this.state.contracts.escrow && this.state.contracts.escrow._address)}
-                  >
-                    <Col lg="7">&#8614; Escrow:</Col>
-                    <Col lg="5">
+                <Row className="row-highlight-hover" 
+                onMouseEnter={() => this.highlightSVGElement("instructionsProviderEscrow")} 
+                onMouseLeave={() => this.unhighlightSVGElement("instructionsProviderEscrow")}
+                onClick={() => this.saveToClipboard(this.state.contracts.escrow && this.state.contracts.escrow._address)}
+                >
+                  <Col lg="7">&#8614; Escrow:</Col>
+                  <Col lg="5">
+                    <Card.Text>  
                       {(
                         this.state.contracts.escrow && this.state.references.instructionsProviderEscrow === this.state.contracts.escrow._address 
                         ? this.shortAddress(this.state.contracts.escrow._address)
                         : this.shortAddress(this.state.references.instructionsProviderEscrow)
                       )}
-                    </Col>
-                  </Row>
-                  <Row className="row-highlight-hover" 
-                  onMouseEnter={() => this.highlightSVGElement("instructionsProviderInterpreter")} 
-                  onMouseLeave={() => this.unhighlightSVGElement("instructionsProviderInterpreter")}
-                  onClick={() => this.saveToClipboard(this.state.contracts.interpreter && this.state.contracts.interpreter._address)}
-                  >
-                    <Col lg="7">&#8614; Interpreter:</Col>
-                    <Col lg="5">
+                    </Card.Text>
+                  </Col>
+                </Row>
+
+                <Row className="row-highlight-hover" 
+                onMouseEnter={() => this.highlightSVGElement("instructionsProviderInterpreter")} 
+                onMouseLeave={() => this.unhighlightSVGElement("instructionsProviderInterpreter")}
+                onClick={() => this.saveToClipboard(this.state.contracts.interpreter && this.state.contracts.interpreter._address)}
+                >
+                  <Col lg="7">&#8614; Interpreter:</Col>
+                  <Col lg="5">
+                    <Card.Text>
                       {(
                         this.state.contracts.interpreter && this.state.references.instructionsProviderInterpreter === this.state.contracts.interpreter._address 
                         ? this.shortAddress(this.state.contracts.interpreter._address) 
                         : this.shortAddress(this.state.references.instructionsProviderInterpreter)
                       )}
-                    </Col>
-                  </Row>
-                  <Row className="row-highlight-hover" 
-                  onMouseEnter={() => this.highlightSVGElement("instructionsProviderProxy")} 
-                  onMouseLeave={() => this.unhighlightSVGElement("instructionsProviderProxy")}
-                  onClick={() => this.saveToClipboard(this.state.contracts.proxy && this.state.contracts.proxy._address)}
-                  >
-                    <Col lg="7">&#8614; Proxy:</Col>
-                    <Col lg="5">
+                    </Card.Text>
+                  </Col>
+                </Row>
+
+                <Row className="row-highlight-hover" 
+                onMouseEnter={() => this.highlightSVGElement("instructionsProviderProxy")} 
+                onMouseLeave={() => this.unhighlightSVGElement("instructionsProviderProxy")}
+                onClick={() => this.saveToClipboard(this.state.contracts.proxy && this.state.contracts.proxy._address)}
+                >
+                  <Col lg="7">&#8614; Proxy:</Col>
+                  <Col lg="5">
+                    <Card.Text>
                       {(
                         this.state.contracts.proxy && this.state.references.instructionsProviderProxy === this.state.contracts.proxy._address 
                         ? this.shortAddress(this.state.contracts.proxy._address)
                         : this.shortAddress(this.state.references.instructionsProviderProxy)
                       )}
-                    </Col>
-                  </Row>
-                </Card.Text>
+                    </Card.Text>
+                  </Col>
+                </Row>
+
               </Card.Body>
             </Card>
+
             <br/>
+
             <Card>
               <Card.Header>Proxy</Card.Header>
               <Card.Body>
-                <Card.Text>
                   <Row className="row-highlight-hover" 
                   onMouseEnter={() => this.highlightSVGElement("proxyInterpreter")} 
                   onMouseLeave={() => this.unhighlightSVGElement("proxyInterpreter")}
@@ -677,13 +699,16 @@ class AdminDashboard extends Component {
                   >
                     <Col lg="7">&#8614; Interpreter: </Col>
                     <Col lg="5">
-                      {(
-                        this.state.contracts.interpreter && this.state.references.proxyInterpreter === this.state.contracts.interpreter._address 
-                        ? this.shortAddress(this.state.contracts.interpreter._address) 
-                        : this.shortAddress(this.state.references.proxyInterpreter)
-                      )}
+                      <Card.Text>
+                        {(
+                          this.state.contracts.interpreter && this.state.references.proxyInterpreter === this.state.contracts.interpreter._address 
+                          ? this.shortAddress(this.state.contracts.interpreter._address) 
+                          : this.shortAddress(this.state.references.proxyInterpreter)
+                        )}
+                      </Card.Text>
                     </Col>
                   </Row>
+
                   <Row className="row-highlight-hover" 
                   onMouseEnter={() => this.highlightSVGElement("proxyInstructionsProvider")} 
                   onMouseLeave={() => this.unhighlightSVGElement("proxyInstructionsProvider")}
@@ -691,14 +716,16 @@ class AdminDashboard extends Component {
                   >
                     <Col lg="7">&#8614; InstructionsProvider:</Col>
                     <Col lg="5">
-                      {(
-                        this.state.contracts.instructionsProvider && this.state.references.proxyInstructionsProvider === this.state.contracts.instructionsProvider._address 
-                        ? this.shortAddress(this.state.contracts.instructionsProvider._address) 
-                        : this.shortAddress(this.state.references.proxyInstructionsProvider)
-                      )}
+                      <Card.Text>
+                        {(
+                          this.state.contracts.instructionsProvider && this.state.references.proxyInstructionsProvider === this.state.contracts.instructionsProvider._address 
+                          ? this.shortAddress(this.state.contracts.instructionsProvider._address) 
+                          : this.shortAddress(this.state.references.proxyInstructionsProvider)
+                        )}
+                      </Card.Text>
                     </Col>
                   </Row>
-                </Card.Text>
+                
               </Card.Body>
             </Card>
           </Col>
