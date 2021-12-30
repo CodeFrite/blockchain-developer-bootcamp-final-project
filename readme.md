@@ -19,7 +19,7 @@ But what are these rules? A rule is a succession of atomic instructions that are
 
 ## Use Cases
 
-Now let's consider a few examples and how they could be solved on MAD.
+Now let's consider a few examples and how they could be solved on MAD. You can watch a demo by following this link: XXX
 
 ### &#128256; Split incomes between associates
 
@@ -27,7 +27,7 @@ One of the simplest use case ever would be to split any incoming payment in half
 
 ![image](https://user-images.githubusercontent.com/34804976/144054962-65a4b1bb-e67e-46a0-8dc4-6318f0c7dacc.png)
 
-... and using the `TRANSFER-SOME` instruction:
+... and define how the money should be routed using the `TRANSFER-SOME` instruction:
 
 ![image](https://user-images.githubusercontent.com/34804976/144055222-7891afb1-cfc0-4fb1-af39-7613155b4245.png)
 
@@ -45,9 +45,37 @@ A second use case would be to redirect the payments depending on the msg.sender.
 
 ![image](https://user-images.githubusercontent.com/34804976/144057427-8468723e-cb95-4362-92c6-2f0f30a93484.png)
 
+## Instruction set
+
+In order to illustrate the DApp upgrability, I created two different versions of the contracts.
+
+In the V1, the following instructions are available:
+
+- IF-ADDR: Tests if the msg.sender is equal to the address defined in the rule
+- TRANSFER-ALL: Transfers all the funds to the address defined in the rule
+- TRANSFER-SOME: Transfers a percentage of the msg.value to an address, both the percentage and the address defined in the rule
+
+In the V2, the following instruction was added:
+
+- IF-AMOUNT-BIGGER: Test if the msg.value is bigger than the amount defined in the rule
+
+## What if ...
+
+In this section, we'll learn more about the different 
+
+### ... what if a rule fails
+
+MAD rules use conditions to 
+
+## Upgrade the instructions set
+
+MAD architecture was designed so that the instructions set would be upgradable. In the V1 version of MAD, the following instructions are available:
+
+
+
 ## WorkFlow
 
-Once connected to [MAD](), the user
+Once on [MAD]() website, the user 
 
 ## Metamask
 
@@ -66,9 +94,7 @@ In order to run the code locally, clone this repo. Open a terminal and navigate 
 ```
 > npm install
 > truffle compile
-> truffle migrate
-> truffle exec scripts/linkContracts.js
-> truffle exec scripts/loadInstructions.js
+> truffle migrate --network develop
 ```
 
 In order to install & serve the front-end, navigate to the `client` folder and run the following command:
@@ -243,7 +269,16 @@ Compiling your contracts...
 - React / Bootstrap (Front-End)
 - web3.js (Blockchain connection)
 
+## Possible improvements
+
+As for any projects, particularly in the context of a time framed bootcamp, there is always room for improvements. If I have had more time, I would probably have improved the following points:
+
+- Naming of setter and getters accross smart contracts should be harmonized
+- Add a "VOTE" instruction to create dynamic pools (typical use case: )
+- Make sure that the total percentage in a rule using TRANSFER-SOME instructions adds up to 100%. Currently ...
++ ... if the sum is > 100%, I just mitigated the risk by for the user by reverting the transaction
++ ... if the sum is < 100%, the unused part of the msg.value will be stuck in the contract. Adding a check in the Interpreter.sol could detect this situation and revert the transaction
 
 ## Disclaimer
 
-- I changed the subject of my project. Please find [here](https://github.com/CodeFrite/consensys-bootcamp-initial-idea) the initial idea I was working on
+- I changed the subject of my project. Please find [here](https://github.com/CodeFrite/consensys-bootcamp-initial-idea) the initial idea I was working on.
