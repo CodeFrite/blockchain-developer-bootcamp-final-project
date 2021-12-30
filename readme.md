@@ -174,21 +174,21 @@ If Metamask is not detected, the following popup is displayed:
 
 ![image](https://user-images.githubusercontent.com/34804976/147744304-37cdb0d5-08a5-4804-a53e-1aec8ea66f45.png)
 
-Moreover, the MetaMask button reflects the connection status:
+Moreover, the MetaMask button reflects the connection status.
 
-Metamask not installed:
+If Metamask not installed, the button is disabled:
 
 ![image](https://user-images.githubusercontent.com/34804976/147744348-c4a2ecf2-1dc6-49bb-8606-7991edf90705.png)
 
-Metamask is locked:
+If the wallet is locked, the button is disabled:
 
 ![image](https://user-images.githubusercontent.com/34804976/147744257-4197cda1-7ea2-4c6c-a40b-82649dfd6e62.png)
 
-Wallet is not connected to the DApp:
+If the wallet is not connected to the DApp, clicking on the button will connect the Wallet to the DApp and redirect the user to the 'Let's Create a Deal' page:
 
 ![image](https://user-images.githubusercontent.com/34804976/147744380-3ced5dd2-4938-47be-9fc7-d85460a30f3f.png)
 
-Wallet is connected to the DApp:
+If the wallet is connected to the DApp, clicking on the button will disconnect the user from MAD and redirect him to the homepage:
 
 ![image](https://user-images.githubusercontent.com/34804976/147744405-cfc84476-ca88-4710-8373-a4ddd433c9a7.png)
 
