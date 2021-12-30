@@ -154,7 +154,30 @@ In the V2, the following instruction was added:
 
 ## How does it work?
 
+### Meta-Language interpreter based on an AST Tree
 
+My initial idea was to create an interpreter that could run any instruction defined in a meta-language. I made a first version capable of interpreting elementary mathematical operations like `(2*7)+3`. It was based on a AST Tree where each the operation was stored as follow:
+
+![image](https://user-images.githubusercontent.com/34804976/147769202-731bad0b-c52e-45c0-a0d9-febddf87a1d6.png)
+
+In order to develop an interpreter capable of running more complex programs, I had to define 5 types of nodes:
+
+- Operator nodes which accepts 2 operands
+- Operand, which are terminal nodes and are basically values
+- Branch instructions to be able to conditionally execute a part of the tree
+- A jump instruction allowing me to emulate for/while loops
+
+Moreover, I had to find a way to manage variables and scope.
+
+![image](https://user-images.githubusercontent.com/34804976/147769593-2c66dd8f-bc95-4887-b244-aab4acddab43.png)
+
+It turned out that this idea, even if partially working, was extremely expensive in term of contract storage and gas execution fees. You can test the code on Remix: [AST Tree in Solidity]()
+
+I finally decided to go for a simpler version.
+
+### Specialized interpreter for payments
+
+When a rule is executed, MAD interprets it instruction by instruction.
 
 ## &#11014; Upgrading the instructions set [VIDEO](XXX)
 
