@@ -144,13 +144,13 @@ In order to illustrate the DApp upgrability, I created two different versions of
 
 In the V1, the following instructions are available:
 
-- IF-ADDR: Tests if the msg.sender is equal to the address defined in the rule
-- TRANSFER-ALL: Transfers all the funds to the address defined in the rule
-- TRANSFER-SOME: Transfers a percentage of the msg.value to an address, both the percentage and the address defined in the rule
+- `IF-ADDR`: Tests if the msg.sender is equal to the address defined in the rule
+- `TRANSFER-ALL`: Transfers all the funds to the address defined in the rule
+- `TRANSFER-SOME`: Transfers a percentage of the msg.value to an address, both the percentage and the address defined in the rule
 
 In the V2, the following instruction was added:
 
-- IF-AMOUNT-BIGGER: Test if the msg.value is bigger than the amount defined in the rule
+- `IF-AMOUNT-BIGGER`: Test if the msg.value is bigger than the amount defined in the rule
 
 ## How does it work?
 
@@ -168,15 +168,27 @@ In order to facilitate the upgrade process, along with the main Truffle deployme
 
 ## Metamask
 
-When navigating to the [MAD](XXX) website, the user is invited to connect his wallet to the DApp.
+When navigating to [MAD](XXX), the user is provided with some feedback about his MetaMask installation.
+
+If Metamask is not detected, the following popup is displayed:
 
 ![image](https://user-images.githubusercontent.com/34804976/147744304-37cdb0d5-08a5-4804-a53e-1aec8ea66f45.png)
 
+Moreover, the MetaMask button reflects the connection status:
+
+Metamask not installed:
+
 ![image](https://user-images.githubusercontent.com/34804976/147744348-c4a2ecf2-1dc6-49bb-8606-7991edf90705.png)
+
+Metamask is locked:
 
 ![image](https://user-images.githubusercontent.com/34804976/147744257-4197cda1-7ea2-4c6c-a40b-82649dfd6e62.png)
 
+Wallet is not connected to the DApp:
+
 ![image](https://user-images.githubusercontent.com/34804976/147744380-3ced5dd2-4938-47be-9fc7-d85460a30f3f.png)
+
+Wallet is connected to the DApp:
 
 ![image](https://user-images.githubusercontent.com/34804976/147744405-cfc84476-ca88-4710-8373-a4ddd433c9a7.png)
 
@@ -385,10 +397,11 @@ Compiling your contracts...
 
 ## Technologies
  
-- Solidity (Smart Contract)
+- Solidity (Smart Contracts)
 - Truffle (testing / unbox react)
 - React / Bootstrap (Front-End)
 - web3.js (Blockchain connection)
+- Miro (prototyping). You can follow this link to see the process: [Miro Board](https://miro.com/app/board/o9J_lwU-JWc=/)
 
 ## Possible improvements
 
