@@ -45,25 +45,69 @@ A second use case would be to redirect the payments depending on the msg.sender.
 
 ![image](https://user-images.githubusercontent.com/34804976/144057427-8468723e-cb95-4362-92c6-2f0f30a93484.png)
 
+## Screens
+
+Once connected, the user has access to the following screens:
+
+### &#128421; Create a Deal
+
+The layout of this screen mimics a contract. It is composed out of 6 contract clauses, each addressing a particular part of the deal.
+
+`Clause 0` explains to the user that all the prices shown on screen are displayed in USD. To convert ETH amounts to USD, the ETH/USD conversion rate is fetched from Chainlink Oracles. The user can see the rate and know when it was last updated
+
+![image](https://user-images.githubusercontent.com/34804976/147745718-780ba01c-8d58-4013-99c3-d135cdcbe607.png)
+
+`Clause 1` lists the unit price per account and per rule composing the deal, the number of such items and the total price associated with the creation of the current deal.
+
+![image](https://user-images.githubusercontent.com/34804976/147745682-a8f9e027-1b02-42ce-9d75-66567b9be1fe.png)
+
+`Clause 2` mentions the execution fees that the user will pay when executing a rule. The execution fees are expressed in percentage of the total msg.value.
+
+![image](https://user-images.githubusercontent.com/34804976/147746181-23871608-4579-4e32-8191-9931da5da614.png)
+
+`Clause 3` mentions the minimal transaction value necessary for a rule to be executed in USD.
+
+![image](https://user-images.githubusercontent.com/34804976/147746244-9665053a-de6c-4365-a00b-8c0075b68576.png)
+
+`Clause 4` allows the user to define the accounts that will be part of the deal.
+
+![image](https://user-images.githubusercontent.com/34804976/147746568-ec6b87b2-bc24-4b6b-a1ad-dfa194919c59.png)
+
+`Clause 5` allows the user to define the rules that will compose the deal. Each deal can contain several rules, each rule being composed out of a series of instructions.
+
+![image](https://user-images.githubusercontent.com/34804976/147746600-7d97b534-80ca-419a-95e7-aac4fb216f0b.png)
+
+At the bottom of the screen, the user can find the `Let's Make a Deal` button that triggers the deal creation. The button is only enabled once the user has accepted all the clauses by clicking on the black arrows next to the clauses.
+
+![image](https://user-images.githubusercontent.com/34804976/147746735-b3886f9e-a49c-4373-93b0-413ee543309e.png)
+
+### Execute a Rule
+
+On this screen, the user can search for a deal, execute a single rule and withdraw any available ETH from the Escrow
+
+### Admin Dashboard
+
+On this screen, the contract owner is able to modify the different DApp fees parameters, fetch the last ETH/USD conversion rate, pause the DApp. He will has also access to a visual representation of the contracts composing the DApp, see their addresses and know where they all points to. This screen is only accessible by the contracts owner which is determined by comparing the Metamask selectedAccount against the Proxy.sol owner (main entry point of the DApp)
 
 ## WorkFlow
 
-When navigating to the [MAD](XXX) website, the user is invited to connect his wallet to the DApp. Once connected, the user has access to the following screens:
-
-- **Create a Deal:** On this screen, the user is able to defined the accounts and rules that will compose his deal.
-- **Execute a Rule:** On this screen, the user can search for a deal, execute a single rule and withdraw any available ETH from the Escrow
-- **Admin Dashboard:** On this screen, the contract owner is able to modify the different DApp fees parameters, fetch the last ETH/USD conversion rate, pause the DApp. He will has also access to a visual representation of the contracts composing the DApp, see their addresses and know where they all points to. This screen is only accessible by the contracts owner which is determined by comparing the Metamask selectedAccount against the Proxy.sol owner (main entry point of the DApp)
-
 A typical workflow would be:
 
-1. A user connects his wallet to MAD
-2. He defines a the accounts list that are part of the deal
-3. He defines the rules defining the deal
-4. He reads and accepts all the clauses defining the deal
-5. He creates the deal and pays the creation fees by accepting the transaction submitted to him in his Metamask wallet
-6. He communicates the deal id to his collaborators/clients
-7. The collaborators/clients execute one or more rules from the deal
-8. Any account owner defined in the deal can withdraw ETH, if available
+1. **Connecting to MAD**:
+  - The user install & unlocks his Metamask wallet
+  - He navigates to the [MAD website](XXX)
+  - He then connects his wallet to the DApp
+
+2. **Creating a Deal**:
+  - The user defines the list of accounts that are part of the deal
+  - He defines the rules composing the deal
+  - He reads and accepts all the clauses
+  - He creates the deal and pays the creation fees by accepting the transaction submitted to him in his Metamask wallet
+
+3. **Executing a Rule**:
+  - He communicates the deal id to his collaborators/clients
+  - The collaborators/clients execute one or more rules from the deal
+  - Any account owner defined in the deal can withdraw ETH, if available
 
 ## Instructions set
 
@@ -92,6 +136,18 @@ MAD rules use conditions to achieve a dynamic behaviour. The user can create the
 MAD architecture was designed with upgradable in mind. The main challenge in this situation is to make sure that an upgrade does not lead to a client data loss. More information on this subject can be found in the file [design_pattern_decisions.md](https://github.com/CodeFrite/blockchain-developer-bootcamp-final-project/blob/main/design_pattern_decisions.md)
 
 ## Metamask
+
+When navigating to the [MAD](XXX) website, the user is invited to connect his wallet to the DApp.
+
+![image](https://user-images.githubusercontent.com/34804976/147744304-37cdb0d5-08a5-4804-a53e-1aec8ea66f45.png)
+
+![image](https://user-images.githubusercontent.com/34804976/147744348-c4a2ecf2-1dc6-49bb-8606-7991edf90705.png)
+
+![image](https://user-images.githubusercontent.com/34804976/147744257-4197cda1-7ea2-4c6c-a40b-82649dfd6e62.png)
+
+![image](https://user-images.githubusercontent.com/34804976/147744380-3ced5dd2-4938-47be-9fc7-d85460a30f3f.png)
+
+![image](https://user-images.githubusercontent.com/34804976/147744405-cfc84476-ca88-4710-8373-a4ddd433c9a7.png)
 
 ### Icon 
 
