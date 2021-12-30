@@ -53,7 +53,7 @@ Once connected, the user has access to the following screens:
 
 ### &#128421; Create a Deal
 
-The layout of this screen mimics a contract. It is composed out of 6 contract clauses, each addressing a particular part of the deal.
+The layout of this screen mimics a paper contract. It is composed out of 6 clauses, each addressing a particular part of the deal.
 
 `Clause 0` explains to the user that all the prices shown on screen are displayed in USD. To convert ETH amounts to USD, the ETH/USD conversion rate is fetched from Chainlink Oracles. The user can see the rate and know when it was last updated
 
@@ -152,17 +152,19 @@ In the V2, the following instruction was added:
 
 - IF-AMOUNT-BIGGER: Test if the msg.value is bigger than the amount defined in the rule
 
-## What if ...
+## How does it work?
 
-In this section, we'll learn more about the different 
 
-### ... what if a rule fails
 
-MAD rules use conditions to achieve a dynamic behaviour. The user can create them freely by combining a series of instructions. If for any reason a rule execution fails, the smart contract execution is reverted and the msg.value is returned to the sender, minus the cost of the smart contracts code executed so far by the Ethereum VM.
+## &#11014; Upgrading the instructions set [VIDEO](XXX)
 
-## Upgrade the instructions set
+MAD architecture was designed with upgradability in mind. The main challenge in this situation is to make sure that an upgrade does not lead to a client data loss. In other words, after extending the instruction set or correcting a bug in the `Interpreter.sol` or `InstructionsProvider.sol` contracts, the deals as well as the Escrow balance should remain unchanged. This is done without having to migrate any data. More information on this subject can be found in the file [design_pattern_decisions.md](https://github.com/CodeFrite/blockchain-developer-bootcamp-final-project/blob/main/design_pattern_decisions.md)
 
-MAD architecture was designed with upgradable in mind. The main challenge in this situation is to make sure that an upgrade does not lead to a client data loss. More information on this subject can be found in the file [design_pattern_decisions.md](https://github.com/CodeFrite/blockchain-developer-bootcamp-final-project/blob/main/design_pattern_decisions.md)
+In order to facilitate the upgrade process, along with the main Truffle deployment script, 2 additional scripts are available.
+
+### &#11014; Minor Upgrade
+
+### &#11014; Major Upgrade
 
 ## Metamask
 
@@ -178,13 +180,21 @@ When navigating to the [MAD](XXX) website, the user is invited to connect his wa
 
 ![image](https://user-images.githubusercontent.com/34804976/147744405-cfc84476-ca88-4710-8373-a4ddd433c9a7.png)
 
+## What if ...
+
+In this section, we'll learn more about the different 
+
+### ... what if a rule fails
+
+MAD rules use conditions to achieve a dynamic behaviour. The user can create them freely by combining a series of instructions. If for any reason a rule execution fails, the smart contract execution is reverted and the msg.value is returned to the sender, minus the cost of the smart contracts code executed so far by the Ethereum VM.
+
 ### Icon 
 
 As recommended in the [Metamask docs](https://docs.metamask.io/guide/defining-your-icon.html), I added an icon for my DApp. It is used by Metamask to show to which application the user account is currently linked:
 
 ![image](https://user-images.githubusercontent.com/34804976/145849775-5f81808b-fe0f-4be0-aebd-076cfd43bc00.png)
 
-Credits: The image used comes from [here](https://www.flaticon.com/premium-icon/scientist_1039065?term=mad&related_id=1039065) and is free of use for personal and commercial purpose _with attribution_: *<div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>*
+Credits: The icon comes from [here](https://www.flaticon.com/premium-icon/scientist_1039065?term=mad&related_id=1039065) and is free of use for personal and commercial purpose _with attribution_: *<div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>*
 
 ## Installation
 
@@ -201,6 +211,18 @@ In order to install & serve the front-end, navigate to the `client` folder and r
 ```
 > npm install
 > npm run start
+```
+
+To deploy a minor upgrade (= redeploy the `InstructionsProvider.sol` and update the links between the contracts), you can run the following command:
+
+```
+> truffle migrate --network develop --upgrade minor
+```
+
+To deploy a major upgrade (= redeploy the `InstructionsProvider.sol`, the `Interpreter.sol` and update the links between the contracts), you can run the following command:
+
+```
+> truffle migrate --network develop --upgrade major
 ```
 
 ## Testing
