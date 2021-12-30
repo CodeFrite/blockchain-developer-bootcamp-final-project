@@ -45,9 +45,11 @@ A second use case would be to redirect the payments depending on the msg.sender.
 
 ![image](https://user-images.githubusercontent.com/34804976/144057427-8468723e-cb95-4362-92c6-2f0f30a93484.png)
 
-## Screens
+## &#128421; Screens
 
 Once connected, the user has access to the following screens:
+
+![image](https://user-images.githubusercontent.com/34804976/147746944-e9b43c1a-dbb2-4f79-a661-273cf0432a07.png)
 
 ### &#128421; Create a Deal
 
@@ -80,12 +82,23 @@ The layout of this screen mimics a contract. It is composed out of 6 contract cl
 At the bottom of the screen, the user can find the `Let's Make a Deal` button that triggers the deal creation. The button is only enabled once the user has accepted all the clauses by clicking on the black arrows next to the clauses.
 
 ![image](https://user-images.githubusercontent.com/34804976/147746735-b3886f9e-a49c-4373-93b0-413ee543309e.png)
+![image](https://user-images.githubusercontent.com/34804976/147748748-66af07b1-7d15-4fab-ad50-843e73c1e1ef.png)
 
-### Execute a Rule
+Clicking on this button will open a Metamask transaction. The msg.value displayed in the window corresponds to the amount displayed in `Clause 1`:
 
-On this screen, the user can search for a deal, execute a single rule and withdraw any available ETH from the Escrow
+![image](https://user-images.githubusercontent.com/34804976/147748652-fdba61c1-f45b-411e-8ffc-f9fe13f86993.png)
 
-### Admin Dashboard
+Once accepted by the user, a new frame will appear and summarize all the important informations concerning the newly created deal, the most important field being the deal id:
+
+![image](https://user-images.githubusercontent.com/34804976/147748792-c974644c-8418-4193-bd69-3b4db05553b3.png)
+
+### &#128421; Execute a Rule
+
+On this screen, the user can load for a deal, execute a single rule and withdraw any available ETH from the Escrow.
+
+To load a deal, the user has to know the dea
+
+### &#128421; Admin Dashboard
 
 On this screen, the contract owner is able to modify the different DApp fees parameters, fetch the last ETH/USD conversion rate, pause the DApp. He will has also access to a visual representation of the contracts composing the DApp, see their addresses and know where they all points to. This screen is only accessible by the contracts owner which is determined by comparing the Metamask selectedAccount against the Proxy.sol owner (main entry point of the DApp)
 
