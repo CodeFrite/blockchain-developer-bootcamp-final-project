@@ -1,7 +1,7 @@
 # blockchain-developer-bootcamp-final-project
 Let's Make A Deal (MAD) : Point and click platform allowing everyone to create versatile routing rules for payments on the Ethereum blockchain
  
-## Problematic
+## &#9881; Problematic
 
 Let's say that you want to work with an associate on a commercial project. You know before hand that you are gonna receive all your incomes from a particular address. As associates, your desire is to simply split the incomes in 2 equal parts, 50% each.
 
@@ -11,13 +11,13 @@ Another method would be to create a smart contract that will split any incoming 
 
 This is where MAD comes to the rescue.
 
-## Idea
+## &#128161; Idea
 
 The goal of this DApp is to allow anyone with no prior experience in coding, to use the power of the blockchain to process incoming funds according to very simple rules and be sure that the resulting behavior will never change in the future.
 
 But what are these rules? A rule is a succession of atomic instructions that are interpreted one after the other by the DApp. This results in the incoming funds being automatically routed to different accounts depending on defined conditions. In other words, by chaining the correct instructions, a user can "program" how an incoming payment will be processes depending on the sender and its value.
 
-## Use Cases
+## &#128256; Use Cases
 
 Now let's consider a few examples and how they could be solved on MAD. You can watch a demo by following this link: XXX
 
@@ -88,15 +88,31 @@ Clicking on this button will open a Metamask transaction. The msg.value displaye
 
 ![image](https://user-images.githubusercontent.com/34804976/147748652-fdba61c1-f45b-411e-8ffc-f9fe13f86993.png)
 
-Once accepted by the user, a new frame will appear and summarize all the important informations concerning the newly created deal, the most important field being the deal id:
+Once accepted by the user, a new frame will appear and summarize all the important informations concerning the newly created deal, the most important field being the deal id. By clicking on the block id, transaction id or the account, the user is redirected to etherscan.io where he can get more information about the transaction:
 
 ![image](https://user-images.githubusercontent.com/34804976/147748792-c974644c-8418-4193-bd69-3b4db05553b3.png)
 
 ### &#128421; Execute a Rule
 
-On this screen, the user can load for a deal, execute a single rule and withdraw any available ETH from the Escrow.
+On this screen, the user can load a deal, execute a single rule and withdraw any available ETH from the Escrow.
 
-To load a deal, the user has to know the dea
+To load a deal, the user has enter its id (shown during the deal creation) and click on the search button:
+
+![image](https://user-images.githubusercontent.com/34804976/147753721-ce9f6823-683e-46a3-bcaa-1c0f222c648a.png)
+
+The rules contained in the deal are then displayed on screen:
+
+![image](https://user-images.githubusercontent.com/34804976/147753788-147844b3-56bb-4f0e-8c8e-12df3be8c794.png)
+
+The user can then execute a single rule by clicking on the corresponding `▶` button. A popup asks for the msg.value to be sent to the rule:
+
+![image](https://user-images.githubusercontent.com/34804976/147754002-f23caf09-acf0-49c2-a4a5-c760fb80a1b9.png)
+
+Once selected, the transaction is triggered.
+
+If the user has a positive balance in the OpenZeppelin Escrow contract, he can withdraw it by clicking on the withdraw button. Please note that the user balance displayed on screen is updated after each rule execution:
+
+![image](https://user-images.githubusercontent.com/34804976/147754170-fef870ef-40c5-4569-8f58-8c1d3f8e12ef.png)
 
 ### &#128421; Admin Dashboard
 
