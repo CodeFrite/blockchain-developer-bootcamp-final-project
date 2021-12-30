@@ -167,15 +167,29 @@ In order to develop an interpreter capable of running more complex programs, I h
 - Branch instructions to be able to conditionally execute a part of the tree
 - A jump instruction allowing me to emulate for/while loops
 
-Moreover, I had to find a way to manage variables and scope.
+Moreover, I had to find a way to manage variables and scope. This means that I had to emulate a variable stack used by the interpreter to keep track of intermediate computation steps.
 
 ![image](https://user-images.githubusercontent.com/34804976/147769593-2c66dd8f-bc95-4887-b244-aab4acddab43.png)
 
-It turned out that this idea, even if partially working, was extremely expensive in term of contract storage and gas execution fees. You can test the code on Remix: [AST Tree in Solidity]()
+It turned out that this idea, even if partially working, was extremely expensive in term of contract storage and gas execution fees. You can test the code on Remix [AST Tree in Solidity](XXX) or watch this video: [AST Tree: demo](XXX)
 
 I finally decided to go for a simpler version.
 
-### Specialized interpreter for payments
+### Specialized interpreter for payments routing
+
+Reducing the scope to payments routing drastically simplified the problem. In a payment, the only variables are:
+
+- The message sender
+- The message value
+- The message recipient
+
+The last piece of the puzzle was to make the decision to interpret the different instructions composing a rule one after the other and stop the execution as soon as a node does not meet the execution criteria. In that case, the transaction is reverted and the funds sent back to the caller.
+
+#### Internal representation of a Rule
+
+Given the choices above, a rule can be represented as a succession of nodes: the tree data structure is reduced to a one directional linked list. For example, here is a rule as defined in the front-end along with its representation on the blockchain:
+
+
 
 When a rule is executed, MAD interprets it instruction by instruction.
 
