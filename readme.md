@@ -2,7 +2,7 @@
 
 Let's Make A Deal (MAD) : Point and click platform allowing everyone to create versatile routing rules for payments on the Ethereum blockchain
 
-## Quick Start
+## &#128247; Quick Start
 
 To get a general grasp on the project, I recommend to watch the following videos:
 
