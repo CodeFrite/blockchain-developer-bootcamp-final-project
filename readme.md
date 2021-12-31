@@ -215,11 +215,15 @@ Reducing the scope to payments routing drastically simplified the problem. In a 
 
 The last piece of the puzzle was to make the decision to interpret the different instructions composing a rule one after the other and stop the execution as soon as a node does not meet the execution criteria. In that case, the transaction is reverted and the funds sent back to the caller.
 
-As an example, let's show how the following rule would be translated by the DApp:
+As an example, let's see how the following rule would be translated by the DApp:
 
-![image](https://user-images.githubusercontent.com/34804976/147819596-bb11305f-1849-48c9-a127-aa1b8c364fd7.png)
+![image](https://user-images.githubusercontent.com/34804976/147826333-1f33f699-2739-4b1a-9888-574e3f029251.png)
+
+Each line of the table correspond to an instruction along with its input data. Let's call them `Article` (legal contract nomenclature):
 
 ![image](https://user-images.githubusercontent.com/34804976/147826263-5d83f7a7-ed08-49f9-ab13-34dbea844a6a.png)
+
+As we can see, each article is evaluated one after the other and if any fail, we revert the transaction.
 
 #### Internal representation of a Rule
 
