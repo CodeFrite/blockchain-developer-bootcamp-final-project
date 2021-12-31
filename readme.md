@@ -290,7 +290,7 @@ To deploy a major upgrade (= redeploy the `InstructionsProvider.sol`, the `Inter
 In order to run the contracts test, navigate to the project folder and run the command:
 
 ```
-truffle test
+> truffle test
 ```
 
 It should produce the following output:
@@ -446,7 +446,8 @@ Compiling your contracts...
 ## Technologies
  
 - Solidity (Smart Contracts)
-- Truffle (testing / unbox react)
+- Truffle (testing / debugging / unbox react)
+- Mocha.js (testing) & Mocha.eth-gas-reporter (gas reporting)
 - React / Bootstrap (Front-End)
 - web3.js (Blockchain connection)
 - Miro (prototyping). You can follow this link to see the process: [Miro Board](https://miro.com/app/board/o9J_lwU-JWc=/)
