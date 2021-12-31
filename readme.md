@@ -29,7 +29,7 @@ But what are these rules? A rule is a succession of atomic instructions that are
 
 ## &#128256; Use Cases
 
-Now let's consider a few examples and how they could be solved on MAD. You can watch a demo by following this link: XXX
+Now let's consider a few examples and how they could be solved on MAD.
 
 ### &#128256; Split incomes between associates
 
@@ -197,7 +197,7 @@ In order to develop an interpreter capable of running more complex programs, I h
 - Branch instructions to be able to conditionally execute a part of the tree
 - A jump instruction allowing me to emulate for/while loops
 
-Moreover, I had to find a way to manage variables and scope. This means that I had to emulate a variable stack used by the interpreter to keep track of intermediate computation steps.
+Moreover, I had to find a way to manage variables and scope. This means that I had to emulate a program stack used by the interpreter to keep track of intermediate computation steps.
 
 ![image](https://user-images.githubusercontent.com/34804976/147769593-2c66dd8f-bc95-4887-b244-aab4acddab43.png)
 
@@ -214,6 +214,12 @@ Reducing the scope to payments routing drastically simplified the problem. In a 
 - The message recipient
 
 The last piece of the puzzle was to make the decision to interpret the different instructions composing a rule one after the other and stop the execution as soon as a node does not meet the execution criteria. In that case, the transaction is reverted and the funds sent back to the caller.
+
+As an example, let's show how the following rule would be translated by the DApp:
+
+![image](https://user-images.githubusercontent.com/34804976/147819596-bb11305f-1849-48c9-a127-aa1b8c364fd7.png)
+
+![image](https://user-images.githubusercontent.com/34804976/147826263-5d83f7a7-ed08-49f9-ab13-34dbea844a6a.png)
 
 #### Internal representation of a Rule
 
