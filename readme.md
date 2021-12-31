@@ -215,21 +215,17 @@ Reducing the scope to payments routing drastically simplified the problem. In a 
 
 The last piece of the puzzle was to make the decision to interpret the different instructions composing a rule one after the other and stop the execution as soon as a node does not meet the execution criteria. In that case, the transaction is reverted and the funds sent back to the caller.
 
-As an example, let's see how the following rule would be translated by the DApp:
+#### Internal representation of a Rule
+
+Given the choices above, a rule can be represented as a succession of nodes: the tree data structure is reduced to a one directional linked list. As an example, let's see how the following rule would be translated by the DApp:
 
 ![image](https://user-images.githubusercontent.com/34804976/147826333-1f33f699-2739-4b1a-9888-574e3f029251.png)
 
 Each line of the table correspond to an instruction along with its input data. Let's call them `Article` (legal contract nomenclature):
 
-![image](https://user-images.githubusercontent.com/34804976/147826263-5d83f7a7-ed08-49f9-ab13-34dbea844a6a.png)
+![image](https://user-images.githubusercontent.com/34804976/147827094-395e15f7-ee20-4cdb-ab64-974ffef17ff6.png)
 
 As we can see, each article is evaluated one after the other and if any fail, we stop the execution and revert the transaction.
-
-#### Internal representation of a Rule
-
-Given the choices above, a rule can be represented as a succession of nodes: the tree data structure is reduced to a one directional linked list. For example, here is a rule as defined in the front-end along with its representation on the blockchain:
-
-When a rule is executed, MAD interprets it instruction by instruction.
 
 ## &#11014; Upgrading the instructions set [VIDEO](XXX)
 
