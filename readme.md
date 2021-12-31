@@ -462,7 +462,7 @@ Compiling your contracts...
 
 ## Possible improvements
 
-As for any projects, particularly in the context of a time framed bootcamp, there is always room for improvements. If I have had more time, I would probably have improved the following points:
+As for any projects, particularly in the context of a time framed bootcamp, there is always room for improvements. Please find below an non-exhaustive list of features that could be added/corrected:
 
 - Naming of setter and getters accross smart contracts should be harmonized
 - Add a "VOTE" instruction to create dynamic pools (typical use case: )
