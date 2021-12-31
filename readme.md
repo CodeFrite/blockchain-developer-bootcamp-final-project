@@ -1,25 +1,25 @@
 # blockchain-developer-bootcamp-final-project
 Let's Make A Deal (MAD) : Point and click platform allowing everyone to create versatile routing rules for payments on the Ethereum blockchain
  
-## Problematic
+## &#9881; Problematic
 
 Let's say that you want to work with an associate on a commercial project. You know before hand that you are gonna receive all your incomes from a particular address. As associates, your desire is to simply split the incomes in 2 equal parts, 50% each.
 
-The classical solution would be to open a bank account on both of your names, and hope that you partner is honest. Even when working with someone reliable, everytime a payment is received, you will still need to split it manually.
+The classical solution would be to open a bank account on both of your names, and trust each other. Even when working with someone reliable, everytime a payment is received, you will still need to split it manually.
 
 Another method would be to create a smart contract that will split any incoming payment. Apart from the fact that you'll need to code it yourserlf or hire someone to create it for you, what happens if the deal that you have with your colleague need to be changed ? For example, a new partner associate comes on board and need to share 15% of the generated incomes, a partner leaves the deal, ... You would probably need to develop & deploy a new contract on the Blockchain.
 
 This is where MAD comes to the rescue.
 
-## Idea
+## &#128161; Idea
 
-The idea of this project is to allow anyone with no prior experience in coding, to use the power of the blockchain to process incoming funds he receives from the outside according to very simple rules and be sure that the resulting behavior will never change in the future.
+The goal of this DApp is to allow anyone with no prior experience in coding, to use the power of the blockchain to process incoming funds according to very simple rules and be sure that the resulting behavior will never change in the future.
 
-But what are these rules? A rule is a succession of atomic instructions that are interpreted one after the other by the DApp. This results in the incoming funds being automatically routed to different accounts depending on certain conditions. In other words, by selecting the correct rules, a user can "program" how an incoming payment will be processes.
+But what are these rules? A rule is a succession of atomic instructions that are interpreted one after the other by the DApp. This results in the incoming funds being automatically routed to different accounts depending on defined conditions. In other words, by chaining the correct instructions, a user can "program" how an incoming payment will be processes depending on the sender and its value.
 
-## Use Cases
+## &#128256; Use Cases
 
-Now let's consider a few examples and how they could be solved on MAD.
+Now let's consider a few examples and how they could be solved on MAD. You can watch a demo by following this link: XXX
 
 ### &#128256; Split incomes between associates
 
@@ -27,7 +27,7 @@ One of the simplest use case ever would be to split any incoming payment in half
 
 ![image](https://user-images.githubusercontent.com/34804976/144054962-65a4b1bb-e67e-46a0-8dc4-6318f0c7dacc.png)
 
-... and using the `TRANSFER-SOME` instruction:
+... and define how the money should be routed using the `TRANSFER-SOME` instruction. Here, any incoming payment will be equally splitted between Charlotte and Malika:
 
 ![image](https://user-images.githubusercontent.com/34804976/144055222-7891afb1-cfc0-4fb1-af39-7613155b4245.png)
 
@@ -45,11 +45,197 @@ A second use case would be to redirect the payments depending on the msg.sender.
 
 ![image](https://user-images.githubusercontent.com/34804976/144057427-8468723e-cb95-4362-92c6-2f0f30a93484.png)
 
+## &#128421; Screens
+
+Once connected, the user has access to the following screens:
+
+![image](https://user-images.githubusercontent.com/34804976/147746944-e9b43c1a-dbb2-4f79-a661-273cf0432a07.png)
+
+### &#128421; Create a Deal
+
+The layout of this screen mimics a paper contract. It is composed out of 6 clauses, each addressing a particular part of the deal.
+
+`Clause 0` explains to the user that all the prices shown on screen are displayed in USD. To convert ETH amounts to USD, the ETH/USD conversion rate is fetched from Chainlink Oracles. The user can see the rate and know when it was last updated
+
+![image](https://user-images.githubusercontent.com/34804976/147745718-780ba01c-8d58-4013-99c3-d135cdcbe607.png)
+
+`Clause 1` lists the unit price per account and per rule composing the deal, the number of such items and the total price associated with the creation of the current deal.
+
+![image](https://user-images.githubusercontent.com/34804976/147745682-a8f9e027-1b02-42ce-9d75-66567b9be1fe.png)
+
+`Clause 2` mentions the execution fees that the user will pay when executing a rule. The execution fees are expressed in percentage of the total msg.value.
+
+![image](https://user-images.githubusercontent.com/34804976/147746181-23871608-4579-4e32-8191-9931da5da614.png)
+
+`Clause 3` mentions the minimal transaction value necessary for a rule to be executed in USD.
+
+![image](https://user-images.githubusercontent.com/34804976/147746244-9665053a-de6c-4365-a00b-8c0075b68576.png)
+
+`Clause 4` allows the user to define the accounts that will be part of the deal.
+
+![image](https://user-images.githubusercontent.com/34804976/147746568-ec6b87b2-bc24-4b6b-a1ad-dfa194919c59.png)
+
+`Clause 5` allows the user to define the rules that will compose the deal. Each deal can contain several rules, each rule being composed out of a series of instructions.
+
+![image](https://user-images.githubusercontent.com/34804976/147746600-7d97b534-80ca-419a-95e7-aac4fb216f0b.png)
+
+At the bottom of the screen, the user can find the `Let's Make a Deal` button that triggers the deal creation. The button is only enabled once the user has accepted all the clauses by clicking on the black arrows next to the clauses.
+
+![image](https://user-images.githubusercontent.com/34804976/147746735-b3886f9e-a49c-4373-93b0-413ee543309e.png)
+![image](https://user-images.githubusercontent.com/34804976/147748748-66af07b1-7d15-4fab-ad50-843e73c1e1ef.png)
+
+Clicking on this button will open a Metamask transaction. The msg.value displayed in the window corresponds to the amount displayed in `Clause 1`:
+
+![image](https://user-images.githubusercontent.com/34804976/147748652-fdba61c1-f45b-411e-8ffc-f9fe13f86993.png)
+
+Once accepted by the user, a new frame will appear and summarize all the important informations concerning the newly created deal, the most important field being the deal id. By clicking on the block id, transaction id or the account, the user is redirected to etherscan.io where he can get more information about the transaction:
+
+![image](https://user-images.githubusercontent.com/34804976/147748792-c974644c-8418-4193-bd69-3b4db05553b3.png)
+
+### &#128421; Execute a Rule
+
+On this screen, the user can load a deal, execute a single rule and withdraw any available ETH from the Escrow.
+
+To load a deal, the user has enter its id (shown during the deal creation) and click on the search button:
+
+![image](https://user-images.githubusercontent.com/34804976/147753721-ce9f6823-683e-46a3-bcaa-1c0f222c648a.png)
+
+The rules contained in the deal are then displayed on screen:
+
+![image](https://user-images.githubusercontent.com/34804976/147753788-147844b3-56bb-4f0e-8c8e-12df3be8c794.png)
+
+The user can then execute a single rule by clicking on the corresponding `▶` button. A popup asks for the msg.value to be sent to the rule:
+
+![image](https://user-images.githubusercontent.com/34804976/147754002-f23caf09-acf0-49c2-a4a5-c760fb80a1b9.png)
+
+Once selected, the transaction is triggered.
+
+If the user has a positive balance in the OpenZeppelin Escrow contract, he can withdraw it by clicking on the withdraw button. Please note that the user balance displayed on screen is updated after each rule execution:
+
+![image](https://user-images.githubusercontent.com/34804976/147754170-fef870ef-40c5-4569-8f58-8c1d3f8e12ef.png)
+
+### &#128421; Admin Dashboard
+
+On this screen, the contract owner is able to modify the different DApp fees parameters, fetch the last ETH/USD conversion rate, pause the DApp. He will has also access to a visual representation of the contracts composing the DApp, see their addresses and know where they all points to. This screen is only accessible by the contracts owner which is determined by comparing the Metamask selectedAccount against the Proxy.sol owner (main entry point of the DApp)
+
 ## WorkFlow
 
-Once connected to [MAD](), the user
+A typical workflow would be:
+
+1. **Connecting to MAD**:
+  - The user install & unlocks his Metamask wallet
+  - He navigates to the [MAD website](XXX)
+  - He then connects his wallet to the DApp
+
+2. **Creating a Deal**:
+  - The user defines the list of accounts that are part of the deal
+  - He defines the rules composing the deal
+  - He reads and accepts all the clauses
+  - He creates the deal and pays the creation fees by accepting the transaction submitted to him in his Metamask wallet
+
+3. **Executing a Rule**:
+  - He communicates the deal id to his collaborators/clients
+  - The collaborators/clients execute one or more rules from the deal
+  - Any account owner defined in the deal can withdraw ETH, if available
+
+## Instructions set
+
+In order to illustrate the DApp upgrability, I created two different versions of the contracts.
+
+In the V1, the following instructions are available:
+
+- `IF-ADDR`: Tests if the msg.sender is equal to the address defined in the rule
+- `TRANSFER-ALL`: Transfers all the funds to the address defined in the rule
+- `TRANSFER-SOME`: Transfers a percentage of the msg.value to an address, both the percentage and the address defined in the rule
+
+In the V2, the following instruction was added:
+
+- `IF-AMOUNT-BIGGER`: Test if the msg.value is bigger than the amount defined in the rule
+
+## How does it work?
+
+### Meta-Language interpreter based on an AST Tree
+
+My initial idea was to create an interpreter that could run any instruction defined in a meta-language. I made a first version capable of interpreting elementary mathematical operations like `(2*7)+3`. It was based on a AST Tree where each the operation was stored as follow:
+
+![image](https://user-images.githubusercontent.com/34804976/147769202-731bad0b-c52e-45c0-a0d9-febddf87a1d6.png)
+
+In order to develop an interpreter capable of running more complex programs, I had to define 5 types of nodes:
+
+- Operator nodes which accepts 2 operands
+- Operand, which are terminal nodes and are basically values
+- Branch instructions to be able to conditionally execute a part of the tree
+- A jump instruction allowing me to emulate for/while loops
+
+Moreover, I had to find a way to manage variables and scope. This means that I had to emulate a variable stack used by the interpreter to keep track of intermediate computation steps.
+
+![image](https://user-images.githubusercontent.com/34804976/147769593-2c66dd8f-bc95-4887-b244-aab4acddab43.png)
+
+It turned out that this idea, even if partially working, was extremely expensive in term of contract storage and gas execution fees. You can test the code on Remix [AST Tree in Solidity](XXX) or watch this video: [AST Tree: demo](XXX)
+
+I finally decided to go for a simpler version.
+
+### Specialized interpreter for payments routing
+
+Reducing the scope to payments routing drastically simplified the problem. In a payment, the only variables are:
+
+- The message sender
+- The message value
+- The message recipient
+
+The last piece of the puzzle was to make the decision to interpret the different instructions composing a rule one after the other and stop the execution as soon as a node does not meet the execution criteria. In that case, the transaction is reverted and the funds sent back to the caller.
+
+#### Internal representation of a Rule
+
+Given the choices above, a rule can be represented as a succession of nodes: the tree data structure is reduced to a one directional linked list. For example, here is a rule as defined in the front-end along with its representation on the blockchain:
+
+
+
+When a rule is executed, MAD interprets it instruction by instruction.
+
+## &#11014; Upgrading the instructions set [VIDEO](XXX)
+
+MAD architecture was designed with upgradability in mind. The main challenge in this situation is to make sure that an upgrade does not lead to a client data loss. In other words, after extending the instruction set or correcting a bug in the `Interpreter.sol` or `InstructionsProvider.sol` contracts, the deals as well as the Escrow balance should remain unchanged. This is done without having to migrate any data. More information on this subject can be found in the file [design_pattern_decisions.md](https://github.com/CodeFrite/blockchain-developer-bootcamp-final-project/blob/main/design_pattern_decisions.md)
+
+In order to facilitate the upgrade process, along with the main Truffle deployment script, 2 additional scripts are available.
+
+### &#11014; Minor Upgrade
+
+### &#11014; Major Upgrade
 
 ## Metamask
+
+When navigating to [MAD](XXX), the user is provided with some feedback about his MetaMask installation.
+
+If Metamask is not detected, the following popup is displayed:
+
+![image](https://user-images.githubusercontent.com/34804976/147744304-37cdb0d5-08a5-4804-a53e-1aec8ea66f45.png)
+
+Moreover, the MetaMask button reflects the connection status.
+
+If Metamask not installed, the button is disabled:
+
+![image](https://user-images.githubusercontent.com/34804976/147744348-c4a2ecf2-1dc6-49bb-8606-7991edf90705.png)
+
+If the wallet is locked, the button is disabled:
+
+![image](https://user-images.githubusercontent.com/34804976/147744257-4197cda1-7ea2-4c6c-a40b-82649dfd6e62.png)
+
+If the wallet is not connected to the DApp, clicking on the button will connect the Wallet to the DApp and redirect the user to the 'Let's Create a Deal' page:
+
+![image](https://user-images.githubusercontent.com/34804976/147744380-3ced5dd2-4938-47be-9fc7-d85460a30f3f.png)
+
+If the wallet is connected to the DApp, clicking on the button will disconnect the user from MAD and redirect him to the homepage:
+
+![image](https://user-images.githubusercontent.com/34804976/147744405-cfc84476-ca88-4710-8373-a4ddd433c9a7.png)
+
+## What if ...
+
+In this section, we'll learn more about the different 
+
+### ... what if a rule fails
+
+MAD rules use conditions to achieve a dynamic behaviour. The user can create them freely by combining a series of instructions. If for any reason a rule execution fails, the smart contract execution is reverted and the msg.value is returned to the sender, minus the cost of the smart contracts code executed so far by the Ethereum VM.
 
 ### Icon 
 
@@ -57,7 +243,7 @@ As recommended in the [Metamask docs](https://docs.metamask.io/guide/defining-yo
 
 ![image](https://user-images.githubusercontent.com/34804976/145849775-5f81808b-fe0f-4be0-aebd-076cfd43bc00.png)
 
-Credits: The image used comes from [here](https://www.flaticon.com/premium-icon/scientist_1039065?term=mad&related_id=1039065) and is free of use for personal and commercial purpose _with attribution_: *<div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>*
+Credits: The icon comes from [here](https://www.flaticon.com/premium-icon/scientist_1039065?term=mad&related_id=1039065) and is free of use for personal and commercial purpose _with attribution_: *<div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>*
 
 ## Installation
 
@@ -66,9 +252,7 @@ In order to run the code locally, clone this repo. Open a terminal and navigate 
 ```
 > npm install
 > truffle compile
-> truffle migrate
-> truffle exec scripts/linkContracts.js
-> truffle exec scripts/loadInstructions.js
+> truffle migrate --network develop
 ```
 
 In order to install & serve the front-end, navigate to the `client` folder and run the following command:
@@ -76,6 +260,18 @@ In order to install & serve the front-end, navigate to the `client` folder and r
 ```
 > npm install
 > npm run start
+```
+
+To deploy a minor upgrade (= redeploy the `InstructionsProvider.sol` and update the links between the contracts), you can run the following command:
+
+```
+> truffle migrate --network develop --upgrade minor
+```
+
+To deploy a major upgrade (= redeploy the `InstructionsProvider.sol`, the `Interpreter.sol` and update the links between the contracts), you can run the following command:
+
+```
+> truffle migrate --network develop --upgrade major
 ```
 
 ## Testing
@@ -238,12 +434,25 @@ Compiling your contracts...
 
 ## Technologies
  
-- Solidity (Smart Contract)
+- Solidity (Smart Contracts)
 - Truffle (testing / unbox react)
 - React / Bootstrap (Front-End)
 - web3.js (Blockchain connection)
+- Miro (prototyping). You can follow this link to see the process: [Miro Board](https://miro.com/app/board/o9J_lwU-JWc=/)
 
+## Possible improvements
+
+As for any projects, particularly in the context of a time framed bootcamp, there is always room for improvements. If I have had more time, I would probably have improved the following points:
+
+- Naming of setter and getters accross smart contracts should be harmonized
+- Add a "VOTE" instruction to create dynamic pools (typical use case: )
+- Make sure (in the front-end and/or smart contracts) that the total percentage in a rule using TRANSFER-SOME instructions adds up to 100%. Currently ...
+  - ... if the sum is > 100%, I just mitigated the risk by for the user by reverting the transaction
+  - ... if the sum is < 100%, the unused part of the msg.value will be stuck in the contract. Adding a check in the Interpreter.sol could detect this situation and revert the transaction
+- Deal ids are generated by an auto-incremental uint256 making possible to guess a deal id. To improve data privacy, we could replace it by a randomly generated string (for example keccack of deal data + timestamp or Chainlink VRF)
+- Add a view on the instruction set contained in the Instructions.sol
+- Currently, the ETH/USD conversion rate has to be updated manually by calling Proxy.saveLatestQuotation() either directly or via the Admin Dashboard. This manual procedure could be automated, for example, by adding a backend job that would periodically call this function or by using [Chailink Keepers](https://docs.chain.link/docs/chainlink-keepers/introduction/)
 
 ## Disclaimer
 
-- I changed the subject of my project. Please find [here](https://github.com/CodeFrite/consensys-bootcamp-initial-idea) the initial idea I was working on
+- I changed the subject of my project. Please find [here](https://github.com/CodeFrite/consensys-bootcamp-initial-idea) the initial idea I was working on.
