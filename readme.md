@@ -1,7 +1,15 @@
 # ![image](https://user-images.githubusercontent.com/34804976/147816690-f141a47d-25d7-4125-8e4d-00f7ef8b9ace.png) MAD
 
 Let's Make A Deal (MAD) : Point and click platform allowing everyone to create versatile routing rules for payments on the Ethereum blockchain
- 
+
+## Quick Start
+
+To get a general grasp on the project, I recommend to watch the following videos:
+
+1. [MAD: How to use it?](XXX)
+2. [MAD: How does it work?](XXX)
+3. [MAD: How to upgrade?](XXX)
+
 ## &#9881; Problematic
 
 Let's say that you want to work with an associate on a commercial project. You know before hand that you are gonna receive all your incomes from a particular address. As associates, your desire is to simply split the incomes in 2 equal parts, 50% each.
