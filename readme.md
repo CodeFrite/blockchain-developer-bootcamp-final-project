@@ -1,4 +1,5 @@
-# blockchain-developer-bootcamp-final-project
+# ![image](https://user-images.githubusercontent.com/34804976/147816690-f141a47d-25d7-4125-8e4d-00f7ef8b9ace.png) MAD
+
 Let's Make A Deal (MAD) : Point and click platform allowing everyone to create versatile routing rules for payments on the Ethereum blockchain
  
 ## &#9881; Problematic
@@ -116,7 +117,27 @@ If the user has a positive balance in the OpenZeppelin Escrow contract, he can w
 
 ### &#128421; Admin Dashboard
 
-On this screen, the contract owner is able to modify the different DApp fees parameters, fetch the last ETH/USD conversion rate, pause the DApp. He will has also access to a visual representation of the contracts composing the DApp, see their addresses and know where they all points to. This screen is only accessible by the contracts owner which is determined by comparing the Metamask selectedAccount against the Proxy.sol owner (main entry point of the DApp)
+On this screen, the contract owner is able to modify the different DApp fees parameters, fetch the last ETH/USD conversion rate, pause the DApp. He has also access to a visual representation of the contracts composing the DApp, see their addresses and know where they all points to. This screen is only accessible by the contracts owner which is determined by comparing the Metamask selectedAccount against the Proxy.sol owner (main entry point of the DApp).
+
+To pause or unpause the DApp, the user can use these toogle buttons:
+
+![image](https://user-images.githubusercontent.com/34804976/147815348-0cacee4b-40eb-42bc-8bdd-1e4dd1571df5.png)
+
+To query the last ETH/USD conversion rate from Chainlink Oracle and save it to the `Proxy.sol` contract, the contract owner can press the following button. _**Please note that this feature is not available on your local, but will work on Rinkeby. To make it work on any other testnet or on the mainnet, please change the address of the Oracle in the migration script**_:
+
+![image](https://user-images.githubusercontent.com/34804976/147815469-b1d030ff-2437-41ff-8048-b0cdd85fdadd.png)
+
+The contract owner can modify the fees associated with the creation of an account (Clause 4) or a rule (Clause 5):
+
+![image](https://user-images.githubusercontent.com/34804976/147815829-748c7a46-7aec-4fde-b92d-81d68c3255b3.png)
+
+He can also modify the rule execution fees as well as the minimal transaction value:
+
+![image](https://user-images.githubusercontent.com/34804976/147815877-39fc90ea-1857-4ca2-b293-5885ac80f76b.png)
+
+Finally, the user can see the links between the contracts. This diagram is dynamically rendered using an html `svg` element. On the loading of the page, the contracts address are fetched from the ABI. Cliking on any address, either in the diagram or the table, will copy it to the clipboard. Hovering on a line in the table will highlight the corresponding arrow in the diagram:
+
+![image](https://user-images.githubusercontent.com/34804976/147816339-12f3636a-5d0e-480f-a525-f0f764b7a218.png)
 
 ## WorkFlow
 
