@@ -223,7 +223,7 @@ Each line of the table correspond to an instruction along with its input data. L
 
 ![image](https://user-images.githubusercontent.com/34804976/147826263-5d83f7a7-ed08-49f9-ab13-34dbea844a6a.png)
 
-As we can see, each article is evaluated one after the other and if any fail, we revert the transaction.
+As we can see, each article is evaluated one after the other and if any fail, we stop the execution and revert the transaction.
 
 #### Internal representation of a Rule
 
