@@ -210,8 +210,6 @@ The last piece of the puzzle was to make the decision to interpret the different
 
 Given the choices above, a rule can be represented as a succession of nodes: the tree data structure is reduced to a one directional linked list. For example, here is a rule as defined in the front-end along with its representation on the blockchain:
 
-
-
 When a rule is executed, MAD interprets it instruction by instruction.
 
 ## &#11014; Upgrading the instructions set [VIDEO](XXX)
@@ -250,15 +248,7 @@ If the wallet is connected to the DApp, clicking on the button will disconnect t
 
 ![image](https://user-images.githubusercontent.com/34804976/147744405-cfc84476-ca88-4710-8373-a4ddd433c9a7.png)
 
-## What if ...
-
-In this section, we'll learn more about the different 
-
-### ... what if a rule fails
-
-MAD rules use conditions to achieve a dynamic behaviour. The user can create them freely by combining a series of instructions. If for any reason a rule execution fails, the smart contract execution is reverted and the msg.value is returned to the sender, minus the cost of the smart contracts code executed so far by the Ethereum VM.
-
-### Icon 
+## Icon 
 
 As recommended in the [Metamask docs](https://docs.metamask.io/guide/defining-your-icon.html), I added an icon for my DApp. It is used by Metamask to show to which application the user account is currently linked:
 
