@@ -8,7 +8,7 @@ To get a general grasp on the project, I recommend to watch the following videos
 
 1. [MAD: How to use it?](XXX)
 2. [MAD: How does it work?](XXX)
-3. [MAD: How to deploy and run?](XXX)
+3. [MAD: How to deploy, test and run?](XXX)
 4. [MAD: How to upgrade?](XXX)
 
 ## &#9881; Problematic
