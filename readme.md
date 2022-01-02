@@ -227,6 +227,185 @@ Each line of the table correspond to an instruction along with its input data. L
 
 As we can see, each article is evaluated one after the other and if any fail, we stop the execution and revert the transaction.
 
+Internally, the deals are saved in the Deals contract. Each deal is composed out of 1...n Rules (the first mapping level) and each Rule is composed out of 1...n Articles (the second mapping level):
+
+```
+/// @dev Mapping of Articles composing a particular deal (key = dealId, ruleId, ArticleId)
+mapping (uint => mapping (uint => mapping (uint => CommonStructs.Article))) private deals;
+```
+
+An Article saves in storage the instruction name and its input parameters:
+
+```
+/**
+ * @dev Represent a single instruction with its parameters
+ * @param instructionName: Name of the instruction to be executed
+ * @param paramStr Instruction param of type string
+ * @param paramUInt Instruction param of type uint
+ * @param paramAddress Instruction param of type address
+ */
+struct Article {
+    string instructionName;
+    string paramStr;
+    uint paramUInt;
+    address paramAddress;
+}
+```
+
+#### Interpreting a Rule
+
+Here is a high level description of the calls happening when interpreting a rule:
+
+![image](https://user-images.githubusercontent.com/34804976/147871307-45cb776d-cc14-49a7-bc29-67377a1dbb0d.png)
+
+#### Step 0: _Client calls Proxy_
+
+To interpret a Rule, we call the `executeRule` from the Proxy.sol contract, main entry point of the DApp, by passing it the deal id along with the rule id that we want to execute. 
+
+#### Step 1: __Proxy.executeRule__
+
+After making sure that the minimal transaction value is reached, we pay the rule execution fees by simply substracting them from the msg.value and leaving them to be accumulated in the Proxy.sol contract:
+
+```
+/**
+  * @dev Execute a deal's rule
+  * @param _dealId : Id of the deal to execute
+  * @param _ruleId : Id of the rule to execute
+  */
+function executeRule(uint _dealId, uint _ruleId) external payable whenNotPaused {
+  // Amount sent by the user should be higher or equal to the minimal transaction value
+  uint msgValueInUSD = convertWEI2USD(msg.value);
+  require( msgValueInUSD >= transactionMinimalValue, "Transaction minimal value not reached");
+
+  // Upgrability: Low level call to InstructionsProvider
+  // Includes in the call (msg.value - execution fees)
+  uint executionFees = (msg.value / 100) * transactionFees;
+  (bool success, ) = interpreterContractRef.call{value: (msg.value - executionFees)}(
+      abi.encodeWithSignature(
+          "interpretRule(address,uint256,uint256)",
+          msg.sender,
+          _dealId, 
+          _ruleId
+      )
+  );
+
+  // Did the low level call succeed?
+  require(success,"Proxy: Unable to execute rule");
+
+  // Emit a PayTransactionFees
+  emit PayTransactionFees(msg.sender, _dealId, _ruleId, executionFees);
+}
+```
+
+#### Step 1: __Proxy calls Interpreter.interpretRule__
+
+The Proxy.sol contract calls the `interpretRule` function from the Interpreter.sol contract, which interprets the Articles contained in the rule one by one and reverts if an Article interpretation fails:
+
+```
+/**
+  * @dev Interprets a rule
+  * @param _from Address of the user who initiated the call
+  * @param _dealId Id of the deal to be executed
+  * @param _ruleId Id of the rule to be executed
+  */
+function interpretRule(address _from, uint _dealId, uint _ruleId) external payable onlyProxy() {
+    // Init the msg value used to 0
+    msgValueUsed = 0;
+
+    // Get all articles in rule
+    uint articlesCount = dealsInstance.getArticlesCount(_dealId, _ruleId);
+
+    bool success = true;
+    for (uint i=0;i<articlesCount;i++) {
+        success = interpretArticle(_from, _dealId, _ruleId, i);
+        if (!success) {
+            revert();
+        }
+    }
+}
+```
+
+#### Step 2: __Interpreter calls Interpreter.interpretArticle__
+
+In order to interpret a rule, the `Interpreter` contract fetches the current Article from the Deal contract. It then gets the function signature from the Instructions contract. Finally, depending on the instructionType (= function parameters & return type), it calls the InstructionsProvider contract which contains the actual implementation of the instruction defined in the DApp (like `IF-ADDR`, `TRANSFER`, ...):
+
+```
+/**
+  * @dev Interprets a rule
+  * @param _from Address of the user who initiated the call
+  * @param _dealId Id of the deal to be executed
+  * @param _ruleId Id of the rule to be executed
+  * @param _articleId Id of the article to be executed
+  */
+function interpretArticle(address _from, uint _dealId, uint _ruleId, uint _articleId) private returns (bool) {
+    // Get Article
+    CommonStructs.Article memory article = dealsInstance.getArticle(_dealId, _ruleId, _articleId);
+
+    // Get instruction type and signature
+    CommonStructs.InstructionTypes instructionType;
+    string memory instructionSignature;
+    (instructionType, instructionSignature) = instructionsInstance.getInstruction(article.instructionName);
+
+    //> Params injection depends on the instruction type
+
+    // CASE ADDRESS_ADDRESS_R_BOOL: pass the Article.paramAddress field
+    bool success=false;
+    if (instructionType == CommonStructs.InstructionTypes.ADDRESS_ADDRESS_R_BOOL) {
+        // Upgrability: Low level call to InstructionsProvider
+        bool _success;
+        bytes memory _result;
+        (_success, _result) = instructionsProviderInstance.call(
+            abi.encodeWithSignature(
+                instructionSignature,
+                article.paramAddress,
+                _from
+            )
+        );
+        success = _success && abi.decode(_result, (bool));
+
+    // CASE ADDRESS_PAYABLE: pass the Article.paramAddress
+    } else if (instructionType == CommonStructs.InstructionTypes.ADDRESS_PAYABLE) {
+        // Upgrability: Low level call to InstructionsProvider
+        bool _success;
+        bytes memory _result;
+
+        // Increment current msg.value % usage
+        msgValueUsed += article.paramUInt;
+        // Revert if used value > 100% of msg.value
+        if (msgValueUsed>100)
+            revert("Interpreter: Rule is spending more msg.value than received!");
+        (_success, _result) = instructionsProviderInstance.call{value:(msg.value*article.paramUInt)/100}(
+            abi.encodeWithSignature(
+                instructionSignature,
+                article.paramAddress
+            )
+        );
+        success = _success;
+
+    // MAJOR CONTRACT UPDATE : Add support for UINT_UINT_R_BOOL instructions return
+
+    } else if (instructionType == CommonStructs.InstructionTypes.UINT_UINT_R_BOOL) {
+        // Upgrability: Low level call to InstructionsProvider
+        bool _success;
+        bytes memory _result;
+        (_success, _result) = instructionsProviderInstance.call(
+            abi.encodeWithSignature(
+                instructionSignature,
+                msg.value,
+                article.paramUInt
+            )
+        );
+        success = _success && abi.decode(_result, (bool));
+
+    // CASE ADDRESS_PAYABLE: pass the Article.paramAddress
+    }
+
+    // Emit an event to inform the front-end that a particular article in the rule successed or not
+    emit InterpretArticle(_from, _dealId, _ruleId, _articleId);
+    return success;
+}
+```
+
 ## &#11014; Upgrading the instructions set [VIDEO](XXX)
 
 MAD architecture was designed with upgradability in mind. The main challenge in this situation is to make sure that an upgrade does not lead to a client data loss. In other words, after extending the instruction set or correcting a bug in the `Interpreter.sol` or `InstructionsProvider.sol` contracts, the deals as well as the Escrow balance should remain unchanged. This is done without having to migrate any data. More information on this subject can be found in the file [design_pattern_decisions.md](https://github.com/CodeFrite/blockchain-developer-bootcamp-final-project/blob/main/design_pattern_decisions.md)
