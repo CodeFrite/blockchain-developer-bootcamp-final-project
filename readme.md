@@ -227,7 +227,7 @@ Each line of the table correspond to an instruction along with its input data. L
 
 As we can see, each article is evaluated one after the other and if any fail, we stop the execution and revert the transaction.
 
-Internally, the deals are saved in the Deals contract. Each deal is composed out of 1...n Rules (the first mapping level) and each Rule is composed out of 1...n Articles (the second mapping level):
+Internally, the deals are saved in the Deals contract. Each deal is composed out of 1...n rules (the first mapping level) and each rule is composed out of 1...m articles (the second mapping level):
 
 ```
 /// @dev Mapping of Articles composing a particular deal (key = dealId, ruleId, ArticleId)
@@ -251,6 +251,18 @@ struct Article {
     address paramAddress;
 }
 ```
+
+Depending on the instruction being incoded, one or more of these variables will be assigned a value. As an example, the instruction "If the sender is XXX" will be stored as follow:
+
+```
+storage article = Article(
+  "IF-ADDR", // instructionName
+  "ACCOUNTANT", // paramStr
+  0, // paramUInt (unused)
+  "0x001d3f1ef827552ae1114027bd3ecf1f086ba0f9" // paramAddress
+);
+```
+#### Internal representation of an Instruction
 
 #### Interpreting a Rule
 
