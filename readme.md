@@ -270,9 +270,9 @@ Here is a high level description of the calls happening when interpreting a rule
 
 ![image](https://user-images.githubusercontent.com/34804976/147871307-45cb776d-cc14-49a7-bc29-67377a1dbb0d.png)
 
-#### Step 0: _Client calls Proxy_
+#### Step 0: _Client calls Proxy.executeRule_
 
-To interpret a Rule, we call the `executeRule` from the Proxy.sol contract, main entry point of the DApp, by passing it the deal id along with the rule id that we want to execute, for example (0, 0). Here is the call present in the front-end inside the "ExecuteDeal.jsx" react component:
+To interpret a Rule, we call the `executeRule` from the `Proxy` contract, main entry point of the DApp, by passing it the deal id along with the rule id that we want to execute, for example (0, 0). Here is the call present in the front-end inside the "ExecuteDeal.jsx" react component:
 
 ```
 executeRule = async (ruleId, value) => {
@@ -282,14 +282,11 @@ executeRule = async (ruleId, value) => {
     .then(console.log)
     .catch((e) => alert(e.message));
 
-  // Update Escrow balance
-  await this.checkBalance();
+  ...
 }
 ```
 
-#### Step 1: __Proxy.executeRule__
-
-After making sure that the minimal transaction value is reached, we pay the rule execution fees by simply substracting them from the msg.value and leaving them to be accumulated in the Proxy.sol contract:
+After making sure that the minimal transaction value is reached, the `Proxy` contract pays the rule execution fees by simply substracting them from the msg.value and leaving them to be accumulated in the `Proxy` contract. Afterwards, it calls the `interpretRule` from the `Interpreter` contract:
 
 ```
 /**
@@ -324,7 +321,7 @@ function executeRule(uint _dealId, uint _ruleId) external payable whenNotPaused 
 
 #### Step 1: __Proxy calls Interpreter.interpretRule__
 
-The Proxy.sol contract calls the `interpretRule` function from the Interpreter.sol contract, which interprets the Articles contained in the rule one by one and reverts if an Article interpretation fails:
+The `interpretRule` from the `Interpreter`contract interprets the Articles contained in the rule one by one and reverts if an Article interpretation fails. It does so by getting the number of articles (contained in storage for the particular dealId & ruleId we are trying to execute) from the `Deals.getArticlesCount()` function. Then each article is interpreter by the function `Interpreter.interpretArticle`:
 
 ```
 /**
