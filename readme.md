@@ -272,7 +272,20 @@ Here is a high level description of the calls happening when interpreting a rule
 
 #### Step 0: _Client calls Proxy_
 
-To interpret a Rule, we call the `executeRule` from the Proxy.sol contract, main entry point of the DApp, by passing it the deal id along with the rule id that we want to execute. 
+To interpret a Rule, we call the `executeRule` from the Proxy.sol contract, main entry point of the DApp, by passing it the deal id along with the rule id that we want to execute, for example (0, 0). Here is the call present in the front-end inside the "ExecuteDeal.jsx" react component:
+
+```
+executeRule = async (ruleId, value) => {
+  const contract = this.props.contracts.proxy;
+  await contract.methods.executeRule(this.state.dealId, ruleId)
+    .send({from:this.props.selectedAccount,value: value})
+    .then(console.log)
+    .catch((e) => alert(e.message));
+
+  // Update Escrow balance
+  await this.checkBalance();
+}
+```
 
 #### Step 1: __Proxy.executeRule__
 
