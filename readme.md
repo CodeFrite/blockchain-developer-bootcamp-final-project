@@ -270,6 +270,8 @@ Here is a high level description of the calls happening when interpreting a rule
 
 ![image](https://user-images.githubusercontent.com/34804976/147871307-45cb776d-cc14-49a7-bc29-67377a1dbb0d.png)
 
+![image](https://user-images.githubusercontent.com/34804976/148278935-3198c13f-a222-4c97-8103-ac9d9ef34d16.png)
+
 #### Step 0: _Client calls Proxy.executeRule_
 
 To interpret a Rule, we call the `executeRule` from the `Proxy` contract, main entry point of the DApp, by passing it the deal id along with the rule id that we want to execute, for example (0, 0). Here is the call present in the front-end inside the "ExecuteDeal.jsx" react component:
