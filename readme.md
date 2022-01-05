@@ -270,7 +270,7 @@ Here is a high level description of the calls happening when interpreting a rule
 
 ![image](https://user-images.githubusercontent.com/34804976/147871307-45cb776d-cc14-49a7-bc29-67377a1dbb0d.png)
 
-![Untitled (1)](https://user-images.githubusercontent.com/34804976/148280691-40f055f6-c323-4fbd-8ad3-65692d54c7ff.png)
+![Untitled (2)](https://user-images.githubusercontent.com/34804976/148281985-dbed2736-f063-45bc-bd0b-54c1838eed27.png)
 
 
 #### Step 0: _Client calls Proxy.executeRule_
