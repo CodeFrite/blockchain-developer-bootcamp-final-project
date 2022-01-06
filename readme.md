@@ -264,6 +264,40 @@ storage article = Article(
 ```
 #### Internal representation of an Instruction
 
+The `Instructions` contract contains the mapping between the instructions nickname used in the front-end and the actual function signature as well as the instructions type:
+
+```
+contract Instructions is Ownable {
+
+  /* STORAGE VARIABLES */
+
+  /// @dev Mapping between instruction name used in deals Articles and instruction signature used in low level .call()
+  mapping (string => string) private instructionsSignature;
+
+  /// @dev Mapping between instruction name and its type which determines how the Interpreter will run an Article
+  mapping (string => CommonStructs.InstructionTypes) private instructionsType;
+  
+  ...
+}
+```
+
+The instructions are first populated into the `Instructions` contract during the deployment by the [migration script](https://github.com/CodeFrite/blockchain-developer-bootcamp-final-project/blob/main/migrations/2_deploy_contracts.js) or manually :
+
+```
+...
+// Step 2: Get an instance to the deployed contracts
+const instructions = await Instructions.deployed();
+...
+// Load instructions
+console.log("Adding instruction 'IF-ADDR'");
+await instructions.addInstruction("IF-ADDR", "1", "_ifAddress(address,address)");
+console.log("Adding instruction 'TRANSFER'");
+await instructions.addInstruction("TRANSFER", "2", "_transfer(address)");
+...
+```
+As we can see, 
+
+
 #### Interpreting a Rule
 
 Here is a high level description of the calls happening when interpreting a rule:
