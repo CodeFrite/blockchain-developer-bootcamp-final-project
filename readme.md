@@ -4,7 +4,7 @@ Let's Make A Deal (MAD) : Point and click platform allowing everyone to create v
 
 ## &#128247; Quick Start
 
-To get a general grasp on the project, I recommend to watch the following videos:
+To get a general grasp on the project, I recommend watching the following videos:
 
 1. [MAD: How to use it?](XXX)
 2. [MAD: How does it work?](XXX)
@@ -252,17 +252,17 @@ struct Article {
 }
 ```
 
-Depending on the instruction being incoded, one or more of these variables will be assigned a value. As an example, the instruction "If the sender is XXX" will be stored as follow:
+Depending on the instruction being incoded, one or more of these variables will be assigned a value. As an example, the instruction "If the sender is Alex" will be stored as follow:
 
 ```
 storage article = Article(
   "IF-ADDR", // instructionName
-  "ACCOUNTANT", // paramStr
+  "Alex", // paramStr
   0, // paramUInt (unused)
   "0x001d3f1ef827552ae1114027bd3ecf1f086ba0f9" // paramAddress
 );
 ```
-#### Internal representation of an Instruction
+#### Internal representation of an instruction
 
 The `Instructions` contract contains the mapping between the instructions nickname used in the front-end and the actual function signature as well as the instructions type:
 
@@ -281,7 +281,7 @@ contract Instructions is Ownable {
 }
 ```
 
-The instructions are first populated into the `Instructions` contract during the deployment by the [migration script](https://github.com/CodeFrite/blockchain-developer-bootcamp-final-project/blob/main/migrations/2_deploy_contracts.js) or manually :
+The instructions are populated into the `Instructions` contract during the deployment by the [migration script](https://github.com/CodeFrite/blockchain-developer-bootcamp-final-project/blob/main/migrations/2_deploy_contracts.js) or manually after an upgrade, by calling the function `addInstruction`:
 
 ```
 ...
@@ -295,7 +295,7 @@ console.log("Adding instruction 'TRANSFER'");
 await instructions.addInstruction("TRANSFER", "2", "_transfer(address)");
 ...
 ```
-As we can see, 
+As we can see, the instruction `IF-ADDR` corresponds to a function with signature `_ifAddress(address,address)` and with a type `1`.
 
 
 #### Interpreting a Rule
