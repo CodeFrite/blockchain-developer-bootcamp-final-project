@@ -426,8 +426,20 @@ contract Proxy is Ownable, Pausable {
     * @dev Get the internal balance of the contract
     * @return The internal balance of the contract in Wei
     */
-    function getBalance() external view onlyOwner returns(uint) {
+    function getContractBalance() public view onlyOwner returns(uint) {
         return address(this).balance;
+    }
+
+    /**
+    * @dev Owner can withdraw ETH from the contract balance
+    */
+    function harvest() external payable onlyOwner {
+        // Sends contract ETH balance to owner if balance > 0
+        uint balance = address(this).balance;
+
+        if (balance>0)
+            payable(msg.sender).transfer(balance);
+        
     }
 
     /* CHAINLINK ETH/USD PRICE FEED AGGREGATOR */    

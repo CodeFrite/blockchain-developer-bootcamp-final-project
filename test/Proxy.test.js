@@ -294,7 +294,7 @@ contract("Proxy", async (accounts) => {
 
       it("... should emit a PayDealCreationFees event", async () => {
         // Save the old balance
-        oldContractBalance = await instanceProxy.getBalance();
+        oldContractBalance = await instanceProxy.getContractBalance();
         oldCallerBalance = await web3.eth.getBalance(CEO);
 
         // Get the computes deal creation fees from contract
@@ -308,7 +308,7 @@ contract("Proxy", async (accounts) => {
       });
 
       it("... the contract balance should receive 100$ worth of ETH", async () => {
-        let newContractBalance = await instanceProxy.getBalance();
+        let newContractBalance = await instanceProxy.getContractBalance();
         assert.equal(oldContractBalance.add(dealCreationFeesInWEI).toString(), newContractBalance.toString(), "newBalance != oldBalance + dealCreationFees");
       });
 
@@ -348,7 +348,7 @@ contract("Proxy", async (accounts) => {
       let transactionFees;
 
       it("... should emit a PayTransactionFees event", async () => {
-        oldContractBalance = await instanceProxy.getBalance();
+        oldContractBalance = await instanceProxy.getContractBalance();
         oldCallerBalance = await web3.eth.getBalance(CHAIRMAN);
 
         // Get escrow balance for CHAIRMAN
@@ -359,7 +359,7 @@ contract("Proxy", async (accounts) => {
       });
 
       it("... the contract balance should receive 1% of value worth of ETH", async () => {
-        newContractBalance = await instanceProxy.getBalance();
+        newContractBalance = await instanceProxy.getContractBalance();
         transactionFees = await instanceProxy.transactionFees();
         let executionFees = Number(transactionFees) * 10**16;
         assert.equal(Number(newContractBalance), Number(oldContractBalance) + executionFees, "newBalance != oldBalance + msg.value * (transactionFees/100)");
@@ -413,6 +413,16 @@ contract("Proxy", async (accounts) => {
       });
 
     });
+
+    describe("Harvest transaction fees", () => {
+      it("... the owner balance should increase", async () => {
+        let oldOwnerBalance = await web3.eth.getBalance(CEO);
+        await instanceProxy.harvest({from: CEO});
+        let newOwnerBalance = await web3.eth.getBalance(CEO);
+        assert((newOwnerBalance-oldOwnerBalance) > 0, "The owner balance should increase");
+      })
+    })
+
   });
 
 

@@ -46,7 +46,8 @@ class AdminDashboard extends Component {
         accountCreationFees: null,
         ruleCreationFees: null,
         transactionFees: null,
-        transactionMinimalValue: null
+        transactionMinimalValue: null,
+        DAppBalance: null
       },
       DAppState: null,
       upToDate: {
@@ -58,6 +59,22 @@ class AdminDashboard extends Component {
 
   DAPP_SET_STATE = {PAUSE:"PAUSE", RESUME:"RESUME"};
   UPGRADE_STATE = {UPTODATE:"UPTODATE", OUTDATED:"OUTDATED", BROKEN:"BROKEN"}
+
+  // DApp balance
+  getDAppBalance = async () => {
+    await this.state.contracts.proxy.methods.getContractBalance()
+      .call()
+      .then(DAppBalance => this.setState({txtVars: { ...this.state.txtVars, DAppBalance: (parseFloat(DAppBalance) / (10**18)) }}))
+      .catch((e) => alert(e.message));
+  }
+
+  harvest = async () => {
+    await this.state.contracts.proxy.methods.harvest()
+      .send({from: this.props.selectedAccount})
+      .catch((e) => alert(e.message))
+    
+      await this.getDAppBalance();
+  }
 
   // DApp state
   getDAppState = async () => {
@@ -299,6 +316,9 @@ class AdminDashboard extends Component {
 
     // Get contracts references
     await this.getContractsReferences();
+
+    // Get DApp balance
+    await this.getDAppBalance();
   }
 
   shortAddress = address => (address===null ? "0x000...00000" : address.substr(0,5) + "..." + address.substr(address.length-5,5));
@@ -424,6 +444,21 @@ class AdminDashboard extends Component {
                 <Card.Text>  
                   <input type="number" min="0" max="100" id="transactionMinimalValue" size="2" placeholder={this.state.txtVars.transactionMinimalValue}/>&nbsp;
                   <Button variant="primary" size="sm" onClick={this.updateTransactionMinimalValue}>Update</Button>
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col xs={4}>
+            <Card>
+              <Card.Header>DApp balance</Card.Header>
+              <Card.Body>
+                <Card.Title>Current Value</Card.Title>
+                <Card.Text>
+                  + {this.state.txtVars.DAppBalance} ETH
+                </Card.Text>
+                <hr/>
+                <Card.Text>
+                  <Button variant="primary" size="sm" onClick={this.harvest}>Harvest</Button>
                 </Card.Text>
               </Card.Body>
             </Card>
