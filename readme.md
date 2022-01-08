@@ -306,7 +306,7 @@ As we can see, the instruction `IF-ADDR` corresponds to a function with signatur
 
 Here is a high level description of the calls happening when interpreting a rule:
 
-![image](https://user-images.githubusercontent.com/34804976/148659883-349d50b7-7c27-4cdf-b101-2b93c3852118.png)
+![image](https://user-images.githubusercontent.com/34804976/148663327-31d49b77-3d09-4589-8bac-d41348bf0fe7.png)
 
 ![Untitled (2)](https://user-images.githubusercontent.com/34804976/148281985-dbed2736-f063-45bc-bd0b-54c1838eed27.png)
 
