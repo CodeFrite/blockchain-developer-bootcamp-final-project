@@ -146,7 +146,7 @@ He can also modify the rule execution fees as well as the minimal transaction va
 
 He can withdraw the fees accumulated in the DApp and know its value:
 
-![image](https://user-images.githubusercontent.com/34804976/148649109-8dc641ab-1cee-42d9-a4bb-ad21193d7cd7.png)
+![image](https://user-images.githubusercontent.com/34804976/148649203-b079d488-e438-48d8-b9c5-f9ec530f88e6.png)
 
 Finally, the user can see the links between the contracts. This diagram is dynamically rendered using an html `svg` element. On the loading of the page, the contracts address are fetched from the ABI. Cliking on any address, either in the diagram or the table, will copy it to the clipboard. Hovering on a line in the table will highlight the corresponding arrow in the diagram:
 
