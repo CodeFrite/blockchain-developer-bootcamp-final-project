@@ -63,7 +63,7 @@ class AdminDashboard extends Component {
   // DApp balance
   getDAppBalance = async () => {
     await this.state.contracts.proxy.methods.getContractBalance()
-      .call()
+      .call({from:this.props.selectedAccount})
       .then(DAppBalance => this.setState({txtVars: { ...this.state.txtVars, DAppBalance: (parseFloat(DAppBalance) / (10**18)) }}))
       .catch((e) => alert(e.message));
   }
