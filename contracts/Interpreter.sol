@@ -143,7 +143,7 @@ contract Interpreter is Ownable {
         for (uint i=0;i<articlesCount;i++) {
             success = interpretArticle(_from, _dealId, _ruleId, i);
             if (!success) {
-                break;
+                revert();
             }
         }
     }

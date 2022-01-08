@@ -19,8 +19,8 @@ contract("Interpreter", async (accounts) => {
   const ruleList = 
     [
       [
-        ["IF-ADDR", "CHAIRMAN", 0, CHAIRMAN],
-        ["TRANSFER", "ACCOUNTANT", 0, ACCOUNTANT]
+        ["IF-ADDR", "CHAIRMAN", 1, CHAIRMAN],
+        ["TRANSFER", "ACCOUNTANT", 2, ACCOUNTANT]
       ]
     ];
 
@@ -84,11 +84,10 @@ contract("Interpreter", async (accounts) => {
 
       describe("Rule 0 - FROM CEO: IF-ADDR(CHAIRMAN)=false =/> TRANSFER(ACCOUNTANT)=false", () => {
         
-        it("... should return 1 event InterpretArticle with the correct event parameters", async () => {
+        it("... should revert", async () => {
           dealId = 0;
           ruleId = 0;
-          tx = await instanceInterpreter.interpretRule(CEO, dealId, ruleId,{from: PROXY, value:10000000000000000});
-          expectEvent(tx,"InterpretArticle",{_from: CEO, _dealId: new BN(dealId), _ruleId: new BN(ruleId),_articleId: new BN(0)});
+          await expectRevert.unspecified(instanceInterpreter.interpretRule(CEO, dealId, ruleId,{from: PROXY, value:10000000000000000}));
         });
 
       });
