@@ -126,7 +126,7 @@ If the user has a positive balance in the OpenZeppelin Escrow contract, he can w
 
 ### &#128421; Admin Dashboard
 
-On this screen, the contract owner is able to modify the different DApp fees parameters, fetch the last ETH/USD conversion rate, pause the DApp. He has also access to a visual representation of the contracts composing the DApp, see their addresses and know where they all points to. This screen is only accessible by the contracts owner which is determined by comparing the Metamask selectedAccount against the Proxy.sol owner (main entry point of the DApp).
+On this screen, the contract owner is able to modify the different DApp fees parameters, fetch the last ETH/USD conversion rate, pause the DApp and harvest the transaction fees accumulated by the contract. He has also access to a visual representation of the contracts composing the DApp, see their addresses and know where they all points to. This screen is only accessible by the contracts owner which is determined by comparing the Metamask selectedAccount against the Proxy.sol owner (main entry point of the DApp).
 
 To pause or unpause the DApp, the user can use these toogle buttons:
 
@@ -143,6 +143,10 @@ The contract owner can modify the fees associated with the creation of an accoun
 He can also modify the rule execution fees as well as the minimal transaction value:
 
 ![image](https://user-images.githubusercontent.com/34804976/147815877-39fc90ea-1857-4ca2-b293-5885ac80f76b.png)
+
+He can withdraw the fees accumulated in the DApp and know its value:
+
+![image](https://user-images.githubusercontent.com/34804976/148649203-b079d488-e438-48d8-b9c5-f9ec530f88e6.png)
 
 Finally, the user can see the links between the contracts. This diagram is dynamically rendered using an html `svg` element. On the loading of the page, the contracts address are fetched from the ABI. Cliking on any address, either in the diagram or the table, will copy it to the clipboard. Hovering on a line in the table will highlight the corresponding arrow in the diagram:
 
