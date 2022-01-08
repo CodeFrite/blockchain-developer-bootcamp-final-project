@@ -1,6 +1,16 @@
-# blockchain-developer-bootcamp-final-project
+# ![image](https://user-images.githubusercontent.com/34804976/147816690-f141a47d-25d7-4125-8e4d-00f7ef8b9ace.png) MAD
+
 Let's Make A Deal (MAD) : Point and click platform allowing everyone to create versatile routing rules for payments on the Ethereum blockchain
- 
+
+## &#128247; Quick Start
+
+To get a general grasp on the project, I recommend watching the following videos:
+
+1. [MAD: How to use it?](XXX)
+2. [MAD: How does it work?](XXX)
+3. [MAD: How to deploy, test and run?](XXX)
+4. [MAD: How to upgrade?](XXX)
+
 ## &#9881; Problematic
 
 Let's say that you want to work with an associate on a commercial project. You know before hand that you are gonna receive all your incomes from a particular address. As associates, your desire is to simply split the incomes in 2 equal parts, 50% each.
@@ -19,7 +29,7 @@ But what are these rules? A rule is a succession of atomic instructions that are
 
 ## &#128256; Use Cases
 
-Now let's consider a few examples and how they could be solved on MAD. You can watch a demo by following this link: XXX
+Now let's consider a few examples and how they could be solved on MAD.
 
 ### &#128256; Split incomes between associates
 
@@ -116,7 +126,27 @@ If the user has a positive balance in the OpenZeppelin Escrow contract, he can w
 
 ### &#128421; Admin Dashboard
 
-On this screen, the contract owner is able to modify the different DApp fees parameters, fetch the last ETH/USD conversion rate, pause the DApp. He will has also access to a visual representation of the contracts composing the DApp, see their addresses and know where they all points to. This screen is only accessible by the contracts owner which is determined by comparing the Metamask selectedAccount against the Proxy.sol owner (main entry point of the DApp)
+On this screen, the contract owner is able to modify the different DApp fees parameters, fetch the last ETH/USD conversion rate, pause the DApp. He has also access to a visual representation of the contracts composing the DApp, see their addresses and know where they all points to. This screen is only accessible by the contracts owner which is determined by comparing the Metamask selectedAccount against the Proxy.sol owner (main entry point of the DApp).
+
+To pause or unpause the DApp, the user can use these toogle buttons:
+
+![image](https://user-images.githubusercontent.com/34804976/147815348-0cacee4b-40eb-42bc-8bdd-1e4dd1571df5.png)
+
+To query the last ETH/USD conversion rate from Chainlink Oracle and save it to the `Proxy.sol` contract, the contract owner can press the following button. _**Please note that this feature is not available on your local, but will work on Rinkeby. To make it work on any other testnet or on the mainnet, please change the address of the Oracle in the migration script**_:
+
+![image](https://user-images.githubusercontent.com/34804976/147815469-b1d030ff-2437-41ff-8048-b0cdd85fdadd.png)
+
+The contract owner can modify the fees associated with the creation of an account (Clause 4) or a rule (Clause 5):
+
+![image](https://user-images.githubusercontent.com/34804976/147815829-748c7a46-7aec-4fde-b92d-81d68c3255b3.png)
+
+He can also modify the rule execution fees as well as the minimal transaction value:
+
+![image](https://user-images.githubusercontent.com/34804976/147815877-39fc90ea-1857-4ca2-b293-5885ac80f76b.png)
+
+Finally, the user can see the links between the contracts. This diagram is dynamically rendered using an html `svg` element. On the loading of the page, the contracts address are fetched from the ABI. Cliking on any address, either in the diagram or the table, will copy it to the clipboard. Hovering on a line in the table will highlight the corresponding arrow in the diagram:
+
+![image](https://user-images.githubusercontent.com/34804976/147816339-12f3636a-5d0e-480f-a525-f0f764b7a218.png)
 
 ## WorkFlow
 
@@ -167,7 +197,7 @@ In order to develop an interpreter capable of running more complex programs, I h
 - Branch instructions to be able to conditionally execute a part of the tree
 - A jump instruction allowing me to emulate for/while loops
 
-Moreover, I had to find a way to manage variables and scope. This means that I had to emulate a variable stack used by the interpreter to keep track of intermediate computation steps.
+Moreover, I had to find a way to manage variables and scope. This means that I had to emulate a program stack used by the interpreter to keep track of intermediate computation steps.
 
 ![image](https://user-images.githubusercontent.com/34804976/147769593-2c66dd8f-bc95-4887-b244-aab4acddab43.png)
 
@@ -187,11 +217,253 @@ The last piece of the puzzle was to make the decision to interpret the different
 
 #### Internal representation of a Rule
 
-Given the choices above, a rule can be represented as a succession of nodes: the tree data structure is reduced to a one directional linked list. For example, here is a rule as defined in the front-end along with its representation on the blockchain:
+Given the choices above, a rule can be represented as a succession of nodes: the tree data structure is reduced to a one directional linked list. As an example, let's see how the following rule would be translated by the DApp:
+
+![image](https://user-images.githubusercontent.com/34804976/147826333-1f33f699-2739-4b1a-9888-574e3f029251.png)
+
+Each line of the table correspond to an instruction along with its input data. Let's call them `Article` (legal contract nomenclature):
+
+![image](https://user-images.githubusercontent.com/34804976/147827094-395e15f7-ee20-4cdb-ab64-974ffef17ff6.png)
+
+As we can see, each article is evaluated one after the other and if any fail, we stop the execution and revert the transaction.
+
+Internally, the deals are saved in the Deals contract. Each deal is composed out of 1...n rules (the first mapping level) and each rule is composed out of 1...m articles (the second mapping level):
+
+```
+/// @dev Mapping of Articles composing a particular deal (key = dealId, ruleId, ArticleId)
+mapping (uint => mapping (uint => mapping (uint => CommonStructs.Article))) private deals;
+```
+
+An Article saves in storage the instruction name and its input parameters:
+
+```
+/**
+ * @dev Represent a single instruction with its parameters
+ * @param instructionName: Name of the instruction to be executed
+ * @param paramStr Instruction param of type string
+ * @param paramUInt Instruction param of type uint
+ * @param paramAddress Instruction param of type address
+ */
+struct Article {
+    string instructionName;
+    string paramStr;
+    uint paramUInt;
+    address paramAddress;
+}
+```
+
+Depending on the instruction being incoded, one or more of these variables will be assigned a value. As an example, the instruction "If the sender is Alex" will be stored as follow:
+
+```
+storage article = Article(
+  "IF-ADDR", // instructionName
+  "Alex", // paramStr
+  0, // paramUInt (unused)
+  "0x001d3f1ef827552ae1114027bd3ecf1f086ba0f9" // paramAddress
+);
+```
+#### Internal representation of an instruction
+
+The `Instructions` contract contains the mapping between the instructions nickname used in the front-end and the actual function signature as well as the instructions type:
+
+```
+contract Instructions is Ownable {
+
+  /* STORAGE VARIABLES */
+
+  /// @dev Mapping between instruction name used in deals Articles and instruction signature used in low level .call()
+  mapping (string => string) private instructionsSignature;
+
+  /// @dev Mapping between instruction name and its type which determines how the Interpreter will run an Article
+  mapping (string => CommonStructs.InstructionTypes) private instructionsType;
+  
+  ...
+}
+```
+
+The instructions are populated into the `Instructions` contract during the deployment by the [migration script](https://github.com/CodeFrite/blockchain-developer-bootcamp-final-project/blob/main/migrations/2_deploy_contracts.js) or manually after an upgrade, by calling the function `addInstruction`:
+
+```
+...
+// Step 2: Get an instance to the deployed contracts
+const instructions = await Instructions.deployed();
+...
+// Load instructions
+console.log("Adding instruction 'IF-ADDR'");
+await instructions.addInstruction("IF-ADDR", "1", "_ifAddress(address,address)");
+console.log("Adding instruction 'TRANSFER'");
+await instructions.addInstruction("TRANSFER", "2", "_transfer(address)");
+...
+```
+As we can see, the instruction `IF-ADDR` corresponds to a function with signature `_ifAddress(address,address)` and with a type `1`.
 
 
+#### Interpreting a Rule
 
-When a rule is executed, MAD interprets it instruction by instruction.
+Here is a high level description of the calls happening when interpreting a rule:
+
+![image](https://user-images.githubusercontent.com/34804976/147871307-45cb776d-cc14-49a7-bc29-67377a1dbb0d.png)
+
+![Untitled (2)](https://user-images.githubusercontent.com/34804976/148281985-dbed2736-f063-45bc-bd0b-54c1838eed27.png)
+
+
+#### Step 0: _Client calls Proxy.executeRule_
+
+To interpret a Rule, we call the `executeRule` from the `Proxy` contract, main entry point of the DApp, by passing it the deal id along with the rule id that we want to execute, for example (0, 0). Here is the call present in the front-end inside the "ExecuteDeal.jsx" react component:
+
+```
+executeRule = async (ruleId, value) => {
+  const contract = this.props.contracts.proxy;
+  await contract.methods.executeRule(this.state.dealId, ruleId)
+    .send({from:this.props.selectedAccount,value: value})
+    .then(console.log)
+    .catch((e) => alert(e.message));
+
+  ...
+}
+```
+
+After making sure that the minimal transaction value is reached, the `Proxy` contract pays the rule execution fees by simply substracting them from the msg.value and leaving them to be accumulated in the `Proxy` contract. Afterwards, it calls the `interpretRule` from the `Interpreter` contract:
+
+```
+/**
+  * @dev Execute a deal's rule
+  * @param _dealId : Id of the deal to execute
+  * @param _ruleId : Id of the rule to execute
+  */
+function executeRule(uint _dealId, uint _ruleId) external payable whenNotPaused {
+  // Amount sent by the user should be higher or equal to the minimal transaction value
+  uint msgValueInUSD = convertWEI2USD(msg.value);
+  require( msgValueInUSD >= transactionMinimalValue, "Transaction minimal value not reached");
+
+  // Upgrability: Low level call to InstructionsProvider
+  // Includes in the call (msg.value - execution fees)
+  uint executionFees = (msg.value / 100) * transactionFees;
+  (bool success, ) = interpreterContractRef.call{value: (msg.value - executionFees)}(
+      abi.encodeWithSignature(
+          "interpretRule(address,uint256,uint256)",
+          msg.sender,
+          _dealId, 
+          _ruleId
+      )
+  );
+
+  // Did the low level call succeed?
+  require(success,"Proxy: Unable to execute rule");
+
+  // Emit a PayTransactionFees
+  emit PayTransactionFees(msg.sender, _dealId, _ruleId, executionFees);
+}
+```
+
+#### Step 1: __Proxy calls Interpreter.interpretRule__
+
+The `interpretRule` from the `Interpreter`contract interprets the Articles contained in the rule one by one and reverts if an Article interpretation fails. It does so by getting the number of articles (contained in storage for the particular dealId & ruleId we are trying to execute) from the `Deals.getArticlesCount()` function. Then each article is interpreter by the function `Interpreter.interpretArticle`:
+
+```
+/**
+  * @dev Interprets a rule
+  * @param _from Address of the user who initiated the call
+  * @param _dealId Id of the deal to be executed
+  * @param _ruleId Id of the rule to be executed
+  */
+function interpretRule(address _from, uint _dealId, uint _ruleId) external payable onlyProxy() {
+    // Init the msg value used to 0
+    msgValueUsed = 0;
+
+    // Get all articles in rule
+    uint articlesCount = dealsInstance.getArticlesCount(_dealId, _ruleId);
+
+    bool success = true;
+    for (uint i=0;i<articlesCount;i++) {
+        success = interpretArticle(_from, _dealId, _ruleId, i);
+        if (!success) {
+            revert();
+        }
+    }
+}
+```
+
+#### Step 2: __Interpreter calls Interpreter.interpretArticle__
+
+In order to interpret a rule, the `Interpreter` contract fetches the current Article from the Deal contract. It then gets the function signature from the Instructions contract. Finally, depending on the instructionType (= function parameters & return type), it calls the InstructionsProvider contract which contains the actual implementation of the instruction defined in the DApp (like `IF-ADDR`, `TRANSFER`, ...):
+
+```
+/**
+  * @dev Interprets a rule
+  * @param _from Address of the user who initiated the call
+  * @param _dealId Id of the deal to be executed
+  * @param _ruleId Id of the rule to be executed
+  * @param _articleId Id of the article to be executed
+  */
+function interpretArticle(address _from, uint _dealId, uint _ruleId, uint _articleId) private returns (bool) {
+    // Get Article
+    CommonStructs.Article memory article = dealsInstance.getArticle(_dealId, _ruleId, _articleId);
+
+    // Get instruction type and signature
+    CommonStructs.InstructionTypes instructionType;
+    string memory instructionSignature;
+    (instructionType, instructionSignature) = instructionsInstance.getInstruction(article.instructionName);
+
+    //> Params injection depends on the instruction type
+
+    // CASE ADDRESS_ADDRESS_R_BOOL: pass the Article.paramAddress field
+    bool success=false;
+    if (instructionType == CommonStructs.InstructionTypes.ADDRESS_ADDRESS_R_BOOL) {
+        // Upgrability: Low level call to InstructionsProvider
+        bool _success;
+        bytes memory _result;
+        (_success, _result) = instructionsProviderInstance.call(
+            abi.encodeWithSignature(
+                instructionSignature,
+                article.paramAddress,
+                _from
+            )
+        );
+        success = _success && abi.decode(_result, (bool));
+
+    // CASE ADDRESS_PAYABLE: pass the Article.paramAddress
+    } else if (instructionType == CommonStructs.InstructionTypes.ADDRESS_PAYABLE) {
+        // Upgrability: Low level call to InstructionsProvider
+        bool _success;
+        bytes memory _result;
+
+        // Increment current msg.value % usage
+        msgValueUsed += article.paramUInt;
+        // Revert if used value > 100% of msg.value
+        if (msgValueUsed>100)
+            revert("Interpreter: Rule is spending more msg.value than received!");
+        (_success, _result) = instructionsProviderInstance.call{value:(msg.value*article.paramUInt)/100}(
+            abi.encodeWithSignature(
+                instructionSignature,
+                article.paramAddress
+            )
+        );
+        success = _success;
+
+    // MAJOR CONTRACT UPDATE : Add support for UINT_UINT_R_BOOL instructions return
+
+    } else if (instructionType == CommonStructs.InstructionTypes.UINT_UINT_R_BOOL) {
+        // Upgrability: Low level call to InstructionsProvider
+        bool _success;
+        bytes memory _result;
+        (_success, _result) = instructionsProviderInstance.call(
+            abi.encodeWithSignature(
+                instructionSignature,
+                msg.value,
+                article.paramUInt
+            )
+        );
+        success = _success && abi.decode(_result, (bool));
+
+    // CASE ADDRESS_PAYABLE: pass the Article.paramAddress
+    }
+
+    // Emit an event to inform the front-end that a particular article in the rule successed or not
+    emit InterpretArticle(_from, _dealId, _ruleId, _articleId);
+    return success;
+}
+```
 
 ## &#11014; Upgrading the instructions set [VIDEO](XXX)
 
@@ -229,15 +501,7 @@ If the wallet is connected to the DApp, clicking on the button will disconnect t
 
 ![image](https://user-images.githubusercontent.com/34804976/147744405-cfc84476-ca88-4710-8373-a4ddd433c9a7.png)
 
-## What if ...
-
-In this section, we'll learn more about the different 
-
-### ... what if a rule fails
-
-MAD rules use conditions to achieve a dynamic behaviour. The user can create them freely by combining a series of instructions. If for any reason a rule execution fails, the smart contract execution is reverted and the msg.value is returned to the sender, minus the cost of the smart contracts code executed so far by the Ethereum VM.
-
-### Icon 
+## Icon 
 
 As recommended in the [Metamask docs](https://docs.metamask.io/guide/defining-your-icon.html), I added an icon for my DApp. It is used by Metamask to show to which application the user account is currently linked:
 
@@ -279,7 +543,7 @@ To deploy a major upgrade (= redeploy the `InstructionsProvider.sol`, the `Inter
 In order to run the contracts test, navigate to the project folder and run the command:
 
 ```
-truffle test
+> truffle test
 ```
 
 It should produce the following output:
@@ -435,14 +699,15 @@ Compiling your contracts...
 ## Technologies
  
 - Solidity (Smart Contracts)
-- Truffle (testing / unbox react)
+- Truffle (testing / debugging / unbox react)
+- Mocha.js (testing) & Mocha.eth-gas-reporter (gas reporting)
 - React / Bootstrap (Front-End)
 - web3.js (Blockchain connection)
 - Miro (prototyping). You can follow this link to see the process: [Miro Board](https://miro.com/app/board/o9J_lwU-JWc=/)
 
 ## Possible improvements
 
-As for any projects, particularly in the context of a time framed bootcamp, there is always room for improvements. If I have had more time, I would probably have improved the following points:
+As for any projects, particularly in the context of a time framed bootcamp, there is always room for improvements. Please find below an non-exhaustive list of features that could be added/corrected:
 
 - Naming of setter and getters accross smart contracts should be harmonized
 - Add a "VOTE" instruction to create dynamic pools (typical use case: )
