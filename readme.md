@@ -219,7 +219,7 @@ Reducing the scope to payments routing drastically simplified the problem. In a 
 
 The last piece of the puzzle was to make the decision to interpret the different instructions composing a rule one after the other and stop the execution as soon as a node does not meet the execution criteria. In that case, the transaction is reverted and the funds sent back to the caller.
 
-#### Internal representation of a Rule
+#### + Internal representation of a Rule
 
 Given the choices above, a rule can be represented as a succession of nodes: the tree data structure is reduced to a one directional linked list. As an example, let's see how the following rule would be translated by the DApp:
 
@@ -231,7 +231,7 @@ Each line of the table correspond to an instruction along with its input data. L
 
 As we can see, each article is evaluated one after the other and if any fail, we stop the execution and revert the transaction.
 
-#### Internal representation of an Article
+#### + Internal representation of an Article
 
 Internally, the deals are saved in the Deals contract. Each deal is composed out of 1...n rules (the first mapping level) and each rule is composed out of 1...m articles (the second mapping level):
 
@@ -268,7 +268,7 @@ storage article = Article(
   "0x001d3f1ef827552ae1114027bd3ecf1f086ba0f9" // paramAddress
 );
 ```
-#### Internal representation of an instruction
+#### + Internal representation of an instruction
 
 The `Instructions` contract contains the mapping between the instructions nickname used in the front-end and the actual function signature as well as the instructions type:
 
@@ -303,7 +303,7 @@ await instructions.addInstruction("TRANSFER", "2", "_transfer(address)");
 ```
 As we can see, the instruction `IF-ADDR` corresponds to a function with signature `_ifAddress(address,address)` and with a type `1`.
 
-#### Internal implementation of an instruction
+#### + Internal implementation of an instruction
 
 As we have seen in the previous paragraph, the instruction `IF-ADDR` corresponds to the function `ifAddress(address,address)`. All the instructions defined in the DApp have their implementation declared in the `InstructionsProvider` contract. Therefore, in order to execute the instruction `IF-ADDR`, we should call `_ifAdddress(address,address)` from the `InstructionsProvider` contract which contains its implementation:
 
@@ -321,7 +321,7 @@ function _ifAddress(address _address1, address _address2) public view onlyInterp
 ...
 ```
 
-#### Upgrability: How to call a function given its signature and type
+#### + Upgrability: How to call a function given its signature and type
 
 Given that the DApp should be upgradable, some of the contracts will need to evolve over time. This is the case for the `Interpreter` as well as the `InstructionsProvider` contracts. 
 
