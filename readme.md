@@ -303,8 +303,29 @@ await instructions.addInstruction("TRANSFER", "2", "_transfer(address)");
 ```
 As we can see, the instruction `IF-ADDR` corresponds to a function with signature `_ifAddress(address,address)` and with a type `1`.
 
+#### Internal implementation of an instruction
 
-#### Interpreting a Rule
+As we have seen in the previous paragraph, the instruction `IF-ADDR` corresponds to the function `ifAddress(address,address)`. All the instructions defined in the DApp have their implementation defined in the `InstructionsProvider` contract. Therefore, in order to execute the instruction `IF-ADDR`, we should call `_ifAdddress(address,address)` from the `InstructionsProvider` contract which contains its implementation:
+
+```
+...
+/**
+* @dev Checks if the addresses in parameters are equal
+* @param _address1 First address used in the comparison
+* @param _address2 Second address used in the comparison
+* @return Returns true if both addresses are equal
+*/
+function _ifAddress(address _address1, address _address2) public view onlyInterpreter returns (bool) {
+    return (_address1 == _address2);
+}
+...
+```
+
+#### Upgrability: How to call a function given its signature
+
+As we 
+
+#### Interpreting a Rule : Wrapping up
 
 Here is a high level description of the calls happening when interpreting a rule:
 
