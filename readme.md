@@ -190,11 +190,11 @@ In the V2, the following instruction was added:
 
 ### Meta-Language interpreter based on an AST Tree
 
-My initial idea was to create an interpreter that could run any instruction defined in a meta-language. I made a first version capable of interpreting elementary mathematical operations like `(2*7)+3`. It was based on a AST Tree where each the operation was stored as follow:
+My initial idea was to create an interpreter that could run any instruction defined in a meta-language. I made a first version capable of interpreting elementary mathematical operations like `(2*7)+3`. It was based on a AST Tree where each operation was stored as follow:
 
 ![image](https://user-images.githubusercontent.com/34804976/147769202-731bad0b-c52e-45c0-a0d9-febddf87a1d6.png)
 
-In order to develop an interpreter capable of running more complex programs, I had to define 5 types of nodes:
+In order to develop an interpreter capable of running more complex programs, I had to define 4 types of nodes:
 
 - Operator nodes which accepts 2 operands
 - Operand, which are terminal nodes and are basically values
@@ -305,7 +305,7 @@ As we can see, the instruction `IF-ADDR` corresponds to a function with signatur
 
 #### Internal implementation of an instruction
 
-As we have seen in the previous paragraph, the instruction `IF-ADDR` corresponds to the function `ifAddress(address,address)`. All the instructions defined in the DApp have their implementation defined in the `InstructionsProvider` contract. Therefore, in order to execute the instruction `IF-ADDR`, we should call `_ifAdddress(address,address)` from the `InstructionsProvider` contract which contains its implementation:
+As we have seen in the previous paragraph, the instruction `IF-ADDR` corresponds to the function `ifAddress(address,address)`. All the instructions defined in the DApp have their implementation declared in the `InstructionsProvider` contract. Therefore, in order to execute the instruction `IF-ADDR`, we should call `_ifAdddress(address,address)` from the `InstructionsProvider` contract which contains its implementation:
 
 ```
 ...
@@ -321,9 +321,11 @@ function _ifAddress(address _address1, address _address2) public view onlyInterp
 ...
 ```
 
-#### Upgrability: How to call a function given its signature
+#### Upgrability: How to call a function given its signature and type
 
-As we 
+Given that the DApp should be upgradable, some of the contracts will need to evolve over time. This is the case for the `Interpreter` as well as the `InstructionsProvider` contracts. 
+
+![image](https://user-images.githubusercontent.com/34804976/148951153-45b60e47-eec1-4c87-9970-4bb729173c5e.png)
 
 #### Interpreting a Rule : Wrapping up
 
