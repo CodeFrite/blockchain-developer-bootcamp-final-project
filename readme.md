@@ -231,6 +231,8 @@ Each line of the table correspond to an instruction along with its input data. L
 
 As we can see, each article is evaluated one after the other and if any fail, we stop the execution and revert the transaction.
 
+#### Internal representation of an instruction
+
 Internally, the deals are saved in the Deals contract. Each deal is composed out of 1...n rules (the first mapping level) and each rule is composed out of 1...m articles (the second mapping level):
 
 ```
@@ -320,7 +322,7 @@ For a more detailed view on how the interpreter works, please check the [design_
 
 ## &#11014; Upgrading the instructions set [VIDEO](XXX)
 
-MAD architecture was designed with upgradability in mind. The main challenge in this situation is to make sure that an upgrade does not lead to a client data loss. In other words, after extending the instruction set or correcting a bug in the `Interpreter.sol` or `InstructionsProvider.sol` contracts, the deals as well as the Escrow balance should remain unchanged. This is done without having to migrate any data. More information on this subject can be found in the file [design_pattern_decisions.md](https://github.com/CodeFrite/blockchain-developer-bootcamp-final-project/blob/main/design_pattern_decisions.md)
+MAD architecture was designed with upgradability in mind. The main challenge in this situation is to make sure that an upgrade does not lead to a client data loss. In other words, after extending the instruction set or correcting a bug in the `Interpreter.sol` or `InstructionsProvider.sol` contracts, the deals as well as the Escrow balances should remain unchanged. This is done without having to migrate any data. More information on this subject can be found in the file [design_pattern_decisions.md](https://github.com/CodeFrite/blockchain-developer-bootcamp-final-project/blob/main/design_pattern_decisions.md)
 
 In order to facilitate the upgrade process, along with the main Truffle deployment script, 2 additional scripts are available.
 
