@@ -231,7 +231,7 @@ Each line of the table correspond to an instruction along with its input data. L
 
 As we can see, each article is evaluated one after the other and if any fail, we stop the execution and revert the transaction.
 
-#### Internal representation of an instruction
+#### Internal representation of an Article
 
 Internally, the deals are saved in the Deals contract. Each deal is composed out of 1...n rules (the first mapping level) and each rule is composed out of 1...m articles (the second mapping level):
 
