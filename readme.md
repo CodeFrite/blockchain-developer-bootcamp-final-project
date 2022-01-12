@@ -94,7 +94,7 @@ At the bottom of the screen, the user can find the `Let's Make a Deal` button th
 ![image](https://user-images.githubusercontent.com/34804976/147746735-b3886f9e-a49c-4373-93b0-413ee543309e.png)
 ![image](https://user-images.githubusercontent.com/34804976/147748748-66af07b1-7d15-4fab-ad50-843e73c1e1ef.png)
 
-Clicking on this button will open a Metamask transaction. The msg.value displayed in the window corresponds to the amount displayed in `Clause 1`:
+Clicking on this button will open a Metamask transaction. The msg.value displayed in the window corresponds to the amount displayed in `Clause 1` + gas fees:
 
 ![image](https://user-images.githubusercontent.com/34804976/147748652-fdba61c1-f45b-411e-8ffc-f9fe13f86993.png)
 
@@ -106,7 +106,7 @@ Once accepted by the user, a new frame will appear and summarize all the importa
 
 On this screen, the user can load a deal, execute a single rule and withdraw any available ETH from the Escrow.
 
-To load a deal, the user has enter its id (shown during the deal creation) and click on the search button:
+To load a deal, the user has to enter its id (shown during the deal creation) and click on the search button:
 
 ![image](https://user-images.githubusercontent.com/34804976/147753721-ce9f6823-683e-46a3-bcaa-1c0f222c648a.png)
 
@@ -329,10 +329,10 @@ Given that the DApp should be upgradable, some of the contracts will need to evo
 
 As we can see, the contracts are divided into 2 categories:
 
-- Data contracts contain the DApp data and should never be redeployed
+- Data contracts contain client data and should never be redeployed
 - Logic contracts contains the DApp logic which might change as we introduce new instructions or as we correct defects
 
-**_These remarks allow us to come to the following conclusion:_** No data contract should ever import the implementation of a logic contract. Indeed, importing a contract means copying its implementation inside the contract that imports it. If a logic contract implementation changes, it will need to be redeployed: its ABI will change ... but the calling contract will use an old version of its code and will not be aware of new functions or changes in existing functions
+**_These remarks allow us to come to the following conclusion:_** No data contract should ever import the implementation of a logic contract. Indeed, importing a contract means copying its implementation inside the contract that imports it. If a logic contract implementation changes, it will need to be redeployed: its ABI will change ... but the calling contract will still be using an old version of its code and will not be aware of new functions or changes in existing functions
 
 Therefore, to invoke a logic contract function, we need to call it via a low level call. For example, when calling the `InstructionsProvider` contract, the `Interpreter` contract needs to know the `InstructionsProvider` contract address, the signature of the function we wanna call as well as an indication over the input parameters and return type:
 
@@ -395,6 +395,10 @@ function interpretArticle(address _from, uint _dealId, uint _ruleId, uint _artic
     return success;
 }
 ```
+
+The readers interested in a more precise insight on the calls happening when interpreting a rule can refer to the following diagram:
+
+![image](https://user-images.githubusercontent.com/34804976/149093403-da1b7f17-1232-4d70-9520-77c3156f6bb9.png)
 
 #### Interpreting a Rule : Wrapping up
 
