@@ -414,13 +414,34 @@ For a more detailed view on how the interpreter works, please check the [design_
 
 ## &#11014; Upgrading the instructions set [VIDEO](XXX)
 
-MAD architecture was designed with upgradability in mind. The main challenge in this situation is to make sure that an upgrade does not lead to a client data loss. In other words, after extending the instruction set or correcting a bug in the `Interpreter.sol` or `InstructionsProvider.sol` contracts, the deals as well as the Escrow balances should remain unchanged. This is done without having to migrate any data. More information on this subject can be found in the file [design_pattern_decisions.md](https://github.com/CodeFrite/blockchain-developer-bootcamp-final-project/blob/main/design_pattern_decisions.md)
+MAD architecture was designed with upgradability in mind. The main challenge in this situation is to make sure that an upgrade does not lead to a client data loss. In other words, after extending the instruction set or correcting a bug in the `Interpreter` or `InstructionsProvider` contracts, the deals as well as the Escrow balances should remain unchanged. This is done without having to migrate any data.
+
+As we have seen above in the text, among the contracts, only the `Interpreter` and `InstructionsProvider` can be upgraded. In this context, `minor upgrade` will refer to an upgrade where only the `InstructionsProvider` contract is changed and `major upgrade` when both the `Interpreter` and `InstructionsProvider` need to be redeployed.
 
 In order to facilitate the upgrade process, along with the main Truffle deployment script, 2 additional scripts are available.
 
 ### &#11014; Minor Upgrade
 
+
+To deploy a minor upgrade (= redeploy the `InstructionsProvider.sol` and update the links between the contracts), you can run the following command:
+
+```
+> truffle migrate --network develop --upgrade minor
+```
+
 ### &#11014; Major Upgrade
+
+```
+> truffle migrate --network develop --upgrade major
+```
+
+### Initial migration
+
+In order to migrate the DApp to the blockchain for the first time, we can use the `truffle migrate` command without mentionning the `upgrade` parameter:
+
+```
+> truffle migrate --network develop
+```
 
 ## Metamask
 
