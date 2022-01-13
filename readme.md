@@ -334,7 +334,50 @@ As we can see, the contracts are divided into 2 categories:
 
 **_These remarks allow us to come to the following conclusion:_** No data contract should ever import the implementation of a logic contract. Indeed, importing a contract means copying its implementation inside the contract that imports it. If a logic contract implementation changes, it will need to be redeployed: its ABI will change ... but the calling contract will still be using an old version of its code and will not be aware of new functions or changes in existing functions
 
-Therefore, to invoke a logic contract function, we need to call it via a low level call. For example, when calling the `InstructionsProvider` contract, the `Interpreter` contract needs to know the `InstructionsProvider` contract address, the signature of the function we wanna call as well as an indication over the input parameters and return type:
+As an example, the `Interpreter`, which is a data contract, does import the `CommonStructs`, `Instructions` and `Deals`contracts which implementations will remain unchanged during the lifetime of the DApp BUT only saves a reference to the `InstructionsProvider` contract which is a logic contract that may change in the future:
+
+```
+...
+/* INTERNAL DEPENDENCIES */
+import "./CommonStructs.sol";
+import "./Instructions.sol";
+import "./Deals.sol";
+...
+contract Interpreter is Ownable {
+
+  /* STORAGE VARIABLES */
+
+  /// @dev Instructions contract reference
+  Instructions public instructionsInstance;
+
+  /// @dev Deals contract reference
+  Deals public dealsInstance;
+  
+  /// @dev InstructionsProvider contract reference
+  address public instructionsProviderInstance;
+...
+```
+
+For the sake of completeness, please note that the `Interpreter` contract does only save the `Proxy` contract address and does not import it (even if it is a data contract) because it only needs to know its address to limit access to some of its function by defining the following modifier. By doing so, we are saving some deployments ETH:
+
+```
+...
+contract Interpreter is Ownable {
+...
+  /// @dev Proxy contract address
+  address public proxyContractAddress;
+...
+  /* MODIFIERS */ 
+    
+  /// @dev Modifier used to assess that the caller is the Proxy contract
+  modifier onlyProxy() {
+      require(msg.sender==proxyContractAddress, "Interpreter: Only Proxy may call");
+      _;
+  }
+...
+```
+
+Finally, to invoke a logic contract function, we need to call it via a **_low level call_**. For example, when calling the `InstructionsProvider` contract, the `Interpreter` contract needs to know the `InstructionsProvider` contract address, the signature of the function we wanna call as well as an indication over the input parameters and return type:
 
 ```
 /**
