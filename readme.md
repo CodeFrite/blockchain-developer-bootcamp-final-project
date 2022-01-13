@@ -414,14 +414,38 @@ For a more detailed view on how the interpreter works, please check the [design_
 
 ## &#11014; Upgrading the instructions set [VIDEO](XXX)
 
-MAD architecture was designed with upgradability in mind. The main challenge in this situation is to make sure that an upgrade does not lead to a client data loss. In other words, after extending the instruction set or correcting a bug in the `Interpreter` or `InstructionsProvider` contracts, the deals as well as the Escrow balances should remain unchanged. This is done without having to migrate any data.
+MAD architecture was designed with upgradability in mind. The main challenge in this situation is to make sure that an upgrade does not lead to a client data loss. In other words, after extending the instruction set or correcting a bug in the `Interpreter` or `InstructionsProvider` contracts, the deals as well as the Escrow balances should remain unchanged. This is done without having to migrate any data client data.
 
 As we have seen above in the text, among the contracts, only the `Interpreter` and `InstructionsProvider` can be upgraded. In this context, `minor upgrade` will refer to an upgrade where only the `InstructionsProvider` contract is changed and `major upgrade` when both the `Interpreter` and `InstructionsProvider` need to be redeployed.
 
-In order to facilitate the upgrade process, along with the main Truffle deployment script, 2 additional scripts are available.
+In order to facilitate the upgrade process, inside the main Truffle deployment script, namely `2_deploy_contracts.js`, 2 additional blocks of code have been added. They are called if the parameter `--upgrade minor || major` is passed to the command line:
+
+```
+...
+module.exports = async function(deployer) {
+
+  // Are we upgrading the DApp ?
+
+  // No argument given in truffle migrate command: undefined => initial deployment
+  if (argv['upgrade']===undefined) {
+...
+  // ... upgrade 'minor' = redeploy InstructionsProvider
+  } else if (argv['upgrade']==="minor") {
+...
+  // ... upgrade 'major' = redeploy InstructionsProvider & Interpreter
+  } else if (argv['upgrade']==="major") {
+...
+```
+
+Please note that it is also possible in Truffle to define additional migration scripts, for example `3_upgrade_minor.js` and `4_upgrade_major.js` and ask Truffle to only execute some of them by using the parameters `-f` and `--to`:
+
+```
+truffle migrate -f 3 --to 4
+```
+
+In my situation, I found the first solution more adapted to what I wanted to do.
 
 ### &#11014; Minor Upgrade
-
 
 To deploy a minor upgrade (= redeploy the `InstructionsProvider.sol` and update the links between the contracts), you can run the following command:
 
