@@ -358,7 +358,7 @@ contract Interpreter is Ownable {
 ...
 ```
 
-For the sake of completeness, please note that the `Interpreter` contract does only save the `Proxy` contract address and does not import it (even if it is a data contract) because it only needs to know its address to limit access to some of its function by defining the following modifier. By doing so, we are saving some deployments ETH:
+For the sake of completeness, please note that the `Interpreter` contract does only save the `Proxy` contract address and does not import it (even if it is a data contract) because it only needs to know its address to limit the access to some of its function by defining the following modifier. By doing so, we are saving some deployments ETH:
 
 ```
 ...
@@ -377,66 +377,19 @@ contract Interpreter is Ownable {
 ...
 ```
 
-Finally, to invoke a logic contract function, we need to call it via a **_low level call_**. For example, when calling the `InstructionsProvider` contract, the `Interpreter` contract needs to know the `InstructionsProvider` contract address, the signature of the function we wanna call as well as an indication over the input parameters and return type:
+Finally, to invoke a logic contract function, we need to call it via a **_low level call_** by encoding the function signature. This allows the EVM to compute the position of our function in the byte code of our contract:
 
 ```
-/**
-* @dev Interprets a rule
-* @param _from Address of the user who initiated the call
-* @param _dealId Id of the deal to be executed
-* @param _ruleId Id of the rule to be executed
-* @param _articleId Id of the article to be executed
-*/
 function interpretArticle(address _from, uint _dealId, uint _ruleId, uint _articleId) private returns (bool) {
-    // Get Article
-    CommonStructs.Article memory article = dealsInstance.getArticle(_dealId, _ruleId, _articleId);
-
-    // Get instruction type and signature
-    CommonStructs.InstructionTypes instructionType;
-    string memory instructionSignature;
-    (instructionType, instructionSignature) = instructionsInstance.getInstruction(article.instructionName);
-
-    //> Params injection depends on the instruction type
-
-    // CASE ADDRESS_ADDRESS_R_BOOL: pass the Article.paramAddress field
-    bool success=false;
-    if (instructionType == CommonStructs.InstructionTypes.ADDRESS_ADDRESS_R_BOOL) {
-        // Upgrability: Low level call to InstructionsProvider
-        bool _success;
-        bytes memory _result;
-        (_success, _result) = instructionsProviderInstance.call(
-            abi.encodeWithSignature(
-                instructionSignature,
-                article.paramAddress,
-                _from
-            )
-        );
-        success = _success && abi.decode(_result, (bool));
-
-    // CASE ADDRESS_PAYABLE: pass the Article.paramAddress
-    } else if (instructionType == CommonStructs.InstructionTypes.ADDRESS_PAYABLE) {
-        // Upgrability: Low level call to InstructionsProvider
-        bool _success;
-        bytes memory _result;
-
-        // Increment current msg.value % usage
-        msgValueUsed += article.paramUInt;
-        // Revert if used value > 100% of msg.value
-        if (msgValueUsed>100)
-            revert("Interpreter: Rule is spending more msg.value than received!");
-        (_success, _result) = instructionsProviderInstance.call{value:(msg.value*article.paramUInt)/100}(
-            abi.encodeWithSignature(
-                instructionSignature,
-                article.paramAddress
-            )
-        );
-        success = _success;
-    }
-
-    // Emit an event to inform the front-end that a particular article in the rule successed or not
-    emit InterpretArticle(_from, _dealId, _ruleId, _articleId);
-    return success;
-}
+...
+  (_success, _result) = instructionsProviderInstance.call(
+      abi.encodeWithSignature(
+          instructionSignature,
+          article.paramAddress,
+          _from
+      )
+  );
+...  
 ```
 
 The readers interested in a more precise insight on the calls happening when interpreting a rule can refer to the following diagram:
