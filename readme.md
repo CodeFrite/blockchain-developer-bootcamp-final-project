@@ -437,13 +437,13 @@ module.exports = async function(deployer) {
 ...
 ```
 
-Please note that it is also possible in Truffle to define additional migration scripts, for example `3_upgrade_minor.js` and `4_upgrade_major.js` and ask Truffle to only execute some of them by using the parameters `-f` and `--to`:
+Please note that it is also possible in Truffle to define additional migration scripts, for example `3_upgrade_minor.js` and `4_upgrade_major.js` and ask Truffle to only execute the scripts which number prefix is contained between 2 values by using the parameters `-f` and `--to`:
 
 ```
 truffle migrate -f 3 --to 4
 ```
 
-In my situation, I found the first solution more adapted to what I wanted to do.
+In my situation, I found the first solution more adapted to my needs.
 
 ### &#11014; Minor Upgrade
 
