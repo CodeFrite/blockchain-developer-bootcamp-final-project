@@ -6,10 +6,12 @@ Let's Make A Deal (MAD) : Point and click platform allowing everyone to create v
 
 To get a general grasp on the project, I recommend watching the following videos:
 
-1. [MAD: How to clone, test, deploy and run on your local?](XXX)
-2. [MAD: What is MAD?](XXX)
-3. [MAD: How does it work?](XXX)
-4. [MAD: How to upgrade on Rinkeby?](XXX)
+1. [MAD: How to clone, test, deploy and run on your local?](https://www.youtube.com/watch?v=7ovgkmoqhyw)
+2. [MAD: Connection button & Metamask](https://www.youtube.com/watch?v=v5CC_YePBZ0)
+3. [MAD: How to create a Deal?](XXX)
+4. [MAD: How to execute a Rule?](XXX)
+5. [MAD: Manage the DApp](XXX)
+6. [MAD: How to upgrade the DApp?](XXX)
 
 ## &#9881; Problematic
 
