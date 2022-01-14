@@ -13,6 +13,8 @@ To get a general grasp on the project, I recommend watching the following videos
 5. [MAD: Manage the DApp](XXX)
 6. [MAD: How to upgrade the DApp?](XXX)
 
+The DApp is hosted on fleek at [https://mad.on.fleek.co/](https://mad.on.fleek.co/).
+
 ## &#9881; Problematic
 
 Let's say that you want to work with an associate on a commercial project. You know before hand that you are gonna receive all your incomes from a particular address. As associates, your desire is to simply split the incomes in 2 equal parts, 50% each.
