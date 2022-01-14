@@ -1,4 +1,4 @@
-#**These report & the videos will be finalized before midnight on January the 15th of 2022**
+# These report & the videos will be finalized before midnight (US time) on January the 15th of 2022 ... a few more hours to go :)
 
 # ![image](https://user-images.githubusercontent.com/34804976/147816690-f141a47d-25d7-4125-8e4d-00f7ef8b9ace.png) MAD
 
