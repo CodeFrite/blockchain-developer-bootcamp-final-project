@@ -1,3 +1,5 @@
+**These report & the videos will be finalized before midnight on January the 15th of 2022**
+
 # ![image](https://user-images.githubusercontent.com/34804976/147816690-f141a47d-25d7-4125-8e4d-00f7ef8b9ace.png) MAD
 
 Let's Make A Deal (MAD) : Point and click platform allowing everyone to create versatile routing rules for payments on the Ethereum blockchain
