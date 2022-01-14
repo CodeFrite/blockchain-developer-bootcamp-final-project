@@ -93,6 +93,8 @@ module.exports = async function(deployer) {
     await instructions.addInstruction("IF-ADDR", "1", "_ifAddress(address,address)");
     console.log("Adding instruction 'TRANSFER'");
     await instructions.addInstruction("TRANSFER", "2", "_transfer(address)");
+    console.log("Adding instruction 'IF-AMOUNT-BIGGER'");
+    await instructions.addInstruction("IF-AMOUNT-BIGGER", "3", "_ifMsgValueBigger(uint256,uint256)");
 
   // ... upgrade 'minor' = redeploy InstructionsProvider
   } else if (argv['upgrade']==="minor") {

@@ -35,7 +35,7 @@ class Clause5 extends Component {
       this.setState({signed});
       this.props.signHandler(5,signed);
       
-      let rules = this.state.rules.map((rule) => rule.articles.map((article)=>[this.translateInstructionName(article.instructionName),article.paramString, article.paramUInt, article.paramAddress]));
+      let rules = this.state.rules.map((rule) => rule.articles.map((article)=>[this.translateInstructionName(article.instructionName),article.paramString, article.paramUInt.toString(), article.paramAddress]));
       this.props.rulesHandler(rules);
     }
   }
@@ -60,9 +60,9 @@ class Clause5 extends Component {
     console.log("handleSelectParamString")
   }
 
-  handleSelectParamUInt = (idx, e) => {
+  handleSelectParamUInt = (idx, e, factor) => {
     let newArticles = this.state.newArticles;
-    newArticles[idx].paramUInt = e.target.value;    
+    newArticles[idx].paramUInt = e.target.value * factor;
     this.setState({newArticles});
     console.log("handleSelectParamUINT")
   }
@@ -83,6 +83,8 @@ class Clause5 extends Component {
     const article = this.state.rules[ruleIdx].articles[articleIdx];
     if (article.instructionName === "IF-ADDR")
       text = "If the sender is " + article.paramString;
+    else if(article.instructionName === "IF-AMOUNT-BIGGER")
+      text = "If the received value is bigger than " + article.paramUInt/10**18 + " ETH";
     else if(article.instructionName === "TRANSFER-ALL")
       text = "I transfer the total amount to " + article.paramString;
     else if(article.instructionName === "TRANSFER-SOME")
@@ -95,9 +97,9 @@ class Clause5 extends Component {
     let newArticle = this.state.newArticles[ruleId];
     let article = {
       instructionName: newArticle.instructionName,
-      paramString: newArticle.paramString,
+      paramString: (newArticle.paramString ? newArticle.paramString : ""),
       paramUInt: newArticle.paramUInt,
-      paramAddress: newArticle.paramAddress,
+      paramAddress: (newArticle.paramAddress ? newArticle.paramAddress : "0x0000000000000000000000000000000000000000"),
     }
     rules[ruleId].articles.push(article);
     this.setState({rules});
@@ -176,7 +178,7 @@ class Clause5 extends Component {
                         this.state.rules[ruleIdx].articles.map((article, articleIdx) => {
 
                           return(
-                            <tr>
+                            <tr key={articleIdx}>
                               <td key={"ruleId-" + {ruleIdx} + "-articleId" + articleIdx}>{articleIdx+1}</td>
                               <td key={"ruleId-" + {ruleIdx} + "-articleName-" + articleIdx}>{article.instructionName}</td>
                               <td key={"ruleId-" + {ruleIdx} + "-articleText-" + articleIdx}>{this.renderArticle(ruleIdx,articleIdx)}</td>
@@ -197,6 +199,7 @@ class Clause5 extends Component {
                             <Form.Select aria-label="Default select example" onChange={(e) => this.handleSelectInstructionName(ruleIdx,e)}>
                               <option>Select an instruction</option>
                               <option>IF-ADDR</option>
+                              <option>IF-AMOUNT-BIGGER</option>
                               <option>TRANSFER-ALL</option>
                               <option>TRANSFER-SOME</option>
                             </Form.Select>
@@ -210,6 +213,14 @@ class Clause5 extends Component {
                                     <option>Select an address</option>
                                     {this.props.accounts.map((account, accountId) => <option title={account.address}>{account.alias}</option>)}
                                   </Form.Select>
+                                </Col>
+                              </Row>
+                            }
+                            {this.state.newArticles[ruleIdx].instructionName==="IF-AMOUNT-BIGGER" &&
+                              <Row>
+                                <Col>If the amount received is bigger than</Col>
+                                <Col>
+                                  <input placeholder="75" size="20" maxLength="20" onChange={(e) => this.handleSelectParamUInt(ruleIdx, e, 10**18)}/> ETH
                                 </Col>
                               </Row>
                             }
@@ -230,7 +241,7 @@ class Clause5 extends Component {
                                   I transfer
                                 </Col>
                                 <Col lg="4">
-                                  <input placeholder="75" size="3" maxLength="3" onChange={(e) => this.handleSelectParamUInt(ruleIdx,e)}/>
+                                  <input placeholder="75" size="3" maxLength="3" onChange={(e) => this.handleSelectParamUInt(ruleIdx,e,1)}/>
                                   % to
                                 </Col>
                                 <Col lg="6">

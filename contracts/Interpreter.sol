@@ -199,6 +199,22 @@ contract Interpreter is Ownable {
                 )
             );
             success = _success;
+        
+        // MAJOR CONTRACT UPDATE : Add support for UINT_UINT_R_BOOL instructions return
+        } else if (instructionType == CommonStructs.InstructionTypes.UINT_UINT_R_BOOL) {
+            // Upgrability: Low level call to InstructionsProvider
+            bool _success;
+            bytes memory _result;
+            (_success, _result) = instructionsProviderInstance.call(
+                abi.encodeWithSignature(
+                    instructionSignature,
+                    msg.value,
+                    article.paramUInt
+                )
+            );
+            success = _success && abi.decode(_result, (bool));
+            
+        // CASE ADDRESS_PAYABLE: pass the Article.paramAddress
         }
         
         // Emit an event to inform the front-end that a particular article in the rule successed or not

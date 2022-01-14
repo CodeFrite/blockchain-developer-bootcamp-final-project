@@ -145,6 +145,16 @@ contract InstructionsProvider is Ownable {
         escrowInstance.deposit{value:msg.value}(_to);
     }
 
+    /**
+    * @dev Checks if the msg.value is bigger than the param
+    * @param _msgValue Message value
+    * @param _comparisonValue Value used for comparison
+    * @return Returns true if the message value is bigger than the param
+    */
+    function _ifMsgValueBigger(uint _msgValue, uint _comparisonValue) public view onlyInterpreter returns (bool) {
+        return (_msgValue > _comparisonValue);
+    }
+
     /* OVERRIDE & BLOCK UNUSED INHERITED FUNCTIONS */
 
     /**

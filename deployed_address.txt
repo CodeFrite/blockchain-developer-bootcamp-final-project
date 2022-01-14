@@ -1,1 +1,290 @@
+shakalee@shakalee-System-Product-Name:~/Documents/Consensys/PROJOT-v0$ truffle migrate --network rinkeby --reset
 
+Compiling your contracts...
+===========================
+> Everything is up to date, there is nothing to compile.
+
+
+
+Migrations dry-run (simulation)
+===============================
+> Network name:    'rinkeby-fork'
+> Network id:      4
+> Block gas limit: 29970705 (0x1c95111)
+
+
+1_initial_migration.js
+======================
+
+   Replacing 'Migrations'
+   ----------------------
+   > block number:        9990600
+   > block timestamp:     1642180147
+   > account:             0x07972803660E7d087fDf27F25343D618fA21A354
+   > balance:             1.51156871088239406
+   > gas used:            233842 (0x39172)
+   > gas price:           2 gwei
+   > value sent:          0 ETH
+   > total cost:          0.000467684 ETH
+
+   -------------------------------------
+   > Total cost:         0.000467684 ETH
+
+
+2_deploy_contracts.js
+=====================
+
+   Replacing 'CommonStructs'
+   -------------------------
+   > block number:        9990602
+   > block timestamp:     1642180155
+   > account:             0x07972803660E7d087fDf27F25343D618fA21A354
+   > balance:             1.51136912288239406
+   > gas used:            72281 (0x11a59)
+   > gas price:           2 gwei
+   > value sent:          0 ETH
+   > total cost:          0.000144562 ETH
+
+
+   Replacing 'Interpreter'
+   -----------------------
+   > block number:        9990603
+   > block timestamp:     1642180164
+   > account:             0x07972803660E7d087fDf27F25343D618fA21A354
+   > balance:             1.50792118288239406
+   > gas used:            1723970 (0x1a4e42)
+   > gas price:           2 gwei
+   > value sent:          0 ETH
+   > total cost:          0.00344794 ETH
+
+
+   Replacing 'Instructions'
+   ------------------------
+   > block number:        9990604
+   > block timestamp:     1642180174
+   > account:             0x07972803660E7d087fDf27F25343D618fA21A354
+   > balance:             1.50640070288239406
+   > gas used:            760240 (0xb99b0)
+   > gas price:           2 gwei
+   > value sent:          0 ETH
+   > total cost:          0.00152048 ETH
+
+
+   Replacing 'InstructionsProvider'
+   --------------------------------
+   > block number:        9990605
+   > block timestamp:     1642180197
+   > account:             0x07972803660E7d087fDf27F25343D618fA21A354
+   > balance:             1.50243505088239406
+   > gas used:            1982826 (0x1e416a)
+   > gas price:           2 gwei
+   > value sent:          0 ETH
+   > total cost:          0.003965652 ETH
+
+
+   Replacing 'Deals'
+   -----------------
+   > block number:        9990606
+   > block timestamp:     1642180223
+   > account:             0x07972803660E7d087fDf27F25343D618fA21A354
+   > balance:             1.49964599288239406
+   > gas used:            1394529 (0x154761)
+   > gas price:           2 gwei
+   > value sent:          0 ETH
+   > total cost:          0.002789058 ETH
+
+
+   Replacing 'Proxy'
+   -----------------
+   > block number:        9990607
+   > block timestamp:     1642180259
+   > account:             0x07972803660E7d087fDf27F25343D618fA21A354
+   > balance:             1.49265336888239406
+   > gas used:            3496312 (0x355978)
+   > gas price:           2 gwei
+   > value sent:          0 ETH
+   > total cost:          0.006992624 ETH
+
+Getting deployed contracts ABIs
+Pausing DApp ...
+Linking 0xa1a0780Da7eC03bB23BEa497fE6E7eb58656865C (Deals) => 0xc2d7101dcCf4d8039564b32B813fcF5a6E64C414 (Proxy)
+Linking 0x1A92C191249A7F91164c3d45fdD984b0BEC2adb3 (InstructionsProvider) => 0x2700567E5e45129996d812c96ba751c78bA2244f (Interpreter)
+Linking 0x1A92C191249A7F91164c3d45fdD984b0BEC2adb3 (InstructionsProvider) => 0xc2d7101dcCf4d8039564b32B813fcF5a6E64C414 (Proxy)
+Linking 0x2700567E5e45129996d812c96ba751c78bA2244f (Interpreter) => 0x7334006668739c2F5e1b78060b10CEaBD7aa1F6C (Instructions)
+Linking 0x2700567E5e45129996d812c96ba751c78bA2244f (Interpreter) => 0x1A92C191249A7F91164c3d45fdD984b0BEC2adb3 (InstructionsProvider)
+Linking 0x2700567E5e45129996d812c96ba751c78bA2244f (Interpreter) => 0xa1a0780Da7eC03bB23BEa497fE6E7eb58656865C (Deals)
+Linking 0x2700567E5e45129996d812c96ba751c78bA2244f (Interpreter) => 0xc2d7101dcCf4d8039564b32B813fcF5a6E64C414 (Proxy)
+Linking 0xc2d7101dcCf4d8039564b32B813fcF5a6E64C414 (Proxy) => 0x7334006668739c2F5e1b78060b10CEaBD7aa1F6C (Instructions)
+Linking 0xc2d7101dcCf4d8039564b32B813fcF5a6E64C414 (Proxy) => 0x1A92C191249A7F91164c3d45fdD984b0BEC2adb3 (InstructionsProvider)
+Linking 0xc2d7101dcCf4d8039564b32B813fcF5a6E64C414 (Proxy) => 0xa1a0780Da7eC03bB23BEa497fE6E7eb58656865C (Deals)
+Linking 0xc2d7101dcCf4d8039564b32B813fcF5a6E64C414 (Proxy) => 0x2700567E5e45129996d812c96ba751c78bA2244f (Interpreter)
+Linking 0xc2d7101dcCf4d8039564b32B813fcF5a6E64C414 (Proxy) => 0x8A753747A1Fa494EC906cE90E9f37563A8AF630e (Price Feed Aggregator)
+Unpausing DApp ...
+Adding instruction 'IF-ADDR'
+Adding instruction 'TRANSFER'
+Adding instruction 'IF-AMOUNT-BIGGER'
+   -------------------------------------
+   > Total cost:         0.018860316 ETH
+
+
+Summary
+=======
+> Total deployments:   7
+> Final cost:          0.019328 ETH
+
+
+
+
+
+Starting migrations...
+======================
+> Network name:    'rinkeby'
+> Network id:      4
+> Block gas limit: 29999915 (0x1c9c32b)
+
+
+1_initial_migration.js
+======================
+
+   Replacing 'Migrations'
+   ----------------------
+   > transaction hash:    0x16f5bf885be9bebdeeae5ca0b54f763cf6e6339cfe66f0c257a77ed7c68d51fc
+   > Blocks: 1            Seconds: 4
+   > contract address:    0x1b744f53bAD4fE9555169bCF5D62ADEF23fAe11f
+   > block number:        9990614
+   > block timestamp:     1642180361
+   > account:             0x07972803660E7d087fDf27F25343D618fA21A354
+   > balance:             1.511411039879392356
+   > gas used:            250142 (0x3d11e)
+   > gas price:           2.500000012 gwei
+   > value sent:          0 ETH
+   > total cost:          0.000625355003001704 ETH
+
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:     0.000625355003001704 ETH
+
+
+2_deploy_contracts.js
+=====================
+
+   Replacing 'CommonStructs'
+   -------------------------
+   > transaction hash:    0x3fa9ef1f964bd1c8cfb0811b63bd880419dff74aa5efb81f7d96dc50f9cac269
+   > Blocks: 1            Seconds: 12
+   > contract address:    0xd0eD21eaaCeeFcB28be2E83494A505C193465C83
+   > block number:        9990616
+   > block timestamp:     1642180392
+   > account:             0x07972803660E7d087fDf27F25343D618fA21A354
+   > balance:             1.511115554877974028
+   > gas used:            72281 (0x11a59)
+   > gas price:           2.500000012 gwei
+   > value sent:          0 ETH
+   > total cost:          0.000180702500867372 ETH
+
+
+   Replacing 'Interpreter'
+   -----------------------
+   > transaction hash:    0xf14fb051fd7a17e8976ebce326b3f79585e160664f700e6700b96e7b5908c364
+   > Blocks: 1            Seconds: 12
+   > contract address:    0x2700567E5e45129996d812c96ba751c78bA2244f
+   > block number:        9990617
+   > block timestamp:     1642180407
+   > account:             0x07972803660E7d087fDf27F25343D618fA21A354
+   > balance:             1.506766629857099188
+   > gas used:            1739570 (0x1a8b32)
+   > gas price:           2.500000012 gwei
+   > value sent:          0 ETH
+   > total cost:          0.00434892502087484 ETH
+
+
+   Replacing 'Instructions'
+   ------------------------
+   > transaction hash:    0x558423d7e454734abf916fc6ecf48c96c2ef60a7a08cfb24bafe7f4dd45d64ba
+   > Blocks: 1            Seconds: 12
+   > contract address:    0x7334006668739c2F5e1b78060b10CEaBD7aa1F6C
+   > block number:        9990618
+   > block timestamp:     1642180422
+   > account:             0x07972803660E7d087fDf27F25343D618fA21A354
+   > balance:             1.504827029847789108
+   > gas used:            775840 (0xbd6a0)
+   > gas price:           2.500000012 gwei
+   > value sent:          0 ETH
+   > total cost:          0.00193960000931008 ETH
+
+
+   Replacing 'InstructionsProvider'
+   --------------------------------
+   > transaction hash:    0x0e32a7a7be1193457cffda08a7e0fd0c80ec6c250d11ab7aba803cc559aae62b
+   > Blocks: 2            Seconds: 30
+   > contract address:    0x1A92C191249A7F91164c3d45fdD984b0BEC2adb3
+   > block number:        9990619
+   > block timestamp:     1642180437
+   > account:             0x07972803660E7d087fDf27F25343D618fA21A354
+   > balance:             1.49975121482139487
+   > gas used:            2030326 (0x1efaf6)
+   > gas price:           2.500000013 gwei
+   > value sent:          0 ETH
+   > total cost:          0.005075815026394238 ETH
+
+
+   Replacing 'Deals'
+   -----------------
+   > transaction hash:    0xee5268e8758bb598ca729ac9655f4881636040f1e198403537258f2e12b04c1e
+   > Blocks: 0            Seconds: 4
+   > contract address:    0xa1a0780Da7eC03bB23BEa497fE6E7eb58656865C
+   > block number:        9990621
+   > block timestamp:     1642180467
+   > account:             0x07972803660E7d087fDf27F25343D618fA21A354
+   > balance:             1.496195392301482264
+   > gas used:            1422329 (0x15b3f9)
+   > gas price:           2.500000014 gwei
+   > value sent:          0 ETH
+   > total cost:          0.003555822519912606 ETH
+
+
+   Replacing 'Proxy'
+   -----------------
+   > transaction hash:    0xf999d74900c1e5f79934891f3591b3a0fcaeae68887de6500e016dccbd69a5d4
+   > Blocks: 1            Seconds: 12
+   > contract address:    0xc2d7101dcCf4d8039564b32B813fcF5a6E64C414
+   > block number:        9990622
+   > block timestamp:     1642180482
+   > account:             0x07972803660E7d087fDf27F25343D618fA21A354
+   > balance:             1.487162612250898696
+   > gas used:            3613112 (0x3721b8)
+   > gas price:           2.500000014 gwei
+   > value sent:          0 ETH
+   > total cost:          0.009032780050583568 ETH
+
+Getting deployed contracts ABIs
+Pausing DApp ...
+Linking 0xa1a0780Da7eC03bB23BEa497fE6E7eb58656865C (Deals) => 0xc2d7101dcCf4d8039564b32B813fcF5a6E64C414 (Proxy)
+Linking 0x1A92C191249A7F91164c3d45fdD984b0BEC2adb3 (InstructionsProvider) => 0x2700567E5e45129996d812c96ba751c78bA2244f (Interpreter)
+Linking 0x1A92C191249A7F91164c3d45fdD984b0BEC2adb3 (InstructionsProvider) => 0xc2d7101dcCf4d8039564b32B813fcF5a6E64C414 (Proxy)
+Linking 0x2700567E5e45129996d812c96ba751c78bA2244f (Interpreter) => 0x7334006668739c2F5e1b78060b10CEaBD7aa1F6C (Instructions)
+Linking 0x2700567E5e45129996d812c96ba751c78bA2244f (Interpreter) => 0x1A92C191249A7F91164c3d45fdD984b0BEC2adb3 (InstructionsProvider)
+Linking 0x2700567E5e45129996d812c96ba751c78bA2244f (Interpreter) => 0xa1a0780Da7eC03bB23BEa497fE6E7eb58656865C (Deals)
+Linking 0x2700567E5e45129996d812c96ba751c78bA2244f (Interpreter) => 0xc2d7101dcCf4d8039564b32B813fcF5a6E64C414 (Proxy)
+Linking 0xc2d7101dcCf4d8039564b32B813fcF5a6E64C414 (Proxy) => 0x7334006668739c2F5e1b78060b10CEaBD7aa1F6C (Instructions)
+Linking 0xc2d7101dcCf4d8039564b32B813fcF5a6E64C414 (Proxy) => 0x1A92C191249A7F91164c3d45fdD984b0BEC2adb3 (InstructionsProvider)
+Linking 0xc2d7101dcCf4d8039564b32B813fcF5a6E64C414 (Proxy) => 0xa1a0780Da7eC03bB23BEa497fE6E7eb58656865C (Deals)
+Linking 0xc2d7101dcCf4d8039564b32B813fcF5a6E64C414 (Proxy) => 0x2700567E5e45129996d812c96ba751c78bA2244f (Interpreter)
+Linking 0xc2d7101dcCf4d8039564b32B813fcF5a6E64C414 (Proxy) => 0x8A753747A1Fa494EC906cE90E9f37563A8AF630e (Price Feed Aggregator)
+Unpausing DApp ...
+Adding instruction 'IF-ADDR'
+Adding instruction 'TRANSFER'
+Adding instruction 'IF-AMOUNT-BIGGER'
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:     0.024133645127942704 ETH
+
+
+Summary
+=======
+> Total deployments:   7
+> Final cost:          0.024759000130944408 ETH

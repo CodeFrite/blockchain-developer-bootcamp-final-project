@@ -178,6 +178,12 @@ class ExecuteDeal extends Component {
                                 <td>If the sender is <span className="var" title={article[3]}>{article[1]}{article[3]===this.props.selectedAccount && '=YOU'}</span></td>
                               </>
                             }
+                            {article[0]==="IF-AMOUNT-BIGGER" &&
+                              <>
+                                <td><span className="var">IF-AMOUNT-BIGGER</span></td>
+                                <td>If the amount received is bigger than <span className="var">{article[2]/10**18}</span></td>
+                              </>
+                            }
                             {article[0]==="TRANSFER" && article[2]==="100" &&
                               <>
                                 <td><span className="var">TRANSFER-ALL</span></td>

@@ -37,11 +37,11 @@ contract("InstructionsProvider", function (accounts) {
       let tx = await instanceInstructionsProvider.setEscrowContractRef(INTERPRETER, {from:CEO});
       expectEvent(tx, "SetEscrowContractRef");
     });
-    
+   
   });
 
   describe("Test supported instructions", () => {
-        
+       
     describe("`IF-ADDR` instruction", () => {
       let tx;
 
@@ -57,6 +57,25 @@ contract("InstructionsProvider", function (accounts) {
       it("... should return false when addresses are not equal", async () => {
         tx = await instanceInstructionsProvider._ifAddress(CEO, ACCOUNTANT, {from: INTERPRETER});
         assert.equal(tx,false,"instruction `IF-ADDR` should return `false`");
+      });
+
+    });
+
+    describe("`IF-AMOUNT-BIGGER` instruction", () => {
+      let tx;
+
+      it("... only Interpreter should be able to call, otherwise revert", async () => {
+       await expectRevert.unspecified(instanceInstructionsProvider._ifMsgValueBigger(1, 1, {from: CEO}));
+      });
+
+      it("... should return true when msg.value >= _comparisonValue", async () => {
+        tx = await instanceInstructionsProvider._ifMsgValueBigger(10, 1, {from: INTERPRETER});
+        assert.equal(tx,true,"instruction `IF-AMOUNT-BIGGER` should return `true`");
+      });
+
+      it("... should return false when msg.value < _comparisonValue", async () => {
+        tx = await instanceInstructionsProvider._ifMsgValueBigger(1, 10, {from: INTERPRETER});
+        assert.equal(tx,false,"instruction `IF-AMOUNT-BIGGER` should return `false`");
       });
 
     });
