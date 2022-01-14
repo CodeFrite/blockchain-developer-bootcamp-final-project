@@ -6,10 +6,10 @@ Let's Make A Deal (MAD) : Point and click platform allowing everyone to create v
 
 To get a general grasp on the project, I recommend watching the following videos:
 
-1. [MAD: How to use it?](XXX)
-2. [MAD: How does it work?](XXX)
-3. [MAD: How to deploy, test and run?](XXX)
-4. [MAD: How to upgrade?](XXX)
+1. [MAD: How to clone, test, deploy and run on your local?](XXX)
+2. [MAD: What is MAD?](XXX)
+3. [MAD: How does it work?](XXX)
+4. [MAD: How to upgrade on Rinkeby?](XXX)
 
 ## &#9881; Problematic
 
@@ -557,6 +557,24 @@ Compiling your contracts...
 > Compiled successfully using:
    - solc: 0.8.9+commit.e5eed63a.Emscripten.clang
 
+Getting deployed contracts ABIs
+Pausing DApp ...
+Linking 0x2C2B9C9a4a25e24B174f26114e8926a9f2128FE4 (Deals) => 0x30753E4A8aad7F8597332E813735Def5dD395028 (Proxy)
+Linking 0x9FBDa871d559710256a2502A2517b794B482Db40 (InstructionsProvider) => 0xf25186B5081Ff5cE73482AD761DB0eB0d25abfBF (Interpreter)
+Linking 0x9FBDa871d559710256a2502A2517b794B482Db40 (InstructionsProvider) => 0x30753E4A8aad7F8597332E813735Def5dD395028 (Proxy)
+Linking 0xf25186B5081Ff5cE73482AD761DB0eB0d25abfBF (Interpreter) => 0x8f0483125FCb9aaAEFA9209D8E9d7b9C8B9Fb90F (Instructions)
+Linking 0xf25186B5081Ff5cE73482AD761DB0eB0d25abfBF (Interpreter) => 0x9FBDa871d559710256a2502A2517b794B482Db40 (InstructionsProvider)
+Linking 0xf25186B5081Ff5cE73482AD761DB0eB0d25abfBF (Interpreter) => 0x2C2B9C9a4a25e24B174f26114e8926a9f2128FE4 (Deals)
+Linking 0xf25186B5081Ff5cE73482AD761DB0eB0d25abfBF (Interpreter) => 0x30753E4A8aad7F8597332E813735Def5dD395028 (Proxy)
+Linking 0x30753E4A8aad7F8597332E813735Def5dD395028 (Proxy) => 0x8f0483125FCb9aaAEFA9209D8E9d7b9C8B9Fb90F (Instructions)
+Linking 0x30753E4A8aad7F8597332E813735Def5dD395028 (Proxy) => 0x9FBDa871d559710256a2502A2517b794B482Db40 (InstructionsProvider)
+Linking 0x30753E4A8aad7F8597332E813735Def5dD395028 (Proxy) => 0x2C2B9C9a4a25e24B174f26114e8926a9f2128FE4 (Deals)
+Linking 0x30753E4A8aad7F8597332E813735Def5dD395028 (Proxy) => 0xf25186B5081Ff5cE73482AD761DB0eB0d25abfBF (Interpreter)
+Linking 0x30753E4A8aad7F8597332E813735Def5dD395028 (Proxy) => 0x8A753747A1Fa494EC906cE90E9f37563A8AF630e (Price Feed Aggregator)
+Unpausing DApp ...
+Adding instruction 'IF-ADDR'
+Adding instruction 'TRANSFER'
+Adding instruction 'IF-AMOUNT-BIGGER'
 
   Contract: CommonStructs
     Variables
@@ -604,64 +622,68 @@ Compiling your contracts...
       ✓ ... only owner should be able to call, otherwise revert (23137 gas)
       ✓ ... should emit a SetInterpreterContractRef (46621 gas)
     setEscrowContractRef
-      ✓ ... only owner should be able to call, otherwise revert (22875 gas)
-      ✓ ... should emit a SetInterpreterContractRef (31599 gas)
+      ✓ ... only owner should be able to call, otherwise revert (22898 gas)
+      ✓ ... should emit a SetInterpreterContractRef (31622 gas)
     Test supported instructions
       `IF-ADDR` instruction
         ✓ ... only Interpreter should be able to call, otherwise revert
         ✓ ... should return true when addresses are equal
         ✓ ... should return false when addresses are not equal
+      `IF-AMOUNT-BIGGER` instruction
+        ✓ ... only Interpreter should be able to call, otherwise revert
+        ✓ ... should return true when msg.value >= _comparisonValue
+        ✓ ... should return false when msg.value < _comparisonValue
 
   Contract: Interpreter
     Initialisation
-      ✓ ... instantiate contracts (5895165 gas)
-      ✓ ... link contracts (233125 gas)
-      ✓ ... create deal (342918 gas)
+      ✓ ... instantiate contracts (6106311 gas)
+      ✓ ... link contracts (233157 gas)
+      ✓ ... create deal (381342 gas)
     Access Control
       interpretRule
-        ✓ ... only Proxy has access, otherwise revert (23682 gas)
+        ✓ ... only Proxy has access, otherwise revert (23704 gas)
     Use Cases
       A-Interpret a whole Rule
         Rule 0 - FROM CEO: IF-ADDR(CHAIRMAN)=false =/> TRANSFER(ACCOUNTANT)=false
-          ✓ ... should return 1 event InterpretArticle with the correct event parameters (62767 gas)
+          ✓ ... should revert (62718 gas)
         Rule 0 - FROM CHAIRMAN: IF-ADDR(CHAIRMAN)=true => TRANSFER(ACCOUNTANT)=true
-          ✓ ... should return 2 events InterpretArticle with the correct event parameters (106427 gas)
+          ✓ ... should return 2 events InterpretArticle with the correct event parameters (158183 gas)
 
   Contract: Proxy
     Access Control: 
       OpenZeppelin Ownable
-        ✓ ... only owner can pause the contract (22549 gas)
-        ✓ ... only owner can unpause the contract (22505 gas)
+        ✓ ... only owner can pause the contract (22571 gas)
+        ✓ ... only owner can unpause the contract (22483 gas)
         ✓ ... should revert on renounceOwnership even from owner
       OpenZeppelin Pausable
-        ✓ ... when the contract is paused, it should emit a `Paused` event (31357 gas)
+        ✓ ... when the contract is paused, it should emit a `Paused` event (31379 gas)
         ✓ ... createDeal should not be callable by anyone (47858 gas)
-        ✓ ... executeRule should not be callable by anyone (23180 gas)
-        ✓ ... when the contract is unpaused, it should emit a `Unpaused` event (31307 gas)
+        ✓ ... executeRule should not be callable by anyone (23202 gas)
+        ✓ ... when the contract is unpaused, it should emit a `Unpaused` event (31285 gas)
     Setters & Getters
       instructionsContractRef :
-        ✓ ... setInstructionsContractRef should return a ModifyInstructionsContractAddress (47626 gas)
+        ✓ ... setInstructionsContractRef should return a ModifyInstructionsContractAddress (47604 gas)
         ✓ ... instructionsContractRef shoud return the correct address
       dealsContractRef :
         ✓ ... setDealsContractRef should return a ModifyDealsContractAddress (47581 gas)
         ✓ ... interpreterContractRef should return the correct address
       interpreterContractRef :
-        ✓ ... setInterpreterContractRef should return a ModifyInterpreterContractAddress (47582 gas)
+        ✓ ... setInterpreterContractRef should return a ModifyInterpreterContractAddress (47649 gas)
         ✓ ... interpreterContractRef should return the correct address
       accountCreationFees :
         ✓ ... setAccountCreationFees should return a ModifyAccountCreationFees (46318 gas)
         ✓ ... accountCreationFees should return the correct value
       ruleCreationFees :
-        ✓ ... setRuleCreationFees should return a ModifyRuleCreationFees (46340 gas)
+        ✓ ... setRuleCreationFees should return a ModifyRuleCreationFees (46318 gas)
         ✓ ... ruleCreationFees should return the correct address
       allowAllAddressesFees :
-        ✓ ... setAllowAllAddressesFees should return a ModifyAllowAllAccountsFees (46317 gas)
+        ✓ ... setAllowAllAddressesFees should return a ModifyAllowAllAccountsFees (46339 gas)
         ✓ ... interpreterContractRef should return the correct address
       transactionMinimalValue :
-        ✓ ... setTransactionMinimalValue should return a ModifyTransactionMinimalValue (46362 gas)
+        ✓ ... setTransactionMinimalValue should return a ModifyTransactionMinimalValue (46340 gas)
         ✓ ... interpreterContractRef should return the correct address
       transactionFees :
-        ✓ ... setTransactionFees should return a ModifyTransactionFees (46383 gas)
+        ✓ ... setTransactionFees should return a ModifyTransactionFees (46405 gas)
         ✓ ... interpreterContractRef should return the correct address
     Use cases
       Create a deal with msg.value < deal creation fees
@@ -672,19 +694,95 @@ Compiling your contracts...
         ✓ ... the excess amount payed (1ETH-100$-gas already used) should be reimbursed to the caller
         ✓ ... a ReimburseExcessValue event should be emitted with the excess value and caller address mentionned
       Execute rule with msg.value < transaction minimal value
-        ✓ ... should revert with message `Transaction minimal value not reached` (25046 gas)
+        ✓ ... should revert with message `Transaction minimal value not reached` (25068 gas)
       Execute rule with msg.value >= transaction minimal value
-        ✓ ... should emit a PayTransactionFees event (206435 gas)
+        ✓ ... should emit a PayTransactionFees event (174488 gas)
         ✓ ... the contract balance should receive 1% of value worth of ETH
-        ✓ ... the ACCOUNTANT escrow account should receive a deposit of 1ETH - fees on his Escrow account (31925 gas)
+        ✓ ... the ACCOUNTANT escrow account should receive a deposit of 1ETH - fees on his Escrow account
         ✓ ... the CHAIRMAN account should pay 1 ETH + gas fees
       Withdraw deposits from escrow account
-        ✓ ... balance shoud increase by 1ETH - fees (37526 gas)
+        ✓ ... balance shoud increase by 1ETH - fees (34939 gas)
       Execute Rule 1: Split payment OF 1ETH from CEO to CHAIRMAN 75% & ACCOUNTANT 25%
-        ✓ ... the CHAIRMAN balance should increase by ~.75 ETH (268942 gas)
-        ✓ ... the ACCOUNTANT balance should increase by ~.25 ETH (37526 gas)
+        ✓ ... the CHAIRMAN balance should increase by ~.75 ETH (266311 gas)
+        ✓ ... the ACCOUNTANT balance should increase by ~.25 ETH (34939 gas)
+      Harvest transaction fees
+        ✓ ... the owner balance should increase (29802 gas)
 
-  71 passing (42s)
+·------------------------------------------------------------|----------------------------|-------------|----------------------------·
+|            Solc version: 0.8.9+commit.e5eed63a             ·  Optimizer enabled: false  ·  Runs: 200  ·  Block limit: 6718946 gas  │
+·····························································|····························|·············|·····························
+|  Methods                                                                                                                           │
+·························|···································|··············|·············|·············|··············|··············
+|  Contract              ·  Method                           ·  Min         ·  Max        ·  Avg        ·  # calls     ·  eur (avg)  │
+·························|···································|··············|·············|·············|··············|··············
+|  Deals                 ·  createDeal                       ·      381342  ·     556762  ·     506642  ·           7  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Deals                 ·  setProxyContractAddress          ·       27464  ·      46664  ·      41864  ·           4  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Instructions          ·  addInstruction                   ·       52713  ·      72021  ·      62335  ·           6  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  InstructionsProvider  ·  setEscrowContractRef             ·           -  ·          -  ·      31622  ·           7  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  InstructionsProvider  ·  setInterpreterContractRef        ·           -  ·          -  ·      46621  ·           3  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Interpreter           ·  interpretRule                    ·           -  ·          -  ·     158183  ·           1  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Interpreter           ·  setDealsInstance                 ·           -  ·          -  ·      46631  ·           2  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Interpreter           ·  setInstructionsInstance          ·           -  ·          -  ·      46621  ·           1  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Interpreter           ·  setInstructionsProviderInstance  ·           -  ·          -  ·      46620  ·           1  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Interpreter           ·  setProxyContractAddress          ·           -  ·          -  ·      46708  ·           1  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Migrations            ·  setCompleted                     ·           -  ·          -  ·      27513  ·           2  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Proxy                 ·  createDeal                       ·           -  ·          -  ·     730884  ·           5  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Proxy                 ·  executeRule                      ·      174488  ·     231372  ·     183969  ·           6  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Proxy                 ·  harvest                          ·           -  ·          -  ·      29802  ·           1  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Proxy                 ·  pause                            ·           -  ·          -  ·      31379  ·           3  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Proxy                 ·  setAccountCreationFees           ·           -  ·          -  ·      46318  ·           3  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Proxy                 ·  setAllowAllAddressesFees         ·           -  ·          -  ·      46339  ·           3  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Proxy                 ·  setDealsContractRef              ·           -  ·          -  ·      47581  ·           3  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Proxy                 ·  setInstructionsContractRef       ·           -  ·          -  ·      47604  ·           3  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Proxy                 ·  setInterpreterContractRef        ·           -  ·          -  ·      47649  ·           3  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Proxy                 ·  setRuleCreationFees              ·           -  ·          -  ·      46318  ·           3  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Proxy                 ·  setTransactionFees               ·           -  ·          -  ·      46405  ·           2  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Proxy                 ·  setTransactionMinimalValue       ·           -  ·          -  ·      46340  ·           3  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Proxy                 ·  unpause                          ·           -  ·          -  ·      31285  ·           1  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Proxy                 ·  withdraw                         ·           -  ·          -  ·      34939  ·           6  ·          -  │
+·························|···································|··············|·············|·············|··············|··············
+|  Deployments                                               ·                                          ·  % of limit  ·             │
+·····························································|··············|·············|·············|··············|··············
+|  CommonStructs                                             ·           -  ·          -  ·      72281  ·       1.1 %  ·          -  │
+·····························································|··············|·············|·············|··············|··············
+|  Deals                                                     ·           -  ·          -  ·    1420329  ·      21.1 %  ·          -  │
+·····························································|··············|·············|·············|··············|··············
+|  Instructions                                              ·           -  ·          -  ·     775240  ·      11.5 %  ·          -  │
+·····························································|··············|·············|·············|··············|··············
+|  InstructionsProvider                                      ·           -  ·          -  ·    2027826  ·      30.2 %  ·          -  │
+·····························································|··············|·············|·············|··············|··············
+|  Interpreter                                               ·           -  ·          -  ·    1738970  ·      25.9 %  ·          -  │
+·····························································|··············|·············|·············|··············|··············
+|  Migrations                                                ·           -  ·          -  ·     248842  ·       3.7 %  ·          -  │
+·····························································|··············|·············|·············|··············|··············
+|  Proxy                                                     ·           -  ·          -  ·    3601312  ·      53.6 %  ·          -  │
+·------------------------------------------------------------|--------------|-------------|-------------|--------------|-------------·
+
+  75 passing (45s)
 
 ```
 
