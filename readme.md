@@ -6,10 +6,10 @@ Let's Make A Deal (MAD) : Point and click platform allowing everyone to create v
 
 To get a general grasp on the project, I recommend watching the following videos:
 
-1. [MAD: How to use it?](XXX)
-2. [MAD: How does it work?](XXX)
-3. [MAD: How to deploy, test and run?](XXX)
-4. [MAD: How to upgrade?](XXX)
+1. [MAD: How to clone, test, deploy and run on your local?](XXX)
+2. [MAD: What is MAD?](XXX)
+3. [MAD: How does it work?](XXX)
+4. [MAD: How to upgrade on Rinkeby?](XXX)
 
 ## &#9881; Problematic
 
