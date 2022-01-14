@@ -207,9 +207,7 @@ Moreover, I had to find a way to manage variables and scope. This means that I h
 
 ![image](https://user-images.githubusercontent.com/34804976/147769593-2c66dd8f-bc95-4887-b244-aab4acddab43.png)
 
-It turned out that this idea, even if partially working, was extremely expensive in term of contract storage and gas execution fees. You can test the code on Remix [AST Tree in Solidity](XXX) or watch this video: [AST Tree: demo](XXX)
-
-I finally decided to go for a simpler version.
+It turned out that this idea, because of the data struture and the multiple inter-contract calls, was extremely expensive in term of contract storage and gas execution fees. I finally decided to go for a simpler version.
 
 ### Specialized interpreter for payments routing
 
@@ -334,7 +332,7 @@ As we can see, the contracts are divided into 2 categories:
 - Data contracts contain client data and should never be redeployed
 - Logic contracts contains the DApp logic which might change as we introduce new instructions or as we correct defects
 
-**_These remarks allow us to come to the following conclusion:_** No data contract should ever import the implementation of a logic contract. Indeed, importing a contract means copying its implementation inside the contract that imports it. If a logic contract implementation changes, it will need to be redeployed: its ABI will change ... but the calling contract will still be using an old version of its code and will not be aware of new functions or changes in existing functions
+**These remarks allow us to come to the following conclusion:** _No data contract should ever import the implementation of a logic contract. Indeed, importing a contract means copying its implementation inside the contract that imports it. If a logic contract implementation changes, it will need to be redeployed: its ABI will change ... but the calling contract will still be using an old version of its code and will not be aware of new functions or changes in existing functions._
 
 As an example, the `Interpreter`, which is a data contract, does import the `CommonStructs`, `Instructions` and `Deals`contracts which implementations will remain unchanged during the lifetime of the DApp BUT only saves a reference to the `InstructionsProvider` contract which is a logic contract that may change in the future:
 
@@ -379,7 +377,7 @@ contract Interpreter is Ownable {
 ...
 ```
 
-Finally, to invoke a logic contract function, we need to call it via a **_low level call_** by encoding the function signature. This allows the EVM to compute the position of our function in the byte code of our contract:
+Finally, to invoke a logic contract function, we need to call it via a **_low level call_** by encoding the function signature. This allows the EVM to compute the position of our function in the byte code of our contract. This is precisely how the `Interpreter` calls the `InstructionsProvider` contract:
 
 ```
 function interpretArticle(address _from, uint _dealId, uint _ruleId, uint _articleId) private returns (bool) {
@@ -392,6 +390,71 @@ function interpretArticle(address _from, uint _dealId, uint _ruleId, uint _artic
       )
   );
 ...  
+```
+
+The last technical point that we need to cover is related to the input parameters that the `Ìnterpreter` needs to feed to the `InstructionsProvider` function calls and how it will handle the return value.
+
+```
+function interpretArticle(address _from, uint _dealId, uint _ruleId, uint _articleId) private returns (bool) {
+...
+  //> Params injection depends on the instruction type
+
+  // CASE ADDRESS_ADDRESS_R_BOOL: pass the Article.paramAddress field
+  bool success=false;
+  if (instructionType == CommonStructs.InstructionTypes.ADDRESS_ADDRESS_R_BOOL) {
+    // Upgrability: Low level call to InstructionsProvider
+    bool _success;
+    bytes memory _result;
+    (_success, _result) = instructionsProviderInstance.call(
+        abi.encodeWithSignature(
+            instructionSignature,
+            article.paramAddress,
+            _from
+        )
+    );
+    success = _success && abi.decode(_result, (bool));
+
+  // CASE ADDRESS_PAYABLE: pass the Article.paramAddress
+  } else if (instructionType == CommonStructs.InstructionTypes.ADDRESS_PAYABLE) {
+      // Upgrability: Low level call to InstructionsProvider
+      bool _success;
+      bytes memory _result;
+
+      // Increment current msg.value % usage
+      msgValueUsed += article.paramUInt;
+      // Revert if used value > 100% of msg.value
+      if (msgValueUsed>100)
+          revert("Interpreter: Rule is spending more msg.value than received!");
+      (_success, _result) = instructionsProviderInstance.call{value:(msg.value*article.paramUInt)/100}(
+          abi.encodeWithSignature(
+              instructionSignature,
+              article.paramAddress
+          )
+      );
+      success = _success;
+
+  // MAJOR CONTRACT UPDATE : Add support for UINT_UINT_R_BOOL instructions return
+  } else if (instructionType == CommonStructs.InstructionTypes.UINT_UINT_R_BOOL) {
+      // Upgrability: Low level call to InstructionsProvider
+      bool _success;
+      bytes memory _result;
+      (_success, _result) = instructionsProviderInstance.call(
+          abi.encodeWithSignature(
+              instructionSignature,
+              msg.value,
+              article.paramUInt
+          )
+      );
+      success = _success && abi.decode(_result, (bool));
+
+  // CASE ADDRESS_PAYABLE: pass the Article.paramAddress
+  }
+
+  // Emit an event to inform the front-end that a particular article in the rule successed or not
+  emit InterpretArticle(_from, _dealId, _ruleId, _articleId);
+  return success;
+}
+
 ```
 
 The readers interested in a more precise insight on the calls happening when interpreting a rule can refer to the following diagram:
