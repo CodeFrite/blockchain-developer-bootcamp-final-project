@@ -19,8 +19,7 @@ contract("Interpreter", async (accounts) => {
   const ruleList = 
     [
       [
-        ["IF-ADDR", "CHAIRMAN", 1, CHAIRMAN],
-        ["TRANSFER", "ACCOUNTANT", 2, ACCOUNTANT]
+        ["IF-ADDR", "CHAIRMAN", 1, CHAIRMAN]
       ]
     ];
 
