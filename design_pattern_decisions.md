@@ -268,7 +268,7 @@ function convertUSD2WEI(uint _amountInUSD) public view returns(uint) {
 
 ### Access Control Design Patterns (Restricting access to certain functions using things like Ownable, Role-based Control) Access Control Design Patterns
 
-I am using OpenZeppelin to manage the access control to my contracts functions:
+I am inheriting from OpenZeppelin `Ownable` contract to manage the access control to most of my contracts functions:
 
 ```
   /**
@@ -282,7 +282,7 @@ I am using OpenZeppelin to manage the access control to my contracts functions:
     }
 ```
 
-When necessary, I also used custom modifiers to restrict the access of certain functions to certain contracts. This is part of the upgrability : indeed, when a contract calls another through a low level call, the msg.sender becomes the contract that call the function. This is for example the case in the `Interpreter` contract that restricts the access to the `executeRule` function to the `Proxy` contract:
+When necessary, I also use custom modifiers to restrict the access of certain functions to certain contracts. This is part of the upgrability : indeed, when a contract calls another through a low level call, the msg.sender becomes the contract that call the function. This is for example the case in the `Interpreter` contract that restricts the access to the `interpretRule` function to the `Proxy` contract:
 
 ```
 ...
@@ -320,3 +320,4 @@ contract Interpreter is Ownable {
     }
 ...
 }
+```
