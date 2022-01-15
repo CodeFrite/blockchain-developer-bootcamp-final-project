@@ -266,7 +266,7 @@ function convertUSD2WEI(uint _amountInUSD) public view returns(uint) {
 }
 ```
 
-### Access Control Design Patterns (Restricting access to certain functions using things like Ownable, Role-based Control) Access Control Design Patterns
+### Access Control Design Patterns (Restricting access to certain functions using things like Ownable, Role-based Control)
 
 I am inheriting from OpenZeppelin `Ownable` contract to manage the access control to most of my contracts functions:
 
