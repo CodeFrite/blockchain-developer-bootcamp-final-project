@@ -11,11 +11,6 @@ import "./CommonStructs.sol";
 import "./Instructions.sol";
 import "./Deals.sol";
 
-// TODO: Ajouter un payable fallback a tous les contracts pour voir ce qu'on fait quand on reçoit de l'argent par erreur
-//        ==> Hériter d'une classe qui redirige l'argent vers le proxy ou bien juste rembourser les sous
-
-// TODO: Check how to integrate the allowAllAccounts in the interpreter. Should I add it as a param in the deal?
-
 /// @title Proxy Contract
 /// @dev Main DApp entry point. Exposes the public interface and decouple the data and the logic
 /// @notice lets-make-a-deal.eth allows you to make an agreement between different parties and automatically route ETH to different addresses based on simple rules.
