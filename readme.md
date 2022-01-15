@@ -530,6 +530,8 @@ To deploy a minor upgrade (= redeploy the `InstructionsProvider.sol` and update 
 
 ### &#11014; Major Upgrade
 
+To deploy a major upgrade (= redeploy the `InstructionsProvider.sol`, the `Interpreter.sol` and update the links between the contracts), you can run the following command:
+
 ```
 > truffle migrate --network develop --upgrade major
 ```
