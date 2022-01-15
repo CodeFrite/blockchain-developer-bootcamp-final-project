@@ -141,6 +141,8 @@ contract Proxy is Ownable, Pausable {
     /// @dev Last quotation timestamp fetched from Chainlink
     uint public lastQuotationTimestamp;
 ...
+    /* EVENTS */
+    
     // Modify Chainlink ETH/USD price feed aggregator address
 
     /**
@@ -150,9 +152,6 @@ contract Proxy is Ownable, Pausable {
     * @param _new New address of the Chainlink ETH/USD price feed aggregator address
     */
     event ModifyPriceFeedRefAggregatorAddress(address _from, address _old, address _new);
- ...
- 
-  /* EVENTS */
 
     /** 
     * @dev Event emitted when the WEI to USD conversion rate is updated from Chainlink
