@@ -1,8 +1,5 @@
 # Architecture
 
-Before diving into the discussion behind the artchitectural choices made, let's first give general overview of the DApp building blocks. 
-_(In order to understand this part, the user is advised to first read the readme file and watch the videos)._
-
 ## Diagram
 
 ![image](https://user-images.githubusercontent.com/34804976/143939305-390dfd75-3cd0-4d4f-bc4b-3e17b7c9c00b.png)
@@ -22,8 +19,6 @@ In the diagram, I have used 3 differents types of arrows to show the nature of t
 - `inheritance` is represented by a solid arrow with a white head
 
 Please note that all contracts import the `CommonStructs` library and inherit from the `Ownable` contract (would have been to messy to add all these arrows in the diagram).
-
-The reason why I am using 3 different types of dependencies will become clearer further in the text.
 
 Let's now briefly describe what each contract is used for.
 
@@ -77,9 +72,151 @@ Each constraint led me to an architectural choice mentioned below.
 
 ### Inter-Contract Execution
 
-
+This DApp is composed out of 7 contracts which intensely call one another. They are divided into 2 groups, the data contracts and the logic contracts. Data contracts can be imported and call directly. The logic contracts can change over time. Therefore, their implementation shouldn't be directly imported by any contracts. All the calls should be made in low level by encoding their functions signature using the abiEncodeWithSignature function. More on that in the `readme.md` file.
 
 ### Inheritance and Interfaces
+
+I am inheriting from the Oppenzeppelin Ownable and Pausable contracts:
+
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity 0.8.9;
+
+/* EXTERNAL DEPENDENCIES */
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+
+contract Proxy is Ownable, Pausable {
+    
+    /* EVENTS */
+
+    // Modify Chainlink ETH/USD price feed aggregator address
+
+    /**
+    * @dev Event emitted when the Chainlink ETH/USD price feed aggregator address is changed
+    * @param _from Caller address
+    * @param _old Old address of the Chainlink ETH/USD price feed aggregator address
+    * @param _new New address of the Chainlink ETH/USD price feed aggregator address
+    */
+    event ModifyPriceFeedRefAggregatorAddress(address _from, address _old, address _new);
+...
+    /* OpenZeppelin.Pausable */
+
+    /**
+    * @dev Access control inherited from OpenZeppelin Ownable contract
+    * Pausing the contract makes the createDeal function not callable
+    * Getters are still callable
+    * Only owner can call
+    */
+    function pause() public onlyOwner() whenNotPaused() {
+        _pause();
+    }
+
+    /**
+    * @dev Access control inherited from OpenZeppelin Ownable contract
+    * Unpausing the contract makes the createDeal function callable
+    * Only Owner can call
+    */
+    function unpause() public onlyOwner() whenPaused() {
+        _unpause();
+    }
+
+    /* OVERRIDE & BLOCK UNUSED INHERITED FUNCTIONS */
+
+    /**
+    * @dev Block OpenZeppelin Ownable.renounceOwnership
+    * @notice Will always revert
+    */ 
+    function renounceOwnership() public pure override {
+        revert('Contract cannot be revoked');
+    }
+
+}
+```
+
+I am implementing the Chainlink `AggregatorV3Interface` to fetch the last ETH to USD conversion rate in the Proxy contract:
+
+```
+...
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+...
+contract Proxy is Ownable, Pausable {
+    
+    /* STORAGE VARIABLES */
+
+    /// @dev Chainlink ETH/USD price feed aggregator link on Rinkeby
+    AggregatorV3Interface public priceFeedRef;
+
+    /// @dev Last quotation value in USD per ETH with 8 decimals precision fetched from Chainlink
+    uint public lastQuotationValue;
+
+    /// @dev Last quotation timestamp fetched from Chainlink
+    uint public lastQuotationTimestamp;
+...
+    // Modify Chainlink ETH/USD price feed aggregator address
+
+    /**
+    * @dev Event emitted when the Chainlink ETH/USD price feed aggregator address is changed
+    * @param _from Caller address
+    * @param _old Old address of the Chainlink ETH/USD price feed aggregator address
+    * @param _new New address of the Chainlink ETH/USD price feed aggregator address
+    */
+    event ModifyPriceFeedRefAggregatorAddress(address _from, address _old, address _new);
+ ...
+ 
+  /* EVENTS */
+
+    /** 
+    * @dev Event emitted when the WEI to USD conversion rate is updated from Chainlink
+    * @param _from : msg.sender
+    * @param _value : WEI/USD price at the time the Chainlink Oracle was called
+    * @param _timestamp : timestamp at which the price was fetched from Chainlink
+    */
+    event QueryLastQuotationFromChainlink(address _from, uint _value, uint _timestamp);
+...
+    /* OWNER INTERFACE */
+
+    // Address to Chainlink ETH/USD price feed aggregator
+    
+    /**
+    * @dev Set the address to the Chainlink ETH/USD price feed aggregator
+    * @param _new New address to the Chainlink ETH/USD price feed aggregator
+    */
+    function setPriceFeedRefAggregatorAddress(address _new) public onlyOwner {
+        address old = address(priceFeedRef);
+        priceFeedRef = AggregatorV3Interface(_new);
+        emit ModifyPriceFeedRefAggregatorAddress(msg.sender, old, _new);
+    }
+...
+    /* PUBLIC INTERFACE */
+...
+    /* CHAINLINK ETH/USD PRICE FEED AGGREGATOR */    
+    
+    /**
+     * @dev Query & save the latest quotation from ChainLink price feed aggregator on Rinkeby
+     */
+    function saveLatestQuotation() public onlyOwner {
+        // Query last ETH/USD price from ChainLink
+        (, int price, , uint timestamp, ) = priceFeedRef.latestRoundData();
+        
+        // Save latest quotation (rounID, price & timestamp)
+        lastQuotationValue = (10**18)*(10**8)/uint(price);
+        lastQuotationTimestamp = timestamp;
+        emit QueryLastQuotationFromChainlink(msg.sender, lastQuotationValue, timestamp);
+    }
+
+    /**
+    * @dev Return the last quotation from Chainlink
+    * @return Last quotation from Chainlink in WEI per USD
+    * along with the query timestamp
+    */
+    function getLatestQuotation() public view returns(uint, uint) {
+        return (lastQuotationValue, lastQuotationTimestamp);
+    }
+...
+    }
+
+}
+```
 
 ### Chainlink Oracle [link](https://docs.chain.link/docs/get-the-latest-price/)
 
