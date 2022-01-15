@@ -10,7 +10,7 @@ To get a general grasp on the project, I recommend watching the following videos
 
 1. [MAD: How to clone, test, deploy and run on your local?](https://www.youtube.com/watch?v=7ovgkmoqhyw)
 2. [MAD: Connection button & Metamask](https://www.youtube.com/watch?v=v5CC_YePBZ0)
-3. [MAD: How to create a Deal?](XXX)
+3. [MAD: How to create a Deal?](https://www.youtube.com/watch?v=4VE8muc4m50)
 4. [MAD: How to execute a Rule?](XXX)
 5. [MAD: Manage the DApp](XXX)
 6. [MAD: How to upgrade the DApp?](XXX)
