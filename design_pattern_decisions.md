@@ -268,166 +268,55 @@ function convertUSD2WEI(uint _amountInUSD) public view returns(uint) {
 
 ### Access Control Design Patterns (Restricting access to certain functions using things like Ownable, Role-based Control) Access Control Design Patterns
 
-### Upgradable Contracts
-
-
-![Untitled (2)](https://user-images.githubusercontent.com/34804976/148281985-dbed2736-f063-45bc-bd0b-54c1838eed27.png)
-
-
-#### Step 0: _Client calls Proxy.executeRule_
-
-To interpret a Rule, we call the `executeRule` from the `Proxy` contract, main entry point of the DApp, by passing it the deal id along with the rule id that we want to execute, for example (0, 0). Here is the call present in the front-end inside the "ExecuteDeal.jsx" react component:
+I am using OpenZeppelin to manage the access control to my contracts functions:
 
 ```
-executeRule = async (ruleId, value) => {
-  const contract = this.props.contracts.proxy;
-  await contract.methods.executeRule(this.state.dealId, ruleId)
-    .send({from:this.props.selectedAccount,value: value})
-    .then(console.log)
-    .catch((e) => alert(e.message));
-
-  ...
-}
+  /**
+    * @dev Set the address to the Chainlink ETH/USD price feed aggregator
+    * @param _new New address to the Chainlink ETH/USD price feed aggregator
+    */
+    function setPriceFeedRefAggregatorAddress(address _new) public onlyOwner {
+        address old = address(priceFeedRef);
+        priceFeedRef = AggregatorV3Interface(_new);
+        emit ModifyPriceFeedRefAggregatorAddress(msg.sender, old, _new);
+    }
 ```
 
-After making sure that the minimal transaction value is reached, the `Proxy` contract pays the rule execution fees by simply substracting them from the msg.value and leaving them to be accumulated in the `Proxy` contract. Afterwards, it calls the `interpretRule` from the `Interpreter` contract:
+When necessary, I also used custom modifiers to restrict the access of certain functions to certain contracts. This is part of the upgrability : indeed, when a contract calls another through a low level call, the msg.sender becomes the contract that call the function. This is for example the case in the `Interpreter` contract that restricts the access to the `executeRule` function to the `Proxy` contract:
 
 ```
-/**
-  * @dev Execute a deal's rule
-  * @param _dealId : Id of the deal to execute
-  * @param _ruleId : Id of the rule to execute
-  */
-function executeRule(uint _dealId, uint _ruleId) external payable whenNotPaused {
-  // Amount sent by the user should be higher or equal to the minimal transaction value
-  uint msgValueInUSD = convertWEI2USD(msg.value);
-  require( msgValueInUSD >= transactionMinimalValue, "Transaction minimal value not reached");
+...
+contract Interpreter is Ownable {
+    
+    /* STORAGE VARIABLES */
 
-  // Upgrability: Low level call to InstructionsProvider
-  // Includes in the call (msg.value - execution fees)
-  uint executionFees = (msg.value / 100) * transactionFees;
-  (bool success, ) = interpreterContractRef.call{value: (msg.value - executionFees)}(
-      abi.encodeWithSignature(
-          "interpretRule(address,uint256,uint256)",
-          msg.sender,
-          _dealId, 
-          _ruleId
-      )
-  );
+    /// @dev Proxy contract address
+    address public proxyContractAddress;
+...
+    /* MODIFIERS */ 
+    
+    /// @dev Modifier used to assess that the caller is the Proxy contract
+    modifier onlyProxy() {
+        require(msg.sender==proxyContractAddress, "Interpreter: Only Proxy may call");
+        _;
+    }
 
-  // Did the low level call succeed?
-  require(success,"Proxy: Unable to execute rule");
-
-  // Emit a PayTransactionFees
-  emit PayTransactionFees(msg.sender, _dealId, _ruleId, executionFees);
-}
-```
-
-#### Step 1: __Proxy calls Interpreter.interpretRule__
-
-The `interpretRule` from the `Interpreter`contract interprets the Articles contained in the rule one by one and reverts if an Article interpretation fails. It does so by getting the number of articles (contained in storage for the particular dealId & ruleId we are trying to execute) from the `Deals.getArticlesCount()` function. Then each article is interpreter by the function `Interpreter.interpretArticle`:
-
-```
-/**
-  * @dev Interprets a rule
-  * @param _from Address of the user who initiated the call
-  * @param _dealId Id of the deal to be executed
-  * @param _ruleId Id of the rule to be executed
-  */
-function interpretRule(address _from, uint _dealId, uint _ruleId) external payable onlyProxy() {
-    // Init the msg value used to 0
-    msgValueUsed = 0;
-
-    // Get all articles in rule
-    uint articlesCount = dealsInstance.getArticlesCount(_dealId, _ruleId);
-
-    bool success = true;
-    for (uint i=0;i<articlesCount;i++) {
-        success = interpretArticle(_from, _dealId, _ruleId, i);
-        if (!success) {
-            revert();
+    /* PUBLIC INTERFACE */
+...
+    function interpretRule(address _from, uint _dealId, uint _ruleId) external payable onlyProxy() {
+        // Init the msg value used to 0
+        msgValueUsed = 0;
+        
+        // Get all articles in rule
+        uint articlesCount = dealsInstance.getArticlesCount(_dealId, _ruleId);
+        
+        bool success = true;
+        for (uint i=0;i<articlesCount;i++) {
+            success = interpretArticle(_from, _dealId, _ruleId, i);
+            if (!success) {
+                revert();
+            }
         }
     }
+...
 }
-```
-
-#### Step 2: __Interpreter calls Interpreter.interpretArticle__
-
-In order to interpret a rule, the `Interpreter` contract fetches the current Article from the Deal contract. It then gets the function signature from the Instructions contract. Finally, depending on the instructionType (= function parameters & return type), it calls the InstructionsProvider contract which contains the actual implementation of the instruction defined in the DApp (like `IF-ADDR`, `TRANSFER`, ...):
-
-```
-/**
-  * @dev Interprets a rule
-  * @param _from Address of the user who initiated the call
-  * @param _dealId Id of the deal to be executed
-  * @param _ruleId Id of the rule to be executed
-  * @param _articleId Id of the article to be executed
-  */
-function interpretArticle(address _from, uint _dealId, uint _ruleId, uint _articleId) private returns (bool) {
-    // Get Article
-    CommonStructs.Article memory article = dealsInstance.getArticle(_dealId, _ruleId, _articleId);
-
-    // Get instruction type and signature
-    CommonStructs.InstructionTypes instructionType;
-    string memory instructionSignature;
-    (instructionType, instructionSignature) = instructionsInstance.getInstruction(article.instructionName);
-
-    //> Params injection depends on the instruction type
-
-    // CASE ADDRESS_ADDRESS_R_BOOL: pass the Article.paramAddress field
-    bool success=false;
-    if (instructionType == CommonStructs.InstructionTypes.ADDRESS_ADDRESS_R_BOOL) {
-        // Upgrability: Low level call to InstructionsProvider
-        bool _success;
-        bytes memory _result;
-        (_success, _result) = instructionsProviderInstance.call(
-            abi.encodeWithSignature(
-                instructionSignature,
-                article.paramAddress,
-                _from
-            )
-        );
-        success = _success && abi.decode(_result, (bool));
-
-    // CASE ADDRESS_PAYABLE: pass the Article.paramAddress
-    } else if (instructionType == CommonStructs.InstructionTypes.ADDRESS_PAYABLE) {
-        // Upgrability: Low level call to InstructionsProvider
-        bool _success;
-        bytes memory _result;
-
-        // Increment current msg.value % usage
-        msgValueUsed += article.paramUInt;
-        // Revert if used value > 100% of msg.value
-        if (msgValueUsed>100)
-            revert("Interpreter: Rule is spending more msg.value than received!");
-        (_success, _result) = instructionsProviderInstance.call{value:(msg.value*article.paramUInt)/100}(
-            abi.encodeWithSignature(
-                instructionSignature,
-                article.paramAddress
-            )
-        );
-        success = _success;
-
-    // MAJOR CONTRACT UPDATE : Add support for UINT_UINT_R_BOOL instructions return
-
-    } else if (instructionType == CommonStructs.InstructionTypes.UINT_UINT_R_BOOL) {
-        // Upgrability: Low level call to InstructionsProvider
-        bool _success;
-        bytes memory _result;
-        (_success, _result) = instructionsProviderInstance.call(
-            abi.encodeWithSignature(
-                instructionSignature,
-                msg.value,
-                article.paramUInt
-            )
-        );
-        success = _success && abi.decode(_result, (bool));
-
-    // CASE ADDRESS_PAYABLE: pass the Article.paramAddress
-    }
-
-    // Emit an event to inform the front-end that a particular article in the rule successed or not
-    emit InterpretArticle(_from, _dealId, _ruleId, _articleId);
-    return success;
-}
-```
