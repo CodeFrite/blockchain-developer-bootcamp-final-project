@@ -11,8 +11,8 @@ To get a general grasp on the project, I recommend watching the following videos
 1. [MAD: How to clone, test, deploy and run on your local?](https://www.youtube.com/watch?v=7ovgkmoqhyw)
 2. [MAD: Connection button & Metamask](https://www.youtube.com/watch?v=v5CC_YePBZ0)
 3. [MAD: How to create a Deal?](https://www.youtube.com/watch?v=4VE8muc4m50)
-4. [MAD: How to execute a Rule?](XXX)
-5. [MAD: Manage the DApp](XXX)
+4. [MAD: How to execute a Rule?](https://www.youtube.com/watch?v=MqtuRp-JO-g)
+5. [MAD: Manage the DApp](https://www.youtube.com/watch?v=7v6ILfD3bXI)
 6. [MAD: How to upgrade the DApp?](XXX)
 
 The DApp is hosted on fleek at [https://mad.on.fleek.co/](https://mad.on.fleek.co/).
