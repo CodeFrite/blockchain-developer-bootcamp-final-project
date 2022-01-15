@@ -76,7 +76,7 @@ This DApp is composed out of 7 contracts which intensely call one another. They 
 
 ### Inheritance and Interfaces
 
-I am inheriting from the Oppenzeppelin Ownable and Pausable contracts:
+I am inheriting from the OpenZeppelin Ownable and Pausable contracts:
 
 ```
 // SPDX-License-Identifier: GPL-3.0
