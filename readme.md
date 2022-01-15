@@ -836,6 +836,12 @@ The folder:
 - web3.js (Blockchain connection)
 - Miro (prototyping). You can follow this link to see the process: [Miro Board](https://miro.com/app/board/o9J_lwU-JWc=/)
 
+## Certificate as an NFT
+
+If I succeed in this bootcamp, I would be glad to receive my certificate as an NFT on this address: 0x1911617464465fCF30e109bFb3A60C752950f304
+
+Thank you :)
+
 ## Possible improvements
 
 As for any projects, particularly in the context of a time framed bootcamp, there is always room for improvements. Please find below an non-exhaustive list of features that could be added/corrected:
