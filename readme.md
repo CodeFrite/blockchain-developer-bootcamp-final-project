@@ -1,5 +1,3 @@
-# These report & the videos will be finalized before midnight (US time) on January the 15th of 2022 ... a few more hours to go :)
-
 # ![image](https://user-images.githubusercontent.com/34804976/147816690-f141a47d-25d7-4125-8e4d-00f7ef8b9ace.png) MAD
 
 Let's Make A Deal (MAD) : Point and click platform allowing everyone to create versatile routing rules for payments on the Ethereum blockchain
@@ -13,7 +11,7 @@ To get a general grasp on the project, I recommend watching the following videos
 3. [MAD: How to create a Deal?](https://www.youtube.com/watch?v=4VE8muc4m50)
 4. [MAD: How to execute a Rule?](https://www.youtube.com/watch?v=MqtuRp-JO-g)
 5. [MAD: Manage the DApp](https://www.youtube.com/watch?v=7v6ILfD3bXI)
-6. [MAD: How to upgrade the DApp?](XXX)
+6. [MAD: How to upgrade the DApp?](https://www.youtube.com/watch?v=MPuyPhQfKDM)
 
 ## Accessing MAD on Rinkeby
 
