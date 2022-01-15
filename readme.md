@@ -572,7 +572,7 @@ Credits: The icon comes from [here](https://www.flaticon.com/premium-icon/scient
 
 ## Installation
 
-In order to run the code locally, clone this repo. Open a terminal and navigate to the root folder, then run the following commands:
+In order to run the code locally, clone this repo. Open a terminal and navigate to the root folder, then run the following commands. Please note that your local testnet should be running on port `7545`:
 
 ```
 > npm install
