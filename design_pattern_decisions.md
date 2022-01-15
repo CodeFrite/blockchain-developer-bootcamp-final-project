@@ -194,77 +194,77 @@ import "@openzeppelin/contracts/utils/escrow/Escrow.sol";
 ...
 contract InstructionsProvider is Ownable {
     
-    /* STORAGE */
+  /* STORAGE */
 ...
-    /// @dev OpenZeppelin Escrow contract reference
-    Escrow public escrowInstance;
+  /// @dev OpenZeppelin Escrow contract reference
+  Escrow public escrowInstance;
 
-    /* EVENTS */ 
+  /* EVENTS */ 
 ...
-    /**
-    * @dev Event emitted when the Escrow contract reference is changed
-    * @param _from Caller address
-    * @param _old Old address of the Escrow contract
-    * @param _new New address of the Escrow contract
-    */
-    event SetEscrowContractRef(address _from, address _old, address _new);
+  /**
+  * @dev Event emitted when the Escrow contract reference is changed
+  * @param _from Caller address
+  * @param _old Old address of the Escrow contract
+  * @param _new New address of the Escrow contract
+  */
+  event SetEscrowContractRef(address _from, address _old, address _new);
 ...
-    /* PUBLIC INTERFACE */
+  /* PUBLIC INTERFACE */
 
-    constructor(address _address) {
-        if (_address==address(0))
-            escrowInstance = new Escrow();
-        else
-            escrowInstance = Escrow(_address);
-    }
+  constructor(address _address) {
+    if (_address==address(0))
+      escrowInstance = new Escrow();
+    else
+      escrowInstance = Escrow(_address);
+  }
 ...
     
-    /**
-    * @dev Sets the Escrow instance. Emits a SetEscrowInstance event
-    * @param _new Address of the Escrow contract
-    */
-    function setEscrowContractRef(address _new) public onlyOwner {
-        address old = address(escrowInstance);
-        escrowInstance = Escrow(_new);
-        emit SetEscrowContractRef(msg.sender, old, _new);
-    }
+  /**
+  * @dev Sets the Escrow instance. Emits a SetEscrowInstance event
+  * @param _new Address of the Escrow contract
+  */
+  function setEscrowContractRef(address _new) public onlyOwner {
+    address old = address(escrowInstance);
+    escrowInstance = Escrow(_new);
+    emit SetEscrowContractRef(msg.sender, old, _new);
+  }
 
     /**
     * @dev Upgrability: Allow the old InstructionsProvider instance
-    * to transfer the Escrow ownership to the new instance
-    * @param _address Address of the new InstructionsProvider instance
-    */
-    function transferEscrow(address _address) external onlyOwner {
-        escrowInstance.transferOwnership(_address);
-        //escrowInstance = Escrow(address(0));
-    }
+  * to transfer the Escrow ownership to the new instance
+  * @param _address Address of the new InstructionsProvider instance
+  */
+  function transferEscrow(address _address) external onlyOwner {
+    escrowInstance.transferOwnership(_address);
+    //escrowInstance = Escrow(address(0));
+  }
 
-    /**
-    * @dev Escrow: Returns msg.sender balance
-    * @return uint Balance of msg.sender
-    */
-    function getBalance() public view returns (uint) {
-        uint deposits = escrowInstance.depositsOf(msg.sender);
-        return deposits;
-    }
+  /**
+  * @dev Escrow: Returns msg.sender balance
+  * @return uint Balance of msg.sender
+  */
+  function getBalance() public view returns (uint) {
+    uint deposits = escrowInstance.depositsOf(msg.sender);
+    return deposits;
+  }
 
-    /**
-    * @dev msg.sender withdraws his total balance
-    *      Modifier hasBalance: msg.sender must have enough balance in the escrow
-    */
-    function withdraw(address _from) external onlyProxy {
-        require(escrowInstance.depositsOf(_from)>0, "InstructionsProvider : Not enough balance");
-        escrowInstance.withdraw(payable(_from));
-    }
+  /**
+  * @dev msg.sender withdraws his total balance
+  *      Modifier hasBalance: msg.sender must have enough balance in the escrow
+  */
+  function withdraw(address _from) external onlyProxy {
+    require(escrowInstance.depositsOf(_from)>0, "InstructionsProvider : Not enough balance");
+    escrowInstance.withdraw(payable(_from));
+  }
 ...
 
-    /**
-     * @dev Escrow: Deposit msg.value to the _to address
-     * @param _to The address to which we deposit ETH
-     */
-    function _transfer(address _to) public payable onlyInterpreter {
-        escrowInstance.deposit{value:msg.value}(_to);
-    }
+  /**
+   * @dev Escrow: Deposit msg.value to the _to address
+   * @param _to The address to which we deposit ETH
+   */
+  function _transfer(address _to) public payable onlyInterpreter {
+    escrowInstance.deposit{value:msg.value}(_to);
+  }
 ...
 }
 ```
