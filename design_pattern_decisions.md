@@ -87,18 +87,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
 contract Proxy is Ownable, Pausable {
-    
-    /* EVENTS */
-
-    // Modify Chainlink ETH/USD price feed aggregator address
-
-    /**
-    * @dev Event emitted when the Chainlink ETH/USD price feed aggregator address is changed
-    * @param _from Caller address
-    * @param _old Old address of the Chainlink ETH/USD price feed aggregator address
-    * @param _new New address of the Chainlink ETH/USD price feed aggregator address
-    */
-    event ModifyPriceFeedRefAggregatorAddress(address _from, address _old, address _new);
 ...
     /* OpenZeppelin.Pausable */
 
