@@ -15,7 +15,13 @@ To get a general grasp on the project, I recommend watching the following videos
 5. [MAD: Manage the DApp](https://www.youtube.com/watch?v=7v6ILfD3bXI)
 6. [MAD: How to upgrade the DApp?](XXX)
 
+## Accessing MAD on Rinkeby
+
 The DApp is hosted on fleek at [https://mad.on.fleek.co/](https://mad.on.fleek.co/).
+
+If you want to play around with the DApp parameters, you will need to connect as the contract owner. In order to do so, you can use the following passphrase in metamask. This is not my main wallet so use it freely:
+
+```mnemonic=best present cable maid net minute culture unfold bid stable silent legend```
 
 ## &#9881; Problematic
 
