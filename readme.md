@@ -855,6 +855,36 @@ Adding instruction 'IF-AMOUNT-BIGGER'
 
 ```
 
+## Directory structure
+
+The project directory structure corresponds to the one obtained after running the `truffle unbox react` command. Please note that I have not used that command because the dependencies seems to be outdated. I just ran the `truffle init` command and then run a `npx create-react-app` command to generate a react project.
+
+The project directory structure is as follow:
+
+![image](https://user-images.githubusercontent.com/34804976/149611268-5f4be590-6cb5-4b56-8130-cd30cc0b88b6.png)
+
+The folder:
+
+- **client** contains the front-end code
+- **contracts** contains my smart contracts
+- **migrations** contains the truffle migration scripts
+- **test** contains the smart contract test files, one per contract along with additional helper functions files
+
+The file:
+- **package.json** contains the npm dependencies
+- **truffle-config** contains the truffle project configuration (infura provider, develop & rinkeby network config, solidity compiler version & eth-gas-reporter dependency)
+
+The client directory has a react project structure:
+
+![image](https://user-images.githubusercontent.com/34804976/149611287-42a3cde0-dbb1-4b66-ae1e-31c2c5c5d597.png)
+
+The folder:
+
+- **public** contains the main html page along with its logo
+- **assets** contains the images used in the html page
+- **components** contains the react components
+- **contracts** contains the smart contracts ABI
+
 ## Technologies
  
 - Solidity (Smart Contracts)
