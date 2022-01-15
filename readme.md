@@ -832,6 +832,7 @@ The folder:
 - Truffle (testing / debugging / unbox react)
 - Mocha.js (testing) & Mocha.eth-gas-reporter (gas reporting)
 - React / Bootstrap (Front-End)
+- Node v16.9.1
 - web3.js (Blockchain connection)
 - Miro (prototyping). You can follow this link to see the process: [Miro Board](https://miro.com/app/board/o9J_lwU-JWc=/)
 
