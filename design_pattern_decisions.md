@@ -78,6 +78,7 @@ This DApp is composed out of 7 contracts which intensely call one another. They 
 
 I am inheriting from the Oppenzeppelin Ownable and Pausable contracts:
 
+```
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity 0.8.9;
 
