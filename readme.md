@@ -418,8 +418,6 @@ As we can see, in order to interpret a rule, the Interpreter will need to answer
 
 - From that moment, the Intepreter knows how to call the correct methods inside the InstructionsProvider contract. The InstructionsProvider contract contains the implementation of all the instructions defined in the DApp which means that he knows "How to execute an instruction"
 
-For a more detailed view on how the interpreter works, please check the [design_patterns_desicions.md](https://github.com/CodeFrite/blockchain-developer-bootcamp-final-project/blob/main/design_pattern_decisions.md) file
-
 ## &#11014; Upgrading the instructions set [VIDEO](XXX)
 
 MAD architecture was designed with upgradability in mind. The main challenge in this situation is to make sure that an upgrade does not lead to a client data loss. In other words, after extending the instruction set or correcting a bug in the `Interpreter` or `InstructionsProvider` contracts, the deals as well as the Escrow balances should remain unchanged. This is done without having to migrate any data client data.
